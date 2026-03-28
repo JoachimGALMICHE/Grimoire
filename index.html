@@ -323,7 +323,7 @@
 
     try {
       await signInWithEmailAndPassword(auth, 'grimoire@grimoire.local', password);
-      window.location.href = 'menu.html';
+      window.location.href = '/Grimoire/menu.html';
     } catch (err) {
       errMsg.textContent = '✦ Mot de passe incorrect ✦';
       errMsg.classList.add('show');
@@ -334,7 +334,6 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter') window.handleLogin();
-  });
   });
 </script>
 
