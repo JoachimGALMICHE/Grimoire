@@ -61,11 +61,7 @@
 
     /* Grid */
     .grid-container { max-width: 1100px; margin: 0 auto; padding: 0 0.5rem; }
-    .beast-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.4rem;
-    }
+    .beast-grid { display: flex; flex-direction: column; gap: 1.4rem; }
 
     /* Beast card */
     .beast-card {
@@ -77,8 +73,9 @@
       animation: card-in 0.5s cubic-bezier(0.22,1,0.36,1) both;
       transition: transform 0.2s, box-shadow 0.2s;
       overflow: hidden;
+      padding: 1.8rem 2rem 2.5rem;
     }
-    .beast-card:hover { transform: translateY(-3px); box-shadow: 5px 6px 0 rgba(0,0,0,0.5); }
+    .beast-card:hover { transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(0,0,0,0.5); }
     .beast-card::after {
       content: ''; position: absolute; top: 6px; right: 6px;
       width: 16px; height: 16px;
@@ -88,7 +85,7 @@
 
 
 
-    .beast-body { padding: 1.2rem 1.2rem 2.5rem; }
+    .beast-body {}
     .beast-type {
       font-family: 'Cinzel Decorative', serif;
       font-size: 0.5rem; letter-spacing: 0.15rem; text-transform: uppercase;
