@@ -225,10 +225,10 @@
 <body>
 
 <header>
-  <div class="header-divider">⸻ ✦ ✦ ✦ ⸻</div>
+  <div class="header-divider">    </div>
   <h1 class="site-title">Grimoire</h1>
-  <p class="site-subtitle">Livre des Ombres — Sanctuaire de l'Adepte</p>
-  <div class="header-divider">⸻ ✦ ✦ ✦ ⸻</div>
+  <p class="site-subtitle">Livre de l'Éclypse — Sanctuaire de l'Adepte</p>
+  <div class="header-divider">    </div>
 </header>
 
 <div class="user-bar">
@@ -238,9 +238,9 @@
 
 <!-- Moon phase & druidic feast banner -->
 <div class="moon-banner">
-  <span class="moon-icon" id="moonIcon">🌙</span>
+  <span class="moon-icon" id="moonIcon"></span>
   <span id="moonText">Calcul des cycles…</span>
-  <span style="opacity:0.4">✦</span>
+  <span style="opacity:0.4"></span>
   <span id="feastText">—</span>
 </div>
 
@@ -248,79 +248,77 @@
 
   <!-- Featured: Journal -->
   <a class="menu-card card-featured" href="journal.html">
-    <span class="card-icon">🌞</span>
+    <span class="card-icon">&#9788;</span>
     <div class="card-title">Journal Solaire & Lunaire</div>
     <div class="card-desc">Suis les cycles de la lune et du soleil. Fêtes druidiques automatisées selon équinoxes et solstices.</div>
   </a>
 
   <a class="menu-card" href="bestiaire.html">
-    <span class="card-icon">🐉</span>
+    <span class="card-icon">&#10022;</span>
     <div class="card-title">Bestiaire</div>
     <div class="card-desc">Créatures, esprits & entités des mondes visibles et invisibles.</div>
   </a>
 
   <a class="menu-card" href="magie.html">
-    <span class="card-icon">✨</span>
+    <span class="card-icon">&#10019;</span>
     <div class="card-title">Types de Magie</div>
     <div class="card-desc">Traditions, courants et disciplines magiques.</div>
   </a>
 
   <a class="menu-card" href="energie.html">
-    <span class="card-icon">⚡</span>
     <div class="card-title">Types d'Énergie</div>
     <div class="card-desc">Éléments, vibrations et forces primordiales.</div>
   </a>
 
   <a class="menu-card" href="rituels.html">
-    <span class="card-icon">🕯️</span>
+    <span class="card-icon">&#9679;</span>
     <div class="card-title">Rituels</div>
     <div class="card-desc">Cérémonies, cercles et pratiques sacrées.</div>
   </a>
 
   <a class="menu-card" href="sorts.html">
-    <span class="card-icon">📜</span>
+    <span class="card-icon">&#8764;</span>
     <div class="card-title">Sorts & Incantations</div>
     <div class="card-desc">Bibliothèque personnelle de sorts et formules.</div>
   </a>
 
   <a class="menu-card" href="tirages.html">
-    <span class="card-icon">🔮</span>
+    <span class="card-icon">&#9670;</span>
     <div class="card-title">Tirages Divinatoires</div>
     <div class="card-desc">Oracle, Runes et Tarot — lectures & archives.</div>
   </a>
 
   <a class="menu-card" href="cristaux.html">
-    <span class="card-icon">💎</span>
+    <span class="card-icon">&#10023;</span>
     <div class="card-title">Cristaux & Pierres</div>
     <div class="card-desc">Propriétés, correspondances et usages des minéraux.</div>
   </a>
 
   <a class="menu-card" href="reves.html">
-    <span class="card-icon">💤</span>
     <div class="card-title">Lectures de Rêves</div>
     <div class="card-desc">Symboles oniriques, journaux et interprétations.</div>
   </a>
 
   <a class="menu-card" href="plantes.html">
-    <span class="card-icon">🌿</span>
+    <span class="card-icon">&#10022;</span>
     <div class="card-title">Herbier & Plantes</div>
     <div class="card-desc">Vertus, correspondances magiques et préparations végétales.</div>
   </a>
 
   <a class="menu-card" href="recettes.html">
-    <span class="card-icon">🫙</span>
+    <span class="card-icon">&#9737;</span>
     <div class="card-title">Recettes & Préparations</div>
     <div class="card-desc">Huiles, encens, sachets et élixirs artisanaux.</div>
   </a>
 
   <a class="menu-card" href="astrologie.html">
-    <span class="card-icon">⭐</span>
+    <span class="card-icon">&#9733;</span>
     <div class="card-title">Astrologie</div>
     <div class="card-desc">Thème natal, transits et cycles planétaires.</div>
   </a>
 
   <a class="menu-card" href="talismans.html">
-    <span class="card-icon">🪬</span>
+    <span class="card-icon">&#10016;</span>
     <div class="card-title">Talismans & Sigils</div>
     <div class="card-desc">Création, activation et archivage de symboles sacrés.</div>
   </a>
@@ -328,7 +326,7 @@
 </nav>
 
 <footer>
-  ✦ &nbsp; Que la sagesse des anciens guide chacun de tes pas &nbsp; ✦
+   &nbsp; Que la sagesse des anciens guide chacun de tes pas &nbsp; 
 </footer>
 
 <!-- Firebase -->
@@ -336,7 +334,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  // ⚠️ REMPLACE CES VALEURS PAR TA CONFIG FIREBASE
+  //  REMPLACE CES VALEURS PAR TA CONFIG FIREBASE
   const firebaseConfig = {
     apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
     authDomain: "grimoire-commun.firebaseapp.com",
@@ -352,16 +350,16 @@
 
   onAuthStateChanged(auth, user => {
     if (!user) {
-      window.location.href = 'login.html';
+      window.location.href = '/Grimoire/';
       return;
     }
     const name = user.displayName || user.email.split('@')[0];
-    document.getElementById('userName').textContent = `✦ ${name}`;
+    document.getElementById('userName').textContent = ` ${name}`;
   });
 
   window.handleLogout = async () => {
     await signOut(auth);
-    window.location.href = 'login.html';
+    window.location.href = '/Grimoire/';
   };
 </script>
 
@@ -371,27 +369,27 @@
     const known = new Date(2000, 0, 6.3); // new moon reference
     const diff  = (date - known) / (29.53 * 24 * 3600 * 1000);
     const phase = ((diff % 1) + 1) % 1;
-    if (phase < 0.02 || phase > 0.98) return { icon: '🌑', name: 'Nouvelle Lune' };
-    if (phase < 0.23) return { icon: '🌒', name: 'Premier Croissant' };
-    if (phase < 0.27) return { icon: '🌓', name: 'Premier Quartier' };
-    if (phase < 0.48) return { icon: '🌔', name: 'Lune Gibbeuse Croissante' };
-    if (phase < 0.52) return { icon: '🌕', name: 'Pleine Lune' };
-    if (phase < 0.73) return { icon: '🌖', name: 'Lune Gibbeuse Décroissante' };
-    if (phase < 0.77) return { icon: '🌗', name: 'Dernier Quartier' };
-    return { icon: '🌘', name: 'Dernier Croissant' };
+    if (phase < 0.02 || phase > 0.98) return { icon: '', name: 'Nouvelle Lune' };
+    if (phase < 0.23) return { icon: '', name: 'Premier Croissant' };
+    if (phase < 0.27) return { icon: '', name: 'Premier Quartier' };
+    if (phase < 0.48) return { icon: '', name: 'Lune Gibbeuse Croissante' };
+    if (phase < 0.52) return { icon: '', name: 'Pleine Lune' };
+    if (phase < 0.73) return { icon: '', name: 'Lune Gibbeuse Décroissante' };
+    if (phase < 0.77) return { icon: '', name: 'Dernier Quartier' };
+    return { icon: '', name: 'Dernier Croissant' };
   }
 
   function getDruidicFeast(date) {
     const y = date.getFullYear();
     const feasts = [
-      { month: 1,  day: 31, name: 'Imbolc 🌱', desc: 'Éveil de la lumière' },
-      { month: 3,  day: 20, name: 'Ostara 🌸', desc: 'Équinoxe de printemps' },
-      { month: 4,  day: 30, name: 'Beltane 🔥', desc: 'Feu de Mai' },
-      { month: 6,  day: 21, name: 'Litha ☀️', desc: 'Solstice d\'été' },
-      { month: 7,  day: 31, name: 'Lughnasadh 🌾', desc: 'Première récolte' },
-      { month: 9,  day: 22, name: 'Mabon 🍂', desc: 'Équinoxe d\'automne' },
-      { month: 10, day: 31, name: 'Samhain 🎃', desc: 'Voile mince' },
-      { month: 12, day: 21, name: 'Yule ❄️', desc: 'Solstice d\'hiver' },
+      { month: 1,  day: 31, name: 'Imbolc ', desc: 'Éveil de la lumière' },
+      { month: 3,  day: 20, name: 'Ostara ', desc: 'Équinoxe de printemps' },
+      { month: 4,  day: 30, name: 'Beltane ', desc: 'Feu de Mai' },
+      { month: 6,  day: 21, name: 'Litha ', desc: 'Solstice d\'été' },
+      { month: 7,  day: 31, name: 'Lughnasadh ', desc: 'Première récolte' },
+      { month: 9,  day: 22, name: 'Mabon ', desc: 'Équinoxe d\'automne' },
+      { month: 10, day: 31, name: 'Samhain ', desc: 'Voile mince' },
+      { month: 12, day: 21, name: 'Yule ', desc: 'Solstice d\'hiver' },
     ];
     const month = date.getMonth() + 1;
     const day   = date.getDate();
@@ -405,7 +403,7 @@
       const daysLeft = Math.ceil((new Date(y, upcoming.month-1, upcoming.day) - date) / 86400000);
       return `Prochaine fête : ${upcoming.name} dans ${daysLeft} jours`;
     }
-    return 'Samhain approche… 🎃';
+    return 'Samhain approche… ';
   }
 
   const now   = new Date();
