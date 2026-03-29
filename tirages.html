@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grimoire — Tirages Divinatoires</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --parch-light: #f5e9c9; --parch-mid: #e8d5a3; --parch-dark: #c9a96e;
+      --ink: #2c1a0e; --ink-faded: #5c3d1e; --sepia: #8b5e2a;
+      --gold: #b8860b; --gold-light: #d4a820; --red-wax: #7a1f1f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh; background-color: #120a02;
+      background-image: radial-gradient(ellipse at 50% 30%, #2a1205 0%, transparent 70%);
+      font-family: 'IM Fell English', Georgia, serif; color: var(--ink); padding: 2rem 1rem 4rem;
+    }
+    header { text-align: center; padding: 2rem 1rem 1rem; animation: fade-in 1s ease both; }
+    .header-divider { color: var(--gold); opacity: 0.6; letter-spacing: 0.6rem; font-size: 0.9rem; }
+    .site-title { font-family: 'UnifrakturMaguntia', cursive; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--parch-light); text-shadow: 0 0 30px rgba(180,120,30,0.5), 2px 2px 0 #1a0a00; margin: 0.3rem 0; }
+    .site-subtitle { font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; letter-spacing: 0.4rem; color: var(--parch-dark); text-transform: uppercase; }
+
+    .nav-bar { max-width: 1000px; margin: 1.5rem auto; display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; }
+    .btn-back { font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; letter-spacing: 0.15rem; text-transform: uppercase; border: 1px solid var(--sepia); padding: 0.5rem 1.2rem; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block; background: transparent; color: var(--sepia); }
+    .btn-back:hover { background: var(--sepia); color: var(--parch-light); }
+
+    /* Tabs */
+    .tabs { max-width: 1000px; margin: 0 auto 2rem; padding: 0 1rem; display: flex; gap: 0; border-bottom: 1px solid var(--parch-dark); }
+    .tab-btn {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.58rem; letter-spacing: 0.12rem;
+      text-transform: uppercase; padding: 0.7rem 1.2rem; cursor: pointer;
+      background: transparent; border: none; color: var(--parch-dark);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.3s;
+    }
+    .tab-btn:hover { color: var(--sepia); }
+    .tab-btn.active { color: var(--parch-light); border-bottom-color: var(--gold); }
+    .tab-btn .new-btn-inline {
+      margin-left: 0.8rem; font-size: 0.5rem; padding: 0.2rem 0.5rem;
+      border: 1px solid var(--gold); color: var(--gold); background: transparent;
+      cursor: pointer; font-family: 'Cinzel Decorative', serif; letter-spacing: 0.1rem;
+      transition: all 0.2s; vertical-align: middle;
+    }
+    .tab-btn.active .new-btn-inline:hover { background: var(--gold); color: var(--ink); }
+
+    /* Panels */
+    .tab-panel { display: none; max-width: 1000px; margin: 0 auto; padding: 0 0.5rem; }
+    .tab-panel.active { display: block; }
+
+    .loading-msg { text-align: center; color: var(--parch-dark); font-style: italic; margin: 3rem 0; }
+    .entries-list { display: flex; flex-direction: column; gap: 1.5rem; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--parch-dark); font-style: italic; }
+
+    /* Cards */
+    .entry-card { background: linear-gradient(145deg, #f5e9c9 0%, #ecdaaa 100%); border: 1px solid var(--parch-dark); box-shadow: 3px 3px 0 rgba(0,0,0,0.4); padding: 1.8rem 2rem 2.5rem; position: relative; animation: card-in 0.5s cubic-bezier(0.22,1,0.36,1) both; transition: transform 0.2s, box-shadow 0.2s; }
+    .entry-card:hover { transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(0,0,0,0.5); }
+    .entry-card::after { content: ''; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-top: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); opacity: 0.4; }
+    .entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+    .entry-nom { font-family: 'UnifrakturMaguntia', cursive; font-size: 1.8rem; color: var(--ink); line-height: 1.1; }
+    .entry-date { font-family: 'Cinzel Decorative', serif; font-size: 0.65rem; letter-spacing: 0.12rem; color: var(--sepia); text-transform: uppercase; }
+    .entry-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .entry-tag { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.12rem; color: var(--ink-faded); border: 1px solid var(--parch-dark); padding: 0.2rem 0.6rem; text-transform: uppercase; }
+    .entry-divider { border: none; border-top: 1px solid var(--parch-dark); margin: 0.8rem 0; opacity: 0.5; }
+    .entry-section { margin-bottom: 0.8rem; }
+    .entry-section-label { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.15rem; color: var(--sepia); text-transform: uppercase; margin-bottom: 0.25rem; }
+    .entry-section-content { font-size: 0.92rem; color: var(--ink-faded); line-height: 1.6; font-style: italic; white-space: pre-wrap; }
+    .btn-delete { position: absolute; bottom: 0.8rem; right: 1rem; background: transparent; border: 1px solid var(--red-wax); color: var(--red-wax); font-family: 'Cinzel Decorative', serif; font-size: 0.5rem; letter-spacing: 0.1rem; padding: 0.25rem 0.6rem; cursor: pointer; text-transform: uppercase; opacity: 0.4; transition: opacity 0.3s; }
+    .btn-delete:hover { opacity: 1; }
+
+    /* Library grid */
+    .lib-filters { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .filter-btn { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.12rem; text-transform: uppercase; padding: 0.4rem 0.9rem; border: 1px solid var(--parch-dark); background: transparent; color: var(--parch-dark); cursor: pointer; transition: all 0.2s; }
+    .filter-btn.active { background: var(--ink); color: var(--parch-light); border-color: var(--gold); }
+    .lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .lib-card { background: linear-gradient(145deg, #f5e9c9 0%, #ecdaaa 100%); border: 1px solid var(--parch-dark); padding: 1rem 1.2rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+    .lib-card:hover { transform: translateY(-2px); box-shadow: 3px 4px 0 rgba(0,0,0,0.4); }
+    .lib-card-name { font-family: 'Cinzel Decorative', serif; font-size: 0.65rem; letter-spacing: 0.1rem; color: var(--ink); text-transform: uppercase; margin-bottom: 0.3rem; }
+    .lib-card-sub { font-size: 0.78rem; color: var(--ink-faded); font-style: italic; }
+    .lib-card-filled { border-left: 2px solid var(--gold); }
+
+    /* Detail overlay for library */
+    .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(10,5,0,0.88); z-index: 200; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+    .detail-overlay.open { display: flex; }
+    .detail-modal { background: linear-gradient(160deg, #fdf3d8 0%, #f0dca8 40%, #e4c98a 100%); border: 1px solid var(--parch-dark); box-shadow: 0 0 0 4px #1a0f05, 0 0 0 6px var(--sepia); width: 100%; max-width: 600px; padding: 2.5rem 2rem; position: relative; animation: page-in 0.3s ease both; }
+    .detail-name { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: var(--ink); margin-bottom: 0.3rem; }
+    .detail-sub { font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; color: var(--sepia); letter-spacing: 0.15rem; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .detail-divider { border: none; border-top: 1px solid var(--parch-dark); margin: 1rem 0; opacity: 0.5; }
+    .btn-close { position: absolute; top: 1rem; right: 1rem; background: transparent; border: 1px solid var(--sepia); color: var(--sepia); font-family: 'Cinzel Decorative', serif; font-size: 0.5rem; letter-spacing: 0.1rem; padding: 0.3rem 0.7rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+    .btn-close:hover { background: var(--sepia); color: var(--parch-light); }
+    .detail-field { margin-bottom: 1rem; }
+    .detail-field label { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.15rem; color: var(--sepia); text-transform: uppercase; display: block; margin-bottom: 0.3rem; }
+    .detail-field textarea { width: 100%; background: rgba(255,255,255,0.4); border: 1.5px solid var(--parch-dark); padding: 0.5rem; font-family: 'IM Fell English', serif; font-size: 0.9rem; color: var(--ink); outline: none; resize: vertical; min-height: 70px; transition: border-color 0.3s; }
+    .detail-field textarea:focus { border-color: var(--gold); }
+    .btn-save-detail { width: 100%; margin-top: 1rem; padding: 0.75rem; background: var(--ink); color: var(--parch-light); border: 1px solid var(--gold); font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; letter-spacing: 0.2rem; text-transform: uppercase; cursor: pointer; position: relative; transition: background 0.3s; }
+    .btn-save-detail::before { content: ''; position: absolute; inset: 2px; border: 1px solid var(--gold); opacity: 0.3; pointer-events: none; }
+    .btn-save-detail:hover { background: #1a0a00; }
+
+    /* Modals */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,5,0,0.85); z-index: 100; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: linear-gradient(160deg, #fdf3d8 0%, #f0dca8 40%, #e4c98a 100%); border: 1px solid var(--parch-dark); box-shadow: 0 0 0 4px #1a0f05, 0 0 0 6px var(--sepia), 0 0 40px rgba(180,120,30,0.3); width: 100%; max-width: 680px; padding: 2.5rem 2rem; position: relative; animation: page-in 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+    .modal-corner { position: absolute; width: 36px; height: 36px; border-color: var(--gold); border-style: solid; opacity: 0.5; }
+    .modal-corner.tl { top: 8px; left: 8px; border-width: 1.5px 0 0 1.5px; }
+    .modal-corner.tr { top: 8px; right: 8px; border-width: 1.5px 1.5px 0 0; }
+    .modal-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1.5px 1.5px; }
+    .modal-corner.br { bottom: 8px; right: 8px; border-width: 0 1.5px 1.5px 0; }
+    .modal-title { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: var(--ink); text-align: center; margin-bottom: 0.3rem; text-shadow: 1px 1px 0 var(--parch-dark); }
+    .modal-divider { text-align: center; color: var(--sepia); opacity: 0.5; letter-spacing: 0.4rem; margin-bottom: 2rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
+    .form-row.single { grid-template-columns: 1fr; }
+    .field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field label { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.15rem; color: var(--sepia); text-transform: uppercase; }
+    .field input, .field select, .field textarea { background: rgba(255,255,255,0.4); border: none; border-bottom: 1.5px solid var(--parch-dark); padding: 0.45rem 0.3rem; font-family: 'IM Fell English', serif; font-size: 0.9rem; color: var(--ink); outline: none; transition: border-color 0.3s; width: 100%; }
+    .field select { cursor: pointer; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-bottom-color: var(--gold); }
+    .field textarea { resize: vertical; min-height: 80px; border: 1.5px solid var(--parch-dark); padding: 0.5rem; }
+    .field textarea:focus { border-color: var(--gold); }
+    .section-title { font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; letter-spacing: 0.2rem; color: var(--sepia); text-transform: uppercase; margin: 1.5rem 0 0.8rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--parch-dark); }
+    .modal-actions { display: flex; gap: 1rem; margin-top: 2rem; }
+    .btn-cancel { flex: 1; padding: 0.75rem; background: transparent; border: 1px solid var(--sepia); color: var(--sepia); font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; letter-spacing: 0.15rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+    .btn-cancel:hover { background: var(--sepia); color: var(--parch-light); }
+    .btn-save { flex: 2; padding: 0.75rem; background: var(--ink); color: var(--parch-light); border: 1px solid var(--gold); font-family: 'Cinzel Decorative', serif; font-size: 0.6rem; letter-spacing: 0.2rem; text-transform: uppercase; cursor: pointer; position: relative; transition: background 0.3s; }
+    .btn-save::before { content: ''; position: absolute; inset: 2px; border: 1px solid var(--gold); opacity: 0.3; pointer-events: none; }
+    .btn-save:hover { background: #1a0a00; }
+
+    /* Positions dynamiques */
+    .positions-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.6rem; }
+    .position-row { display: flex; gap: 0.5rem; align-items: center; }
+    .position-row input { flex: 1; }
+    .btn-add-pos { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.1rem; color: var(--sepia); background: transparent; border: 1px dashed var(--parch-dark); padding: 0.35rem 0.8rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; width: 100%; }
+    .btn-add-pos:hover { border-color: var(--sepia); }
+    .btn-rm-pos { background: transparent; border: none; color: var(--red-wax); cursor: pointer; font-size: 1rem; opacity: 0.5; transition: opacity 0.2s; padding: 0 0.3rem; }
+    .btn-rm-pos:hover { opacity: 1; }
+
+    /* Tirage cartes rows */
+    .carte-row { display: grid; grid-template-columns: 1fr 2fr; gap: 0.5rem; margin-bottom: 0.5rem; align-items: start; }
+    .carte-row input, .carte-row textarea { background: rgba(255,255,255,0.4); border: none; border-bottom: 1.5px solid var(--parch-dark); padding: 0.4rem 0.3rem; font-family: 'IM Fell English', serif; font-size: 0.85rem; color: var(--ink); outline: none; width: 100%; }
+    .carte-row textarea { border: 1.5px solid var(--parch-dark); padding: 0.4rem; min-height: 50px; resize: vertical; }
+
+    @keyframes card-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes page-in { from { opacity:0; transform: translateY(20px) scale(0.98); } to { opacity:1; transform: translateY(0) scale(1); } }
+    footer { text-align: center; margin-top: 3rem; color: var(--sepia); font-style: italic; font-size: 0.8rem; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+  <h1 class="site-title">Tirages Divinatoires</h1>
+  <p class="site-subtitle">Livre de l'&Eacute;clypse</p>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+</header>
+
+<div class="nav-bar">
+  <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('methodes')">
+    M&eacute;thodes
+    <span class="new-btn-inline" onclick="event.stopPropagation(); openModal('methode')">+ Nouvelle</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('tirages')">
+    Tirages effectu&eacute;s
+    <span class="new-btn-inline" onclick="event.stopPropagation(); openModal('tirage')">+ Nouveau</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('bibliotheque')">
+    Biblioth&egrave;que
+  </button>
+</div>
+
+<!-- PANEL METHODES -->
+<div class="tab-panel active" id="panel-methodes">
+  <div class="loading-msg" id="loading-methodes">Consultation des archives...</div>
+  <div class="entries-list" id="list-methodes"></div>
+</div>
+
+<!-- PANEL TIRAGES -->
+<div class="tab-panel" id="panel-tirages">
+  <div class="loading-msg" id="loading-tirages">Consultation des archives...</div>
+  <div class="entries-list" id="list-tirages"></div>
+</div>
+
+<!-- PANEL BIBLIOTHEQUE -->
+<div class="tab-panel" id="panel-bibliotheque">
+  <div class="lib-filters">
+    <button class="filter-btn active" onclick="filterLib('all', this)">Tout</button>
+    <button class="filter-btn" onclick="filterLib('tarot', this)">Tarot</button>
+    <button class="filter-btn" onclick="filterLib('rune', this)">Runes</button>
+  </div>
+  <div class="lib-grid" id="lib-grid"></div>
+</div>
+
+<footer>&#10022; &nbsp; Les cartes ne mentent pas, elles r&eacute;v&egrave;lent &nbsp; &#10022;</footer>
+
+<!-- DETAIL BIBLIOTHEQUE -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-modal">
+    <button class="btn-close" onclick="closeDetail()">Fermer</button>
+    <div class="detail-name" id="detail-name"></div>
+    <div class="detail-sub" id="detail-sub"></div>
+    <hr class="detail-divider"/>
+    <div class="detail-field">
+      <label>Signification endroit</label>
+      <textarea id="detail-endroit" placeholder="Signification quand la carte est &agrave; l'endroit..."></textarea>
+    </div>
+    <div class="detail-field">
+      <label>Signification revers&eacute;e</label>
+      <textarea id="detail-reverse" placeholder="Signification quand la carte est revers&eacute;e..."></textarea>
+    </div>
+    <button class="btn-save-detail" onclick="saveLibEntry()">Enregistrer</button>
+  </div>
+</div>
+
+<!-- MODAL METHODE -->
+<div class="modal-overlay" id="modal-methode">
+  <div class="modal">
+    <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+    <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+    <div class="modal-title">Nouvelle M&eacute;thode</div>
+    <div class="modal-divider">&#8212; &#10022; &#8212;</div>
+
+    <div class="section-title">Identit&eacute;</div>
+    <div class="form-row">
+      <div class="field">
+        <label for="m-nom">Nom du tirage</label>
+        <input type="text" id="m-nom" placeholder="Ex: Croix celtique..."/>
+      </div>
+      <div class="field">
+        <label for="m-type">Type</label>
+        <select id="m-type">
+          <option value="">— Choisir —</option>
+          <option>Tarot</option>
+          <option>Runes</option>
+          <option>Oracle</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="m-nbcartes">Nombre de cartes</label>
+        <input type="number" id="m-nbcartes" placeholder="Ex: 3, 10..."/>
+      </div>
+      <div class="field">
+        <label for="m-moment">Moment id&eacute;al</label>
+        <input type="text" id="m-moment" placeholder="Ex: Pleine Lune, Samhain..."/>
+      </div>
+    </div>
+    <div class="section-title">Description</div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="m-description">Description de la m&eacute;thode</label>
+        <textarea id="m-description" placeholder="Comment r&eacute;aliser ce tirage..."></textarea>
+      </div>
+    </div>
+    <div class="section-title">Positions</div>
+    <div class="positions-list" id="positions-list"></div>
+    <button class="btn-add-pos" onclick="addPosition()">+ Ajouter une position</button>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('methode')">Annuler</button>
+      <button class="btn-save" onclick="saveMethode()">Sceller la fiche</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TIRAGE -->
+<div class="modal-overlay" id="modal-tirage">
+  <div class="modal">
+    <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+    <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+    <div class="modal-title">Nouveau Tirage</div>
+    <div class="modal-divider">&#8212; &#10022; &#8212;</div>
+
+    <div class="section-title">Contexte</div>
+    <div class="form-row">
+      <div class="field">
+        <label for="t-date">Date</label>
+        <input type="date" id="t-date"/>
+      </div>
+      <div class="field">
+        <label for="t-type">Type</label>
+        <select id="t-type">
+          <option value="">— Choisir —</option>
+          <option>Tarot</option>
+          <option>Runes</option>
+          <option>Oracle</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="t-methode">M&eacute;thode utilis&eacute;e</label>
+        <input type="text" id="t-methode" placeholder="Ex: Croix celtique, 3 cartes..."/>
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="t-intention">Question / Intention</label>
+        <input type="text" id="t-intention" placeholder="Ce que tu cherchais &agrave; savoir..."/>
+      </div>
+    </div>
+
+    <div class="section-title">Cartes / Runes tir&eacute;es</div>
+    <div id="cartes-list"></div>
+    <button class="btn-add-pos" onclick="addCarte()">+ Ajouter une carte / rune</button>
+
+    <div class="section-title">Interpr&eacute;tation</div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="t-interpretation">Interpr&eacute;tation globale</label>
+        <textarea id="t-interpretation" placeholder="Ce que ce tirage t'a r&eacute;v&eacute;l&eacute;..."></textarea>
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="t-ressenti">Ressenti</label>
+        <textarea id="t-ressenti" placeholder="&Eacute;motions, sensations pendant et apr&egrave;s le tirage..."></textarea>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('tirage')">Annuler</button>
+      <button class="btn-save" id="btnSaveTirage" onclick="saveTirage()">Sceller la fiche</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, setDoc, doc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
+    authDomain: "grimoire-commun.firebaseapp.com",
+    projectId: "grimoire-commun",
+    storageBucket: "grimoire-commun.firebasestorage.app",
+    messagingSenderId: "401518708387",
+    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
+    measurementId: "G-F0HFZG2H79"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Bibliothèque statique
+  const TAROT = [
+    // Arcanes majeurs
+    "Le Mat","Le Bateleur","La Papesse","L'Imp\u00e9ratrice","L'Emp\u00e9reur","Le Pape","Les Amoureux","Le Chariot","La Force","L'Hermite","La Roue de Fortune","La Justice","Le Pendu","L'Arcane sans Nom","La Temp\u00e9rance","Le Diable","La Maison Dieu","L'\u00c9toile","La Lune","Le Soleil","Le Jugement","Le Monde",
+    // B\u00e2tons
+    "As de B\u00e2tons","2 de B\u00e2tons","3 de B\u00e2tons","4 de B\u00e2tons","5 de B\u00e2tons","6 de B\u00e2tons","7 de B\u00e2tons","8 de B\u00e2tons","9 de B\u00e2tons","10 de B\u00e2tons","Valet de B\u00e2tons","Cavalier de B\u00e2tons","Reine de B\u00e2tons","Roi de B\u00e2tons",
+    // Coupes
+    "As de Coupes","2 de Coupes","3 de Coupes","4 de Coupes","5 de Coupes","6 de Coupes","7 de Coupes","8 de Coupes","9 de Coupes","10 de Coupes","Valet de Coupes","Cavalier de Coupes","Reine de Coupes","Roi de Coupes",
+    // \u00c9p\u00e9es
+    "As d'\u00c9p\u00e9es","2 d'\u00c9p\u00e9es","3 d'\u00c9p\u00e9es","4 d'\u00c9p\u00e9es","5 d'\u00c9p\u00e9es","6 d'\u00c9p\u00e9es","7 d'\u00c9p\u00e9es","8 d'\u00c9p\u00e9es","9 d'\u00c9p\u00e9es","10 d'\u00c9p\u00e9es","Valet d'\u00c9p\u00e9es","Cavalier d'\u00c9p\u00e9es","Reine d'\u00c9p\u00e9es","Roi d'\u00c9p\u00e9es",
+    // Deniers
+    "As de Deniers","2 de Deniers","3 de Deniers","4 de Deniers","5 de Deniers","6 de Deniers","7 de Deniers","8 de Deniers","9 de Deniers","10 de Deniers","Valet de Deniers","Cavalier de Deniers","Reine de Deniers","Roi de Deniers"
+  ];
+
+  const RUNES = [
+    "Fehu","Uruz","Thurisaz","Ansuz","Raidho","Kenaz","Gebo","Wunjo",
+    "Hagalaz","Nauthiz","Isa","Jera","Eihwaz","Perthro","Algiz","Sowilo",
+    "Tiwaz","Berkano","Ehwaz","Mannaz","Laguz","Ingwaz","Dagaz","Othalan"
+  ];
+
+  let currentLibKey = null;
+  let currentFilter = 'all';
+
+  onAuthStateChanged(auth, user => {
+    if (!user) { window.location.href = '/Grimoire/'; return; }
+    loadMethodes();
+    loadTirages();
+    loadLibrary();
+  });
+
+  // ===== TABS =====
+  window.switchTab = function(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    const idx = ['methodes','tirages','bibliotheque'].indexOf(tab);
+    document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  };
+
+  // ===== METHODES =====
+  async function loadMethodes() {
+    const list = document.getElementById('list-methodes');
+    const loading = document.getElementById('loading-methodes');
+    try {
+      const q = query(collection(db, 'tirages_methodes'), orderBy('nom'));
+      const snap = await getDocs(q);
+      loading.style.display = 'none';
+      if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucune m\u00e9thode consign\u00e9e.</div>'; return; }
+      list.innerHTML = '';
+      snap.forEach(d => list.appendChild(buildMethodeCard(d.data(), d.id)));
+    } catch(e) { loading.textContent = 'Erreur.'; console.error(e); }
+  }
+
+  function buildMethodeCard(d, id) {
+    const card = document.createElement('div');
+    card.className = 'entry-card';
+    let html = `<div class="entry-header">
+      <div class="entry-nom">${d.nom || '—'}</div>
+      <div class="entry-tags">
+        ${d.type ? `<span class="entry-tag">${d.type}</span>` : ''}
+        ${d.nbcartes ? `<span class="entry-tag">${d.nbcartes} cartes</span>` : ''}
+      </div>
+    </div>`;
+    if (d.moment) html += `<div style="font-style:italic;color:var(--sepia);font-size:0.85rem;margin-bottom:0.6rem">${d.moment}</div>`;
+    html += `<hr class="entry-divider"/>`;
+    if (d.description) html += `<div class="entry-section"><div class="entry-section-label">M\u00e9thode</div><div class="entry-section-content">${d.description}</div></div>`;
+    if (d.positions && d.positions.length) {
+      html += `<div class="entry-section"><div class="entry-section-label">Positions</div>`;
+      d.positions.forEach((p, i) => {
+        html += `<div style="font-size:0.85rem;color:var(--ink-faded);margin-bottom:0.3rem"><span style="font-family:'Cinzel Decorative',serif;font-size:0.6rem;color:var(--sepia)">${i+1}.</span> ${p}</div>`;
+      });
+      html += `</div>`;
+    }
+    html += `<button class="btn-delete" onclick="deleteDoc_('tirages_methodes','${id}',this)">Supprimer</button>`;
+    card.innerHTML = html;
+    return card;
+  }
+
+  window.saveMethode = async function() {
+    const nom = document.getElementById('m-nom').value.trim();
+    if (!nom) { alert('Le nom est obligatoire.'); return; }
+    const positions = [...document.querySelectorAll('.pos-input')].map(i => i.value).filter(v => v.trim());
+    const entry = {
+      nom,
+      type:        document.getElementById('m-type').value,
+      nbcartes:    document.getElementById('m-nbcartes').value,
+      moment:      document.getElementById('m-moment').value,
+      description: document.getElementById('m-description').value,
+      positions,
+      createdAt:   new Date().toISOString()
+    };
+    try {
+      await addDoc(collection(db, 'tirages_methodes'), entry);
+      closeModal('methode'); loadMethodes();
+    } catch(e) { console.error(e); alert('Erreur.'); }
+  };
+
+  window.addPosition = function() {
+    const list = document.getElementById('positions-list');
+    const row = document.createElement('div');
+    row.className = 'position-row';
+    row.innerHTML = `<input type="text" class="pos-input" placeholder="Ex: Pass\u00e9, Pr\u00e9sent, Futur..."/>
+      <button class="btn-rm-pos" onclick="this.parentElement.remove()" type="button">&times;</button>`;
+    list.appendChild(row);
+  };
+
+  // ===== TIRAGES =====
+  async function loadTirages() {
+    const list = document.getElementById('list-tirages');
+    const loading = document.getElementById('loading-tirages');
+    try {
+      const q = query(collection(db, 'tirages_effectues'), orderBy('date', 'desc'));
+      const snap = await getDocs(q);
+      loading.style.display = 'none';
+      if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucun tirage consign\u00e9.</div>'; return; }
+      list.innerHTML = '';
+      snap.forEach(d => list.appendChild(buildTirageCard(d.data(), d.id)));
+    } catch(e) { loading.textContent = 'Erreur.'; console.error(e); }
+  }
+
+  function buildTirageCard(d, id) {
+    const card = document.createElement('div');
+    card.className = 'entry-card';
+    const dateStr = d.date ? new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) : '—';
+    let html = `<div class="entry-header">
+      <div class="entry-date">${dateStr}</div>
+      <div class="entry-tags">
+        ${d.type ? `<span class="entry-tag">${d.type}</span>` : ''}
+        ${d.methode ? `<span class="entry-tag">${d.methode}</span>` : ''}
+      </div>
+    </div>`;
+    if (d.intention) html += `<div style="font-style:italic;color:var(--sepia);font-size:0.88rem;margin-bottom:0.6rem">"${d.intention}"</div>`;
+    html += `<hr class="entry-divider"/>`;
+    if (d.cartes && d.cartes.length) {
+      html += `<div class="entry-section"><div class="entry-section-label">Cartes tir\u00e9es</div>`;
+      d.cartes.forEach(c => {
+        html += `<div style="margin-bottom:0.4rem"><span style="font-family:'Cinzel Decorative',serif;font-size:0.6rem;color:var(--sepia)">${c.position || ''}</span>${c.position ? ' — ' : ''}<span style="font-size:0.9rem;color:var(--ink)">${c.carte}</span>`;
+        if (c.note) html += `<div style="font-size:0.82rem;color:var(--ink-faded);font-style:italic;margin-top:0.1rem">${c.note}</div>`;
+        html += `</div>`;
+      });
+      html += `</div>`;
+    }
+    if (d.interpretation) html += `<div class="entry-section"><div class="entry-section-label">Interpr\u00e9tation</div><div class="entry-section-content">${d.interpretation}</div></div>`;
+    if (d.ressenti) html += `<div class="entry-section"><div class="entry-section-label">Ressenti</div><div class="entry-section-content">${d.ressenti}</div></div>`;
+    html += `<button class="btn-delete" onclick="deleteDoc_('tirages_effectues','${id}',this)">Supprimer</button>`;
+    card.innerHTML = html;
+    return card;
+  }
+
+  window.addCarte = function() {
+    const list = document.getElementById('cartes-list');
+    const row = document.createElement('div');
+    row.className = 'carte-row';
+    row.innerHTML = `
+      <input type="text" class="carte-pos" placeholder="Position (ex: Pass\u00e9)"/>
+      <div style="display:flex;flex-direction:column;gap:0.3rem">
+        <input type="text" class="carte-nom" placeholder="Carte / Rune tir\u00e9e"/>
+        <textarea class="carte-note" placeholder="Note / interpr\u00e9tation..." style="min-height:40px"></textarea>
+      </div>`;
+    list.appendChild(row);
+  };
+
+  window.saveTirage = async function() {
+    const btn = document.getElementById('btnSaveTirage');
+    btn.textContent = 'Scellement...'; btn.style.opacity = '0.7';
+    const rows = document.querySelectorAll('.carte-row');
+    const cartes = [...rows].map(r => ({
+      position: r.querySelector('.carte-pos').value,
+      carte: r.querySelector('.carte-nom').value,
+      note: r.querySelector('.carte-note').value
+    })).filter(c => c.carte.trim());
+    const entry = {
+      date:           document.getElementById('t-date').value,
+      type:           document.getElementById('t-type').value,
+      methode:        document.getElementById('t-methode').value,
+      intention:      document.getElementById('t-intention').value,
+      cartes,
+      interpretation: document.getElementById('t-interpretation').value,
+      ressenti:       document.getElementById('t-ressenti').value,
+      createdAt:      new Date().toISOString()
+    };
+    try {
+      await addDoc(collection(db, 'tirages_effectues'), entry);
+      closeModal('tirage'); loadTirages();
+    } catch(e) { console.error(e); alert('Erreur.'); }
+    btn.textContent = 'Sceller la fiche'; btn.style.opacity = '1';
+  };
+
+  // ===== BIBLIOTHEQUE =====
+  async function loadLibrary() {
+    const grid = document.getElementById('lib-grid');
+    grid.innerHTML = '';
+    const all = [
+      ...TAROT.map(n => ({ key: 'tarot_' + n, nom: n, type: 'tarot' })),
+      ...RUNES.map(n => ({ key: 'rune_' + n, nom: n, type: 'rune' }))
+    ];
+    // Load saved data
+    const snap = await getDocs(collection(db, 'bibliotheque'));
+    const saved = {};
+    snap.forEach(d => saved[d.id] = d.data());
+
+    all.forEach(item => {
+      if (currentFilter !== 'all' && item.type !== currentFilter) return;
+      const card = document.createElement('div');
+      const isFilled = saved[item.key] && (saved[item.key].endroit || saved[item.key].reverse);
+      card.className = 'lib-card' + (isFilled ? ' lib-card-filled' : '');
+      card.innerHTML = `<div class="lib-card-name">${item.nom}</div>
+        <div class="lib-card-sub">${item.type === 'tarot' ? 'Tarot' : 'Rune Elder Futhark'}${isFilled ? ' — not\u00e9e' : ''}</div>`;
+      card.onclick = () => openDetail(item.key, item.nom, item.type, saved[item.key] || {});
+      grid.appendChild(card);
+    });
+  }
+
+  window.filterLib = function(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadLibrary();
+  };
+
+  window.openDetail = function(key, nom, type, data) {
+    currentLibKey = key;
+    document.getElementById('detail-name').textContent = nom;
+    document.getElementById('detail-sub').textContent = type === 'tarot' ? 'Tarot' : 'Rune Elder Futhark';
+    document.getElementById('detail-endroit').value = data.endroit || '';
+    document.getElementById('detail-reverse').value = data.reverse || '';
+    document.getElementById('detailOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeDetail = function() {
+    document.getElementById('detailOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  window.saveLibEntry = async function() {
+    if (!currentLibKey) return;
+    const data = {
+      endroit: document.getElementById('detail-endroit').value,
+      reverse: document.getElementById('detail-reverse').value
+    };
+    try {
+      await setDoc(doc(db, 'bibliotheque', currentLibKey), data);
+      closeDetail(); loadLibrary();
+    } catch(e) { console.error(e); alert('Erreur.'); }
+  };
+
+  // ===== SHARED =====
+  window.deleteDoc_ = async function(col, id, btnEl) {
+    if (!confirm('Supprimer ?')) return;
+    try { await deleteDoc(doc(db, col, id)); btnEl.closest('.entry-card').remove(); }
+    catch(e) { console.error(e); }
+  };
+
+  window.openModal = function(type) {
+    if (type === 'tirage') {
+      document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('cartes-list').innerHTML = '';
+      addCarte();
+    }
+    if (type === 'methode') {
+      document.getElementById('positions-list').innerHTML = '';
+      addPosition();
+    }
+    document.getElementById('modal-' + type).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeModal = function(type) {
+    document.getElementById('modal-' + type).classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  ['methode','tirage'].forEach(t => {
+    document.getElementById('modal-' + t).addEventListener('click', e => {
+      if (e.target === document.getElementById('modal-' + t)) closeModal(t);
+    });
+  });
+  document.getElementById('detailOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('detailOverlay')) closeDetail();
+  });
+</script>
+</body>
+</html>
