@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grimoire — Lectures de Rêves</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--parch-light:#f5e9c9;--parch-mid:#e8d5a3;--parch-dark:#c9a96e;--ink:#2c1a0e;--ink-faded:#5c3d1e;--sepia:#8b5e2a;--gold:#b8860b;--gold-light:#d4a820;--red-wax:#7a1f1f;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{min-height:100vh;background-color:#120a02;background-image:radial-gradient(ellipse at 50% 30%,#2a1205 0%,transparent 70%);font-family:'IM Fell English',Georgia,serif;color:var(--ink);padding:2rem 1rem 4rem;}
+    header{text-align:center;padding:2rem 1rem 1rem;animation:fade-in 1s ease both;}
+    .header-divider{color:var(--gold);opacity:0.6;letter-spacing:0.6rem;font-size:0.9rem;}
+    .site-title{font-family:'UnifrakturMaguntia',cursive;font-size:clamp(2rem,5vw,3.5rem);color:var(--parch-light);text-shadow:0 0 30px rgba(180,120,30,0.5),2px 2px 0 #1a0a00;margin:0.3rem 0;}
+    .site-subtitle{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.4rem;color:var(--parch-dark);text-transform:uppercase;}
+    .nav-bar{max-width:900px;margin:1.5rem auto;display:flex;justify-content:space-between;align-items:center;padding:0 1rem;}
+    .btn-back,.btn-new{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--sepia);padding:0.5rem 1.2rem;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block;}
+    .btn-back{background:transparent;color:var(--sepia);}
+    .btn-back:hover{background:var(--sepia);color:var(--parch-light);}
+    .btn-new{background:var(--ink);color:var(--parch-light);border-color:var(--gold);position:relative;}
+    .btn-new::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
+    .btn-new:hover{background:#1a0a00;letter-spacing:0.25rem;}
+    .loading-msg{text-align:center;color:var(--parch-dark);font-style:italic;margin:3rem 0;}
+    .entries-container{max-width:900px;margin:0 auto;padding:0 0.5rem;}
+    .entries-list{display:flex;flex-direction:column;gap:1.5rem;}
+    .entry-card{background:linear-gradient(145deg,#f5e9c9 0%,#ecdaaa 100%);border:1px solid var(--parch-dark);box-shadow:3px 3px 0 rgba(0,0,0,0.4);padding:1.8rem 2rem 2.5rem;position:relative;animation:card-in 0.5s cubic-bezier(0.22,1,0.36,1) both;transition:transform 0.2s,box-shadow 0.2s;}
+    .entry-card:hover{transform:translateY(-2px);box-shadow:5px 6px 0 rgba(0,0,0,0.5);}
+    .entry-card::after{content:'';position:absolute;top:6px;right:6px;width:18px;height:18px;border-top:1.5px solid var(--gold);border-right:1.5px solid var(--gold);opacity:0.4;}
+    .entry-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.5rem;}
+    .entry-nom{font-family:'UnifrakturMaguntia',cursive;font-size:1.8rem;color:var(--ink);line-height:1.1;}
+    .entry-date{font-family:'Cinzel Decorative',serif;font-size:0.65rem;letter-spacing:0.12rem;color:var(--sepia);text-transform:uppercase;}
+    .entry-tags{display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;}
+    .entry-tag{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.12rem;color:var(--ink-faded);border:1px solid var(--parch-dark);padding:0.2rem 0.6rem;text-transform:uppercase;}
+    .tag-recurrent{border-color:var(--gold);color:var(--sepia);}
+    .entry-divider{border:none;border-top:1px solid var(--parch-dark);margin:0.8rem 0;opacity:0.5;}
+    .entry-section{margin-bottom:0.8rem;}
+    .entry-section-label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.25rem;}
+    .entry-section-content{font-size:0.92rem;color:var(--ink-faded);line-height:1.6;font-style:italic;white-space:pre-wrap;}
+    .recit-block{background:rgba(139,94,42,0.06);border-left:2px solid var(--parch-dark);padding:0.8rem 1rem;font-size:0.92rem;color:var(--ink-faded);line-height:1.7;white-space:pre-wrap;font-style:italic;}
+    .btn-delete{position:absolute;bottom:0.8rem;right:1rem;background:transparent;border:1px solid var(--red-wax);color:var(--red-wax);font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;opacity:0.4;transition:opacity 0.3s;}
+    .btn-delete:hover{opacity:1;}
+    .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;}
+    @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.85);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:linear-gradient(160deg,#fdf3d8 0%,#f0dca8 40%,#e4c98a 100%);border:1px solid var(--parch-dark);box-shadow:0 0 0 4px #1a0f05,0 0 0 6px var(--sepia),0 0 40px rgba(180,120,30,0.3);width:100%;max-width:680px;padding:2.5rem 2rem;position:relative;animation:page-in 0.4s cubic-bezier(0.22,1,0.36,1) both;}
+    @keyframes page-in{from{opacity:0;transform:translateY(20px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+    .modal-corner{position:absolute;width:36px;height:36px;border-color:var(--gold);border-style:solid;opacity:0.5;}
+    .modal-corner.tl{top:8px;left:8px;border-width:1.5px 0 0 1.5px;}
+    .modal-corner.tr{top:8px;right:8px;border-width:1.5px 1.5px 0 0;}
+    .modal-corner.bl{bottom:8px;left:8px;border-width:0 0 1.5px 1.5px;}
+    .modal-corner.br{bottom:8px;right:8px;border-width:0 1.5px 1.5px 0;}
+    .modal-title{font-family:'UnifrakturMaguntia',cursive;font-size:2rem;color:var(--ink);text-align:center;margin-bottom:0.3rem;text-shadow:1px 1px 0 var(--parch-dark);}
+    .modal-divider{text-align:center;color:var(--sepia);opacity:0.5;letter-spacing:0.4rem;margin-bottom:2rem;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
+    .form-row.single{grid-template-columns:1fr;}
+    .field{display:flex;flex-direction:column;gap:0.3rem;}
+    .field label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;}
+    .field input,.field select,.field textarea{background:rgba(255,255,255,0.4);border:none;border-bottom:1.5px solid var(--parch-dark);padding:0.45rem 0.3rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.3s;width:100%;}
+    .field select{cursor:pointer;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--gold);}
+    .field textarea{resize:vertical;min-height:80px;border:1.5px solid var(--parch-dark);padding:0.5rem;}
+    .field textarea:focus{border-color:var(--gold);}
+    .check-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;}
+    .check-row input[type="checkbox"]{accent-color:var(--ink);width:14px;height:14px;cursor:pointer;}
+    .check-row label{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.1rem;color:var(--sepia);text-transform:uppercase;cursor:pointer;}
+    .section-title{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;color:var(--sepia);text-transform:uppercase;margin:1.5rem 0 0.8rem;padding-bottom:0.3rem;border-bottom:1px solid var(--parch-dark);}
+    .modal-actions{display:flex;gap:1rem;margin-top:2rem;}
+    .btn-cancel{flex:1;padding:0.75rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+    .btn-cancel:hover{background:var(--sepia);color:var(--parch-light);}
+    .btn-save{flex:2;padding:0.75rem;background:var(--ink);color:var(--parch-light);border:1px solid var(--gold);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;text-transform:uppercase;cursor:pointer;position:relative;transition:background 0.3s;}
+    .btn-save::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
+    .btn-save:hover{background:#1a0a00;}
+    footer{text-align:center;margin-top:3rem;color:var(--sepia);font-style:italic;font-size:0.8rem;opacity:0.5;}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+  <h1 class="site-title">Lectures de R&ecirc;ves</h1>
+  <p class="site-subtitle">Livre de l'&Eacute;clypse</p>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+</header>
+<div class="nav-bar">
+  <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
+  <button class="btn-new" onclick="openModal()">Consigner un r&ecirc;ve</button>
+</div>
+<div class="entries-container">
+  <div class="loading-msg" id="loadingMsg">Consultation des archives...</div>
+  <div class="entries-list" id="entriesList"></div>
+</div>
+<footer>&#10022; &nbsp; Le voile est plus mince dans le sommeil &nbsp; &#10022;</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+    <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+    <div class="modal-title">Nouveau R&ecirc;ve</div>
+    <div class="modal-divider">&#8212; &#10022; &#8212;</div>
+
+    <div class="section-title">Contexte</div>
+    <div class="form-row">
+      <div class="field"><label for="f-date">Date</label><input type="date" id="f-date"/></div>
+      <div class="field"><label for="f-titre">Titre / Th&egrave;me</label><input type="text" id="f-titre" placeholder="En quelques mots..."/></div>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="f-recurrent"/>
+      <label for="f-recurrent">R&ecirc;ve r&eacute;current</label>
+    </div>
+
+    <div class="section-title">R&eacute;cit</div>
+    <div class="form-row single">
+      <div class="field"><label for="f-recit">R&eacute;cit du r&ecirc;ve</label><textarea id="f-recit" style="min-height:120px" placeholder="D&eacute;cris le r&ecirc;ve tel qu'il s'est pass&eacute;..."></textarea></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-symboles">Symboles remarqu&eacute;s</label><textarea id="f-symboles" placeholder="Personnes, lieux, objets, animaux, couleurs marquantes..."></textarea></div>
+    </div>
+
+    <div class="section-title">Analyse</div>
+    <div class="form-row single">
+      <div class="field"><label for="f-interpretation">Interpr&eacute;tation</label><textarea id="f-interpretation" placeholder="Ce que ce r&ecirc;ve pourrait signifier..."></textarea></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-ressenti">Ressenti au r&eacute;veil</label><textarea id="f-ressenti" placeholder="&Eacute;motions, sensations, impression g&eacute;n&eacute;rale..."></textarea></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-notes">Notes libres</label><textarea id="f-notes" placeholder="Liens avec la vie &eacute;veill&eacute;e, intuitions..."></textarea></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" id="btnSave" onclick="saveEntry()">Sceller la fiche</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",
+    projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",
+    messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"
+  };
+  const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+
+  onAuthStateChanged(auth,user=>{ if(!user){window.location.href='/Grimoire/';return;} loadEntries(); });
+
+  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+
+  async function loadEntries(){
+    const list=document.getElementById('entriesList'),loading=document.getElementById('loadingMsg');
+    try{
+      const snap=await getDocs(query(collection(db,'reves'),orderBy('date','desc')));
+      loading.style.display='none';
+      if(snap.empty){list.innerHTML='<div class="empty-state">Aucun r&ecirc;ve consign&eacute;.<br/><em>Le grimoire attend tes visions nocturnes.</em></div>';return;}
+      list.innerHTML='';
+      snap.forEach(d=>list.appendChild(buildCard(d.data(),d.id)));
+    }catch(e){loading.textContent='Erreur.';console.error(e);}
+  }
+
+  function buildCard(d,id){
+    const card=document.createElement('div');
+    card.className='entry-card';
+    const dateStr=d.date?new Date(d.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'—';
+    let html=`<div class="entry-header">
+      <div>
+        <div class="entry-date">${dateStr}</div>
+        ${d.titre?`<div class="entry-nom">${d.titre}</div>`:''}
+      </div>
+      <div class="entry-tags">
+        ${d.recurrent?`<span class="entry-tag tag-recurrent">R&eacute;current</span>`:''}
+      </div>
+    </div><hr class="entry-divider"/>`;
+    if(d.recit) html+=`<div class="entry-section"><div class="entry-section-label">R&eacute;cit</div><div class="recit-block">${d.recit}</div></div>`;
+    const sections=[
+      {label:'Symboles',key:'symboles'},
+      {label:'Interpr&eacute;tation',key:'interpretation'},
+      {label:'Ressenti au r&eacute;veil',key:'ressenti'},
+      {label:'Notes',key:'notes'},
+    ];
+    sections.forEach(s=>{
+      if(d[s.key]) html+=`<div class="entry-section"><div class="entry-section-label">${s.label}</div><div class="entry-section-content">${d[s.key]}</div></div>`;
+    });
+    html+=`<button class="btn-delete" onclick="deleteEntry('${id}',this)">Supprimer</button>`;
+    card.innerHTML=html;
+    return card;
+  }
+
+  window.saveEntry=async function(){
+    const btn=document.getElementById('btnSave');
+    btn.textContent='Scellement en cours…';btn.style.opacity='0.7';
+    const entry={
+      date:           document.getElementById('f-date').value,
+      titre:          document.getElementById('f-titre').value,
+      recurrent:      document.getElementById('f-recurrent').checked,
+      recit:          document.getElementById('f-recit').value,
+      symboles:       document.getElementById('f-symboles').value,
+      interpretation: document.getElementById('f-interpretation').value,
+      ressenti:       document.getElementById('f-ressenti').value,
+      notes:          document.getElementById('f-notes').value,
+      createdAt:      new Date().toISOString()
+    };
+    try{await addDoc(collection(db,'reves'),entry);closeModal();loadEntries();}
+    catch(e){console.error(e);alert('Erreur.');}
+    btn.textContent='Sceller la fiche';btn.style.opacity='1';
+  };
+
+  window.deleteEntry=async function(id,btnEl){
+    if(!confirm('Supprimer ce r&ecirc;ve ?'))return;
+    try{await deleteDoc(doc(db,'reves',id));btnEl.closest('.entry-card').remove();}
+    catch(e){console.error(e);}
+  };
+
+  window.openModal=function(){document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';};
+  window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
+  document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
+</script>
+</body>
+</html>
