@@ -37,6 +37,8 @@
     .ingredients-block{background:rgba(139,94,42,0.06);border-left:2px solid var(--gold);padding:0.8rem 1rem;font-size:0.92rem;color:var(--ink-faded);line-height:1.8;white-space:pre-wrap;font-style:italic;}
     .btn-delete{position:absolute;bottom:0.8rem;right:1rem;background:transparent;border:1px solid var(--red-wax);color:var(--red-wax);font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;opacity:0.4;transition:opacity 0.3s;}
     .btn-delete:hover{opacity:1;}
+    .btn-modifier{position:absolute;bottom:0.8rem;left:1rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;opacity:0.5;transition:opacity 0.3s;}
+    .btn-modifier:hover{opacity:1;background:var(--sepia);color:#f5e9c9;}
     .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;}
     @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.85);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
@@ -161,6 +163,62 @@
   window.openModal=function(){document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';};
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
+
+  // ===== EDIT =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id, btnEl) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'recettes', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+    const ef_nom=document.getElementById('f-nom');if(ef_nom)ef_nom.value=d['nom']||'';
+    const ef_type=document.getElementById('f-type');if(ef_type)ef_type.value=d['type']||'';
+    const ef_intention=document.getElementById('f-intention');if(ef_intention)ef_intention.value=d['intention']||'';
+    const ef_moment=document.getElementById('f-moment');if(ef_moment)ef_moment.value=d['moment']||'';
+    const ef_ingredients=document.getElementById('f-ingredients');if(ef_ingredients)ef_ingredients.value=d['ingredients']||'';
+    const ef_preparation=document.getElementById('f-preparation');if(ef_preparation)ef_preparation.value=d['preparation']||'';
+    const ef_conservation=document.getElementById('f-conservation');if(ef_conservation)ef_conservation.value=d['conservation']||'';
+    const ef_notes=document.getElementById('f-notes');if(ef_notes)ef_notes.value=d['notes']||'';
+      // Handle checkbox fields if any
+      const cbReve = document.getElementById('cb-reve');
+      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
+      const cbTirage = document.getElementById('cb-tirage');
+      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
+      const cbIntention = document.getElementById('cb-intention');
+      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
+      const cbRituel = document.getElementById('cb-rituel');
+      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
+      const cbRecurrent = document.getElementById('f-recurrent');
+      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
+    } catch(e) { console.error(e); return; }
+    // Change save button to update mode
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) {
+      saveBtn.textContent = 'Mettre à jour';
+      saveBtn.onclick = saveEdit;
+    }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const d = currentEditData;
+    const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'type': document.getElementById('f-type')?document.getElementById('f-type').value:d['type']||'', 'intention': document.getElementById('f-intention')?document.getElementById('f-intention').value:d['intention']||'', 'moment': document.getElementById('f-moment')?document.getElementById('f-moment').value:d['moment']||'', 'ingredients': document.getElementById('f-ingredients')?document.getElementById('f-ingredients').value:d['ingredients']||'', 'preparation': document.getElementById('f-preparation')?document.getElementById('f-preparation').value:d['preparation']||'', 'conservation': document.getElementById('f-conservation')?document.getElementById('f-conservation').value:d['conservation']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
+    try {
+      await updateDoc(doc(db, 'recettes', currentEditId), entry);
+      currentEditId = null;
+      // Reset save button
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal();
+      loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
 </script>
 </body>
 </html>

@@ -487,6 +487,63 @@
   document.getElementById('detailOverlay').addEventListener('click', e => {
     if (e.target === document.getElementById('detailOverlay')) closeDetail();
   });
+
+  // ===== EDIT =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id, btnEl) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'bestiaire', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+    const ef_nom=document.getElementById('f-nom');if(ef_nom)ef_nom.value=d['nom']||'';
+    const ef_type=document.getElementById('f-type');if(ef_type)ef_type.value=d['type']||'';
+    const ef_origine=document.getElementById('f-origine');if(ef_origine)ef_origine.value=d['origine']||'';
+    const ef_physique=document.getElementById('f-physique');if(ef_physique)ef_physique.value=d['physique']||'';
+    const ef_caractere=document.getElementById('f-caractere');if(ef_caractere)ef_caractere.value=d['caractere']||'';
+    const ef_pouvoirs=document.getElementById('f-pouvoirs');if(ef_pouvoirs)ef_pouvoirs.value=d['pouvoirs']||'';
+    const ef_correspondances=document.getElementById('f-correspondances');if(ef_correspondances)ef_correspondances.value=d['correspondances']||'';
+    const ef_interagir=document.getElementById('f-interagir');if(ef_interagir)ef_interagir.value=d['interagir']||'';
+    const ef_notes=document.getElementById('f-notes');if(ef_notes)ef_notes.value=d['notes']||'';
+      // Handle checkbox fields if any
+      const cbReve = document.getElementById('cb-reve');
+      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
+      const cbTirage = document.getElementById('cb-tirage');
+      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
+      const cbIntention = document.getElementById('cb-intention');
+      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
+      const cbRituel = document.getElementById('cb-rituel');
+      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
+      const cbRecurrent = document.getElementById('f-recurrent');
+      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
+    } catch(e) { console.error(e); return; }
+    // Change save button to update mode
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) {
+      saveBtn.textContent = 'Mettre à jour';
+      saveBtn.onclick = saveEdit;
+    }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const d = currentEditData;
+    const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'type': document.getElementById('f-type')?document.getElementById('f-type').value:d['type']||'', 'origine': document.getElementById('f-origine')?document.getElementById('f-origine').value:d['origine']||'', 'physique': document.getElementById('f-physique')?document.getElementById('f-physique').value:d['physique']||'', 'caractere': document.getElementById('f-caractere')?document.getElementById('f-caractere').value:d['caractere']||'', 'pouvoirs': document.getElementById('f-pouvoirs')?document.getElementById('f-pouvoirs').value:d['pouvoirs']||'', 'correspondances': document.getElementById('f-correspondances')?document.getElementById('f-correspondances').value:d['correspondances']||'', 'interagir': document.getElementById('f-interagir')?document.getElementById('f-interagir').value:d['interagir']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
+    try {
+      await updateDoc(doc(db, 'bestiaire', currentEditId), entry);
+      currentEditId = null;
+      // Reset save button
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal();
+      loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
 </script>
 
 </body>

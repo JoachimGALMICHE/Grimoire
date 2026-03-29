@@ -317,6 +317,64 @@
   document.getElementById('modalOverlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modalOverlay')) closeModal();
   });
+
+  // ===== EDIT =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id, btnEl) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'rituels', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+    const ef_nom=document.getElementById('f-nom');if(ef_nom)ef_nom.value=d['nom']||'';
+    const ef_type=document.getElementById('f-type');if(ef_type)ef_type.value=d['type']||'';
+    const ef_intention=document.getElementById('f-intention');if(ef_intention)ef_intention.value=d['intention']||'';
+    const ef_lune=document.getElementById('f-lune');if(ef_lune)ef_lune.value=d['lune']||'';
+    const ef_saison=document.getElementById('f-saison');if(ef_saison)ef_saison.value=d['saison']||'';
+    const ef_duree=document.getElementById('f-duree');if(ef_duree)ef_duree.value=d['duree']||'';
+    const ef_materiel=document.getElementById('f-materiel');if(ef_materiel)ef_materiel.value=d['materiel']||'';
+    const ef_etapes=document.getElementById('f-etapes');if(ef_etapes)ef_etapes.value=d['etapes']||'';
+    const ef_resultat=document.getElementById('f-resultat');if(ef_resultat)ef_resultat.value=d['resultat']||'';
+    const ef_notes=document.getElementById('f-notes');if(ef_notes)ef_notes.value=d['notes']||'';
+      // Handle checkbox fields if any
+      const cbReve = document.getElementById('cb-reve');
+      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
+      const cbTirage = document.getElementById('cb-tirage');
+      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
+      const cbIntention = document.getElementById('cb-intention');
+      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
+      const cbRituel = document.getElementById('cb-rituel');
+      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
+      const cbRecurrent = document.getElementById('f-recurrent');
+      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
+    } catch(e) { console.error(e); return; }
+    // Change save button to update mode
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) {
+      saveBtn.textContent = 'Mettre à jour';
+      saveBtn.onclick = saveEdit;
+    }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const d = currentEditData;
+    const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'type': document.getElementById('f-type')?document.getElementById('f-type').value:d['type']||'', 'intention': document.getElementById('f-intention')?document.getElementById('f-intention').value:d['intention']||'', 'lune': document.getElementById('f-lune')?document.getElementById('f-lune').value:d['lune']||'', 'saison': document.getElementById('f-saison')?document.getElementById('f-saison').value:d['saison']||'', 'duree': document.getElementById('f-duree')?document.getElementById('f-duree').value:d['duree']||'', 'materiel': document.getElementById('f-materiel')?document.getElementById('f-materiel').value:d['materiel']||'', 'etapes': document.getElementById('f-etapes')?document.getElementById('f-etapes').value:d['etapes']||'', 'resultat': document.getElementById('f-resultat')?document.getElementById('f-resultat').value:d['resultat']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
+    try {
+      await updateDoc(doc(db, 'rituels', currentEditId), entry);
+      currentEditId = null;
+      // Reset save button
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal();
+      loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
 </script>
 </body>
 </html>

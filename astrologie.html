@@ -116,10 +116,17 @@
 
 <!-- NATAL -->
 <div class="tab-panel active" id="panel-natal">
-  <div class="natal-card" id="natalCard">
-    <div style="font-family:'Cinzel Decorative',serif;font-size:0.7rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:1rem">Ton thème natal</div>
-    <div class="natal-grid" id="natalGrid"></div>
-    <button style="margin-top:1.5rem;font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--gold);padding:0.5rem 1.2rem;background:var(--ink);color:#f5e9c9;cursor:pointer;" onclick="openNatalModal()">Modifier le th&egrave;me</button>
+  <div style="display:flex;gap:1.2rem;flex-wrap:wrap;">
+    <div class="natal-card" style="flex:1;min-width:280px">
+      <div style="font-family:'Cinzel Decorative',serif;font-size:0.7rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:1rem">Th&egrave;me de Soleil</div>
+      <div class="natal-grid" id="natalGrid1"></div>
+      <button style="margin-top:1.5rem;font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--gold);padding:0.5rem 1.2rem;background:var(--ink);color:#f5e9c9;cursor:pointer;" onclick="openNatalModal(1)">Modifier</button>
+    </div>
+    <div class="natal-card" style="flex:1;min-width:280px">
+      <div style="font-family:'Cinzel Decorative',serif;font-size:0.7rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:1rem">Th&egrave;me de Lune</div>
+      <div class="natal-grid" id="natalGrid2"></div>
+      <button style="margin-top:1.5rem;font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--gold);padding:0.5rem 1.2rem;background:var(--ink);color:#f5e9c9;cursor:pointer;" onclick="openNatalModal(2)">Modifier</button>
+    </div>
   </div>
 </div>
 
@@ -152,7 +159,7 @@
 <div class="modal-overlay" id="modal-natal">
   <div class="modal">
     <div class="modal-corner tl"></div><div class="modal-corner tr"></div><div class="modal-corner bl"></div><div class="modal-corner br"></div>
-    <div class="modal-title">Th&egrave;me Natal</div>
+    <div class="modal-title" id="natalModalTitle">Th&egrave;me Natal</div>
     <div class="modal-divider">&#8212; &#10022; &#8212;</div>
     <div class="section-title">Signes</div>
     <div class="form-row">
@@ -233,23 +240,37 @@
   };
 
   // NATAL
+  let currentNatalProfile = 1;
+  const NATAL_FIELDS = [['Signe Solaire','soleil'],['Ascendant','ascendant'],['Lune','lune'],['Mercure','mercure'],['Vénus','venus'],['Mars','mars'],['Jupiter','jupiter'],['Saturne','saturne'],['Notes','notes']];
+
   async function loadNatal(){
     try{
-      const snap=await getDoc(doc(db,'astrologie','natal'));
-      const d=snap.exists()?snap.data():{};
-      const grid=document.getElementById('natalGrid');
-      const fields=[['Signe Solaire','soleil'],['Ascendant','ascendant'],['Lune','lune'],['Mercure','mercure'],['Vénus','venus'],['Mars','mars'],['Jupiter','jupiter'],['Saturne','saturne'],['Notes','notes']];
-      grid.innerHTML=fields.map(([l,k])=>d[k]?`<div class="natal-item"><div class="natal-item-label">${l}</div><div class="natal-item-val">${d[k]}</div></div>`:'').join('');
-      if(!grid.innerHTML) grid.innerHTML='<div style="color:var(--parch-dark);font-style:italic;font-size:0.9rem">Thème natal non renseigné — clique sur Modifier.</div>';
-      // Prefill modal
-      fields.forEach(([,k])=>{const el=document.getElementById('n-'+k);if(el&&d[k])el.value=d[k];});
+      for(const num of [1,2]){
+        const snap=await getDoc(doc(db,'astrologie','natal'+num));
+        const d=snap.exists()?snap.data():{};
+        const grid=document.getElementById('natalGrid'+num);
+        grid.innerHTML=NATAL_FIELDS.map(([l,k])=>d[k]?`<div class="natal-item"><div class="natal-item-label">${l}</div><div class="natal-item-val">${d[k]}</div></div>`:'').join('');
+        if(!grid.innerHTML) grid.innerHTML='<div style="color:var(--parch-dark);font-style:italic;font-size:0.9rem">Thème non renseigné — clique sur Modifier.</div>';
+      }
     }catch(e){console.error(e);}
   }
-  window.openNatalModal=function(){document.getElementById('modal-natal').classList.add('open');document.body.style.overflow='hidden';};
+  window.openNatalModal=function(num){
+    currentNatalProfile=num;
+    const name=num===1?'Soleil':'Lune';
+    document.getElementById('natalModalTitle').textContent='Thème de '+name;
+    // Prefill
+    getDoc(doc(db,'astrologie','natal'+num)).then(snap=>{
+      const d=snap.exists()?snap.data():{};
+      NATAL_FIELDS.forEach(([,k])=>{const el=document.getElementById('n-'+k);if(el)el.value=d[k]||'';});
+    });
+    document.getElementById('modal-natal').classList.add('open');
+    document.body.style.overflow='hidden';
+  };
   window.closeNatalModal=function(){document.getElementById('modal-natal').classList.remove('open');document.body.style.overflow='';};
   window.saveNatal=async function(){
-    const data={soleil:document.getElementById('n-soleil').value,ascendant:document.getElementById('n-ascendant').value,lune:document.getElementById('n-lune').value,mercure:document.getElementById('n-mercure').value,venus:document.getElementById('n-venus').value,mars:document.getElementById('n-mars').value,jupiter:document.getElementById('n-jupiter').value,saturne:document.getElementById('n-saturne').value,notes:document.getElementById('n-notes').value};
-    try{await setDoc(doc(db,'astrologie','natal'),data);closeNatalModal();loadNatal();}catch(e){console.error(e);alert('Erreur.');}
+    const data={};
+    NATAL_FIELDS.forEach(([,k])=>{const el=document.getElementById('n-'+k);if(el)data[k]=el.value;});
+    try{await setDoc(doc(db,'astrologie','natal'+currentNatalProfile),data);closeNatalModal();loadNatal();}catch(e){console.error(e);alert('Erreur.');}
   };
 
   // TRANSITS
