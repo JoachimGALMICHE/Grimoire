@@ -474,7 +474,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
@@ -698,6 +698,88 @@
       closeModal(); loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.');
       if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
+    }
+  };
+
+
+  // MODIFIER
+  let _editId = null;
+  let _editData = {};
+
+  window.editEntry = async function(id) {
+    _editId = id;
+    try {
+      const snap = await getDoc(doc(db, 'journal', id));
+      if (!snap.exists()) return;
+      _editData = snap.data();
+      const d = _editData;
+    const el_date = document.getElementById('f-date'); if(el_date) el_date.value = d['date'] || '';
+    const el_saison = document.getElementById('f-saison'); if(el_saison) el_saison.value = d['saison'] || '';
+    const el_lune = document.getElementById('f-lune'); if(el_lune) el_lune.value = d['lune'] || '';
+    const el_meteo = document.getElementById('f-meteo'); if(el_meteo) el_meteo.value = d['meteo'] || '';
+    const el_humeur = document.getElementById('f-humeur'); if(el_humeur) el_humeur.value = d['humeur'] || '';
+    const el_energie = document.getElementById('f-energie'); if(el_energie) el_energie.value = d['energie'] || '';
+    const el_raison = document.getElementById('f-raison'); if(el_raison) el_raison.value = d['raison'] || '';
+    const el_texte = document.getElementById('f-texte'); if(el_texte) el_texte.value = d['texte'] || '';
+    const el_reve = document.getElementById('f-reve'); if(el_reve) el_reve.value = d['reve'] || '';
+    const el_tirage_type = document.getElementById('f-tirage_type'); if(el_tirage_type) el_tirage_type.value = d['tirage_type'] || '';
+    const el_tirage_cartes = document.getElementById('f-tirage_cartes'); if(el_tirage_cartes) el_tirage_cartes.value = d['tirage_cartes'] || '';
+    const el_tirage_interp = document.getElementById('f-tirage_interp'); if(el_tirage_interp) el_tirage_interp.value = d['tirage_interp'] || '';
+    const el_intention = document.getElementById('f-intention'); if(el_intention) el_intention.value = d['intention'] || '';
+    const el_rituel = document.getElementById('f-rituel'); if(el_rituel) el_rituel.value = d['rituel'] || '';
+      // Checkboxes
+      ['reve','tirage','intention','rituel'].forEach(function(n) {
+        const cb = document.getElementById('cb-' + n);
+        if (cb) {
+          const key = n === 'tirage' ? 'tirage_type' : n;
+          cb.checked = !!d[key];
+          if (typeof toggleSection === 'function') toggleSection(n, !!d[key]);
+        }
+      });
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const btn = document.getElementById('loginBtn') || document.querySelector('.btn-save');
+    const saveBtn = document.getElementById('loginBtn') || document.querySelector('#modalOverlay .btn-enter') || document.querySelectorAll('button.btn-enter, button.btn-save')[0];
+    const allBtns = document.querySelectorAll('.btn-enter, .btn-save');
+    allBtns.forEach(function(b) {
+      if (b.textContent.includes('Sceller') || b.textContent.includes('Franchir') || b.id === 'loginBtn') {
+        b.textContent = 'Mettre à jour';
+        b.onclick = window._saveEdit;
+      }
+    });
+    openModal();
+  };
+
+  window._saveEdit = async function() {
+    if (!_editId) return;
+    const allBtns = document.querySelectorAll('.btn-enter, .btn-save');
+    allBtns.forEach(function(b) { b.style.opacity = '0.7'; });
+    const entry = {
+      'date': document.getElementById('f-date') ? document.getElementById('f-date').value : '',
+      'saison': document.getElementById('f-saison') ? document.getElementById('f-saison').value : '',
+      'lune': document.getElementById('f-lune') ? document.getElementById('f-lune').value : '',
+      'meteo': document.getElementById('f-meteo') ? document.getElementById('f-meteo').value : '',
+      'humeur': document.getElementById('f-humeur') ? document.getElementById('f-humeur').value : '',
+      'energie': document.getElementById('f-energie') ? document.getElementById('f-energie').value : '',
+      'raison': document.getElementById('f-raison') ? document.getElementById('f-raison').value : '',
+      'texte': document.getElementById('f-texte') ? document.getElementById('f-texte').value : '',
+      'reve': document.getElementById('f-reve') ? document.getElementById('f-reve').value : '',
+      'tirage_type': document.getElementById('f-tirage_type') ? document.getElementById('f-tirage_type').value : '',
+      'tirage_cartes': document.getElementById('f-tirage_cartes') ? document.getElementById('f-tirage_cartes').value : '',
+      'tirage_interp': document.getElementById('f-tirage_interp') ? document.getElementById('f-tirage_interp').value : '',
+      'intention': document.getElementById('f-intention') ? document.getElementById('f-intention').value : '',
+      'rituel': document.getElementById('f-rituel') ? document.getElementById('f-rituel').value : '',
+      updatedAt: new Date().toISOString()
+    };
+    try {
+      await updateDoc(doc(db, 'journal', _editId), entry);
+      _editId = null;
+      allBtns.forEach(function(b) {
+        b.textContent = 'Sceller la fiche'; b.onclick = saveEntry; b.style.opacity = '1';
+      });
+      closeModal(); loadEntries();
+    } catch(e) {
+      console.error(e); alert('Erreur mise à jour.');
+      allBtns.forEach(function(b) { b.style.opacity='1'; });
     }
   };
 </script>
