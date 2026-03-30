@@ -150,6 +150,20 @@
     .btn-modifier:hover { background: var(--gold); color: var(--ink); }
     .btn-delete { border-color: var(--red-wax); color: var(--red-wax); }
     .btn-delete:hover { background: var(--red-wax); color: #fff; }
+
+    .btn-new {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.6rem; letter-spacing: 0.15rem; text-transform: uppercase;
+      border: 1px solid var(--gold); padding: 0.5rem 1.4rem;
+      cursor: pointer; transition: all 0.3s;
+      background: var(--ink); color: var(--parch-light);
+      position: relative;
+    }
+    .btn-new::before {
+      content: ''; position: absolute; inset: 2px;
+      border: 1px solid var(--gold); opacity: 0.3; pointer-events: none;
+    }
+    .btn-new:hover { background: #1a0a00; letter-spacing: 0.25rem; }
   </style>
 </head>
 <body>
