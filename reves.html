@@ -221,9 +221,6 @@
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
-    openModal();
-  };
-
   window.saveEdit = async function() {
     if (!currentEditId) return;
     const btn = document.getElementById('btnSave');
@@ -239,46 +236,7 @@
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
   };
-
-  // ===== MODIFIER =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'reves', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-      const ef=document.getElementById('f-date'); if(ef) ef.value=d['date']||'';
-      const ef=document.getElementById('f-titre'); if(ef) ef.value=d['titre']||'';
-      const ef=document.getElementById('f-recit'); if(ef) ef.value=d['recit']||'';
-      const ef=document.getElementById('f-symboles'); if(ef) ef.value=d['symboles']||'';
-      const ef=document.getElementById('f-interpretation'); if(ef) ef.value=d['interpretation']||'';
-      const ef=document.getElementById('f-ressenti'); if(ef) ef.value=d['ressenti']||'';
-      const ef=document.getElementById('f-notes'); if(ef) ef.value=d['notes']||'';
-      const cbR=document.getElementById('f-recurrent'); if(cbR) cbR.checked=!!d['recurrent'];
-    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
-    openModal();
-  };
-
-  window.saveEdit = async function() {
-    if (!currentEditId) return;
-    const btn = document.getElementById('btnSave');
-    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
-    const entry = {'date': (document.getElementById('f-date')?document.getElementById('f-date').value:(currentEditData['date']||'')), 'titre': (document.getElementById('f-titre')?document.getElementById('f-titre').value:(currentEditData['titre']||'')), 'recit': (document.getElementById('f-recit')?document.getElementById('f-recit').value:(currentEditData['recit']||'')), 'symboles': (document.getElementById('f-symboles')?document.getElementById('f-symboles').value:(currentEditData['symboles']||'')), 'interpretation': (document.getElementById('f-interpretation')?document.getElementById('f-interpretation').value:(currentEditData['interpretation']||'')), 'ressenti': (document.getElementById('f-ressenti')?document.getElementById('f-ressenti').value:(currentEditData['ressenti']||'')), 'notes': (document.getElementById('f-notes')?document.getElementById('f-notes').value:(currentEditData['notes']||'')), updatedAt: new Date().toISOString()};
-    try {
-      await updateDoc(doc(db, 'reves', currentEditId), entry);
-      currentEditId = null;
-      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
-      closeModal(); loadEntries();
-    } catch(e) { console.error(e); alert('Erreur mise à jour.');
-      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
-    }
-  };
 </script>
+
 </body>
 </html>

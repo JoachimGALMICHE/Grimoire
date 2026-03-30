@@ -488,9 +488,6 @@
     if (e.target === document.getElementById('detailOverlay')) closeDetail();
   });
 
-    openModal();
-  };
-
   window.saveEdit = async function() {
     if (!currentEditId) return;
     const btn = document.getElementById('btnSave');
@@ -505,47 +502,6 @@
       closeModal();
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
-  };
-
-  // ===== MODIFIER =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'bestiaire', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-      const ef=document.getElementById('f-nom'); if(ef) ef.value=d['nom']||'';
-      const ef=document.getElementById('f-type'); if(ef) ef.value=d['type']||'';
-      const ef=document.getElementById('f-origine'); if(ef) ef.value=d['origine']||'';
-      const ef=document.getElementById('f-physique'); if(ef) ef.value=d['physique']||'';
-      const ef=document.getElementById('f-caractere'); if(ef) ef.value=d['caractere']||'';
-      const ef=document.getElementById('f-pouvoirs'); if(ef) ef.value=d['pouvoirs']||'';
-      const ef=document.getElementById('f-correspondances'); if(ef) ef.value=d['correspondances']||'';
-      const ef=document.getElementById('f-interagir'); if(ef) ef.value=d['interagir']||'';
-      const ef=document.getElementById('f-notes'); if(ef) ef.value=d['notes']||'';
-    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
-    openModal();
-  };
-
-  window.saveEdit = async function() {
-    if (!currentEditId) return;
-    const btn = document.getElementById('btnSave');
-    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
-    const entry = {'nom': (document.getElementById('f-nom')?document.getElementById('f-nom').value:(currentEditData['nom']||'')), 'type': (document.getElementById('f-type')?document.getElementById('f-type').value:(currentEditData['type']||'')), 'origine': (document.getElementById('f-origine')?document.getElementById('f-origine').value:(currentEditData['origine']||'')), 'physique': (document.getElementById('f-physique')?document.getElementById('f-physique').value:(currentEditData['physique']||'')), 'caractere': (document.getElementById('f-caractere')?document.getElementById('f-caractere').value:(currentEditData['caractere']||'')), 'pouvoirs': (document.getElementById('f-pouvoirs')?document.getElementById('f-pouvoirs').value:(currentEditData['pouvoirs']||'')), 'correspondances': (document.getElementById('f-correspondances')?document.getElementById('f-correspondances').value:(currentEditData['correspondances']||'')), 'interagir': (document.getElementById('f-interagir')?document.getElementById('f-interagir').value:(currentEditData['interagir']||'')), 'notes': (document.getElementById('f-notes')?document.getElementById('f-notes').value:(currentEditData['notes']||'')), updatedAt: new Date().toISOString()};
-    try {
-      await updateDoc(doc(db, 'bestiaire', currentEditId), entry);
-      currentEditId = null;
-      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
-      closeModal(); loadEntries();
-    } catch(e) { console.error(e); alert('Erreur mise à jour.');
-      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
-    }
   };
 </script>
 

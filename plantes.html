@@ -171,9 +171,6 @@
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
-    openModal();
-  };
-
   window.saveEdit = async function() {
     if (!currentEditId) return;
     const btn = document.getElementById('btnSave');
@@ -189,46 +186,7 @@
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
   };
-
-  // ===== MODIFIER =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'plantes', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-      const ef=document.getElementById('f-nom'); if(ef) ef.value=d['nom']||'';
-      const ef=document.getElementById('f-famille'); if(ef) ef.value=d['famille']||'';
-      const ef=document.getElementById('f-parties'); if(ef) ef.value=d['parties']||'';
-      const ef=document.getElementById('f-recolte'); if(ef) ef.value=d['recolte']||'';
-      const ef=document.getElementById('f-magiques'); if(ef) ef.value=d['magiques']||'';
-      const ef=document.getElementById('f-medicinales'); if(ef) ef.value=d['medicinales']||'';
-      const ef=document.getElementById('f-precautions'); if(ef) ef.value=d['precautions']||'';
-      const ef=document.getElementById('f-notes'); if(ef) ef.value=d['notes']||'';
-    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
-    openModal();
-  };
-
-  window.saveEdit = async function() {
-    if (!currentEditId) return;
-    const btn = document.getElementById('btnSave');
-    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
-    const entry = {'nom': (document.getElementById('f-nom')?document.getElementById('f-nom').value:(currentEditData['nom']||'')), 'famille': (document.getElementById('f-famille')?document.getElementById('f-famille').value:(currentEditData['famille']||'')), 'parties': (document.getElementById('f-parties')?document.getElementById('f-parties').value:(currentEditData['parties']||'')), 'recolte': (document.getElementById('f-recolte')?document.getElementById('f-recolte').value:(currentEditData['recolte']||'')), 'magiques': (document.getElementById('f-magiques')?document.getElementById('f-magiques').value:(currentEditData['magiques']||'')), 'medicinales': (document.getElementById('f-medicinales')?document.getElementById('f-medicinales').value:(currentEditData['medicinales']||'')), 'precautions': (document.getElementById('f-precautions')?document.getElementById('f-precautions').value:(currentEditData['precautions']||'')), 'notes': (document.getElementById('f-notes')?document.getElementById('f-notes').value:(currentEditData['notes']||'')), updatedAt: new Date().toISOString()};
-    try {
-      await updateDoc(doc(db, 'plantes', currentEditId), entry);
-      currentEditId = null;
-      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
-      closeModal(); loadEntries();
-    } catch(e) { console.error(e); alert('Erreur mise à jour.');
-      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
-    }
-  };
 </script>
+
 </body>
 </html>
