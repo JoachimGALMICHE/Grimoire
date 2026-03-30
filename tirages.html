@@ -332,7 +332,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, setDoc, doc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, setDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
@@ -421,7 +421,7 @@
       });
       html += `</div>`;
     }
-    html += `<button class="btn-delete" onclick="deleteDoc_('tirages_methodes','${id}',this)">Supprimer</button>`;
+    html += `<button class="btn-modifier" onclick="editMethode('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteDoc_('tirages_methodes','${id}',this)">Supprimer</button>`;
     card.innerHTML = html;
     return card;
   }
@@ -492,7 +492,7 @@
     }
     if (d.interpretation) html += `<div class="entry-section"><div class="entry-section-label">Interpr\u00e9tation</div><div class="entry-section-content">${d.interpretation}</div></div>`;
     if (d.ressenti) html += `<div class="entry-section"><div class="entry-section-label">Ressenti</div><div class="entry-section-content">${d.ressenti}</div></div>`;
-    html += `<button class="btn-delete" onclick="deleteDoc_('tirages_effectues','${id}',this)">Supprimer</button>`;
+    html += `<button class="btn-modifier" onclick="editTirage('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteDoc_('tirages_effectues','${id}',this)">Supprimer</button>`;
     card.innerHTML = html;
     return card;
   }
@@ -629,6 +629,113 @@
   document.getElementById('detailOverlay').addEventListener('click', e => {
     if (e.target === document.getElementById('detailOverlay')) closeDetail();
   });
+
+  // ===== MODIFIER METHODE =====
+  let editMethodeId = null;
+  window.editMethode = async function(id) {
+    editMethodeId = id;
+    try {
+      const snap = await getDoc(doc(db, 'tirages_methodes', id));
+      if (!snap.exists()) return;
+      const d = snap.data();
+      document.getElementById('m-nom').value = d.nom || '';
+      document.getElementById('m-type').value = d.type || '';
+      document.getElementById('m-nbcartes').value = d.nbcartes || '';
+      document.getElementById('m-moment').value = d.moment || '';
+      document.getElementById('m-description').value = d.description || '';
+      // Restore positions
+      const posList = document.getElementById('positions-list');
+      posList.innerHTML = '';
+      (d.positions || []).forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'position-row';
+        row.innerHTML = `<input type="text" class="pos-input" value="${p}"/><button class="btn-rm-pos" onclick="this.parentElement.remove()" type="button">&times;</button>`;
+        posList.appendChild(row);
+      });
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const btn = document.querySelector('#modal-methode .btn-save');
+    if(btn) { btn.textContent = 'Mettre à jour'; btn.onclick = saveEditMethode; }
+    document.getElementById('modal-methode').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.saveEditMethode = async function() {
+    if (!editMethodeId) return;
+    const positions = [...document.querySelectorAll('.pos-input')].map(i => i.value).filter(v => v.trim());
+    const entry = {
+      nom: document.getElementById('m-nom').value,
+      type: document.getElementById('m-type').value,
+      nbcartes: document.getElementById('m-nbcartes').value,
+      moment: document.getElementById('m-moment').value,
+      description: document.getElementById('m-description').value,
+      positions, updatedAt: new Date().toISOString()
+    };
+    try {
+      await updateDoc(doc(db, 'tirages_methodes', editMethodeId), entry);
+      editMethodeId = null;
+      const btn = document.querySelector('#modal-methode .btn-save');
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveMethode; }
+      closeModal('methode'); loadMethodes();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.'); }
+  };
+
+  // ===== MODIFIER TIRAGE =====
+  let editTirageId = null;
+  window.editTirage = async function(id) {
+    editTirageId = id;
+    try {
+      const snap = await getDoc(doc(db, 'tirages_effectues', id));
+      if (!snap.exists()) return;
+      const d = snap.data();
+      document.getElementById('t-date').value = d.date || '';
+      document.getElementById('t-type').value = d.type || '';
+      document.getElementById('t-methode').value = d.methode || '';
+      document.getElementById('t-intention').value = d.intention || '';
+      document.getElementById('t-interpretation').value = d.interpretation || '';
+      document.getElementById('t-ressenti').value = d.ressenti || '';
+      // Restore cartes
+      const cartesList = document.getElementById('cartes-list');
+      cartesList.innerHTML = '';
+      (d.cartes || [{ position:'', carte:'', note:'' }]).forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'carte-row';
+        row.innerHTML = `<input type="text" class="carte-pos" placeholder="Position" value="${c.position||''}"/><div style="display:flex;flex-direction:column;gap:0.3rem"><input type="text" class="carte-nom" placeholder="Carte / Rune" value="${c.carte||''}"/><textarea class="carte-note" style="min-height:40px">${c.note||''}</textarea></div>`;
+        cartesList.appendChild(row);
+      });
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const btn = document.getElementById('btnSaveTirage');
+    if(btn) { btn.textContent = 'Mettre à jour'; btn.onclick = saveEditTirage; }
+    document.getElementById('modal-tirage').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.saveEditTirage = async function() {
+    if (!editTirageId) return;
+    const btn = document.getElementById('btnSaveTirage');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const rows = document.querySelectorAll('.carte-row');
+    const cartes = [...rows].map(r => ({
+      position: r.querySelector('.carte-pos').value,
+      carte: r.querySelector('.carte-nom').value,
+      note: r.querySelector('.carte-note').value
+    })).filter(c => c.carte.trim());
+    const entry = {
+      date: document.getElementById('t-date').value,
+      type: document.getElementById('t-type').value,
+      methode: document.getElementById('t-methode').value,
+      intention: document.getElementById('t-intention').value,
+      cartes,
+      interpretation: document.getElementById('t-interpretation').value,
+      ressenti: document.getElementById('t-ressenti').value,
+      updatedAt: new Date().toISOString()
+    };
+    try {
+      await updateDoc(doc(db, 'tirages_effectues', editTirageId), entry);
+      editTirageId = null;
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveTirage; btn.style.opacity = '1'; }
+      closeModal('tirage'); loadTirages();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.');
+      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
+    }
+  };
 </script>
 </body>
 </html>

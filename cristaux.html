@@ -138,7 +138,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",
@@ -178,7 +178,7 @@
     sections.forEach(s=>{
       if(d[s.key]) html+=`<div class="entry-section"><div class="entry-section-label">${s.label}</div><div class="entry-section-content">${d[s.key]}</div></div>`;
     });
-    html+=`<button class="btn-delete" onclick="deleteEntry('${id}',this)">Supprimer</button>`;
+    html += `<button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
     card.innerHTML=html;
     return card;
   }
@@ -212,41 +212,6 @@
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
-  // ===== EDIT =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id, btnEl) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'cristaux', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-    const ef_nom=document.getElementById('f-nom');if(ef_nom)ef_nom.value=d['nom']||'';
-    const ef_famille=document.getElementById('f-famille');if(ef_famille)ef_famille.value=d['famille']||'';
-    const ef_couleur=document.getElementById('f-couleur');if(ef_couleur)ef_couleur.value=d['couleur']||'';
-    const ef_proprietes=document.getElementById('f-proprietes');if(ef_proprietes)ef_proprietes.value=d['proprietes']||'';
-    const ef_utiliser=document.getElementById('f-utiliser');if(ef_utiliser)ef_utiliser.value=d['utiliser']||'';
-    const ef_notes=document.getElementById('f-notes');if(ef_notes)ef_notes.value=d['notes']||'';
-      // Handle checkbox fields if any
-      const cbReve = document.getElementById('cb-reve');
-      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
-      const cbTirage = document.getElementById('cb-tirage');
-      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
-      const cbIntention = document.getElementById('cb-intention');
-      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
-      const cbRituel = document.getElementById('cb-rituel');
-      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
-      const cbRecurrent = document.getElementById('f-recurrent');
-      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
-    } catch(e) { console.error(e); return; }
-    // Change save button to update mode
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) {
-      saveBtn.textContent = 'Mettre à jour';
-      saveBtn.onclick = saveEdit;
-    }
     openModal();
   };
 
@@ -264,6 +229,44 @@
       closeModal();
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
+
+  // ===== MODIFIER =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'cristaux', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+      const ef=document.getElementById('f-nom'); if(ef) ef.value=d['nom']||'';
+      const ef=document.getElementById('f-famille'); if(ef) ef.value=d['famille']||'';
+      const ef=document.getElementById('f-couleur'); if(ef) ef.value=d['couleur']||'';
+      const ef=document.getElementById('f-proprietes'); if(ef) ef.value=d['proprietes']||'';
+      const ef=document.getElementById('f-utiliser'); if(ef) ef.value=d['utiliser']||'';
+      const ef=document.getElementById('f-notes'); if(ef) ef.value=d['notes']||'';
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const entry = {'nom': (document.getElementById('f-nom')?document.getElementById('f-nom').value:(currentEditData['nom']||'')), 'famille': (document.getElementById('f-famille')?document.getElementById('f-famille').value:(currentEditData['famille']||'')), 'couleur': (document.getElementById('f-couleur')?document.getElementById('f-couleur').value:(currentEditData['couleur']||'')), 'proprietes': (document.getElementById('f-proprietes')?document.getElementById('f-proprietes').value:(currentEditData['proprietes']||'')), 'utiliser': (document.getElementById('f-utiliser')?document.getElementById('f-utiliser').value:(currentEditData['utiliser']||'')), 'notes': (document.getElementById('f-notes')?document.getElementById('f-notes').value:(currentEditData['notes']||'')), updatedAt: new Date().toISOString()};
+    try {
+      await updateDoc(doc(db, 'cristaux', currentEditId), entry);
+      currentEditId = null;
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal(); loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.');
+      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
+    }
   };
 </script>
 </body>

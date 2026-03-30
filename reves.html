@@ -140,7 +140,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",
@@ -187,7 +187,7 @@
     sections.forEach(s=>{
       if(d[s.key]) html+=`<div class="entry-section"><div class="entry-section-label">${s.label}</div><div class="entry-section-content">${d[s.key]}</div></div>`;
     });
-    html+=`<button class="btn-delete" onclick="deleteEntry('${id}',this)">Supprimer</button>`;
+    html += `<button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
     card.innerHTML=html;
     return card;
   }
@@ -221,42 +221,6 @@
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
-  // ===== EDIT =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id, btnEl) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'reves', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-    const ef_date=document.getElementById('f-date');if(ef_date)ef_date.value=d['date']||'';
-    const ef_titre=document.getElementById('f-titre');if(ef_titre)ef_titre.value=d['titre']||'';
-    const ef_recit=document.getElementById('f-recit');if(ef_recit)ef_recit.value=d['recit']||'';
-    const ef_symboles=document.getElementById('f-symboles');if(ef_symboles)ef_symboles.value=d['symboles']||'';
-    const ef_interpretation=document.getElementById('f-interpretation');if(ef_interpretation)ef_interpretation.value=d['interpretation']||'';
-    const ef_ressenti=document.getElementById('f-ressenti');if(ef_ressenti)ef_ressenti.value=d['ressenti']||'';
-    const ef_notes=document.getElementById('f-notes');if(ef_notes)ef_notes.value=d['notes']||'';
-      // Handle checkbox fields if any
-      const cbReve = document.getElementById('cb-reve');
-      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
-      const cbTirage = document.getElementById('cb-tirage');
-      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
-      const cbIntention = document.getElementById('cb-intention');
-      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
-      const cbRituel = document.getElementById('cb-rituel');
-      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
-      const cbRecurrent = document.getElementById('f-recurrent');
-      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
-    } catch(e) { console.error(e); return; }
-    // Change save button to update mode
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) {
-      saveBtn.textContent = 'Mettre à jour';
-      saveBtn.onclick = saveEdit;
-    }
     openModal();
   };
 
@@ -274,6 +238,46 @@
       closeModal();
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
+
+  // ===== MODIFIER =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'reves', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+      const ef=document.getElementById('f-date'); if(ef) ef.value=d['date']||'';
+      const ef=document.getElementById('f-titre'); if(ef) ef.value=d['titre']||'';
+      const ef=document.getElementById('f-recit'); if(ef) ef.value=d['recit']||'';
+      const ef=document.getElementById('f-symboles'); if(ef) ef.value=d['symboles']||'';
+      const ef=document.getElementById('f-interpretation'); if(ef) ef.value=d['interpretation']||'';
+      const ef=document.getElementById('f-ressenti'); if(ef) ef.value=d['ressenti']||'';
+      const ef=document.getElementById('f-notes'); if(ef) ef.value=d['notes']||'';
+      const cbR=document.getElementById('f-recurrent'); if(cbR) cbR.checked=!!d['recurrent'];
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const entry = {'date': (document.getElementById('f-date')?document.getElementById('f-date').value:(currentEditData['date']||'')), 'titre': (document.getElementById('f-titre')?document.getElementById('f-titre').value:(currentEditData['titre']||'')), 'recit': (document.getElementById('f-recit')?document.getElementById('f-recit').value:(currentEditData['recit']||'')), 'symboles': (document.getElementById('f-symboles')?document.getElementById('f-symboles').value:(currentEditData['symboles']||'')), 'interpretation': (document.getElementById('f-interpretation')?document.getElementById('f-interpretation').value:(currentEditData['interpretation']||'')), 'ressenti': (document.getElementById('f-ressenti')?document.getElementById('f-ressenti').value:(currentEditData['ressenti']||'')), 'notes': (document.getElementById('f-notes')?document.getElementById('f-notes').value:(currentEditData['notes']||'')), updatedAt: new Date().toISOString()};
+    try {
+      await updateDoc(doc(db, 'reves', currentEditId), entry);
+      currentEditId = null;
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal(); loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.');
+      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
+    }
   };
 </script>
 </body>

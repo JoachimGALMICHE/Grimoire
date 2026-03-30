@@ -558,7 +558,7 @@
     if (d.intention) html += `<div class="entry-section"><div class="entry-section-label">Intention</div><div class="entry-section-content">${d.intention}</div></div>`;
     if (d.rituel) html += `<div class="entry-section"><div class="entry-section-label">Rituel</div><div class="entry-section-content">${d.rituel}</div></div>`;
 
-    html += `<button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
+    html += `<button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
 
     card.innerHTML = html;
     return card;
@@ -629,49 +629,6 @@
     if (e.target === this) closeModal();
   });
 
-  // ===== EDIT =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id, btnEl) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'journal', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-    const ef_date=document.getElementById('f-date');if(ef_date)ef_date.value=d['date']||'';
-    const ef_saison=document.getElementById('f-saison');if(ef_saison)ef_saison.value=d['saison']||'';
-    const ef_lune=document.getElementById('f-lune');if(ef_lune)ef_lune.value=d['lune']||'';
-    const ef_meteo=document.getElementById('f-meteo');if(ef_meteo)ef_meteo.value=d['meteo']||'';
-    const ef_humeur=document.getElementById('f-humeur');if(ef_humeur)ef_humeur.value=d['humeur']||'';
-    const ef_energie=document.getElementById('f-energie');if(ef_energie)ef_energie.value=d['energie']||'';
-    const ef_raison=document.getElementById('f-raison');if(ef_raison)ef_raison.value=d['raison']||'';
-    const ef_texte=document.getElementById('f-texte');if(ef_texte)ef_texte.value=d['texte']||'';
-    const ef_reve=document.getElementById('f-reve');if(ef_reve)ef_reve.value=d['reve']||'';
-    const ef_tirage_type=document.getElementById('f-tirage_type');if(ef_tirage_type)ef_tirage_type.value=d['tirage_type']||'';
-    const ef_tirage_cartes=document.getElementById('f-tirage_cartes');if(ef_tirage_cartes)ef_tirage_cartes.value=d['tirage_cartes']||'';
-    const ef_tirage_interp=document.getElementById('f-tirage_interp');if(ef_tirage_interp)ef_tirage_interp.value=d['tirage_interp']||'';
-    const ef_intention=document.getElementById('f-intention');if(ef_intention)ef_intention.value=d['intention']||'';
-    const ef_rituel=document.getElementById('f-rituel');if(ef_rituel)ef_rituel.value=d['rituel']||'';
-      // Handle checkbox fields if any
-      const cbReve = document.getElementById('cb-reve');
-      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
-      const cbTirage = document.getElementById('cb-tirage');
-      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
-      const cbIntention = document.getElementById('cb-intention');
-      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
-      const cbRituel = document.getElementById('cb-rituel');
-      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
-      const cbRecurrent = document.getElementById('f-recurrent');
-      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
-    } catch(e) { console.error(e); return; }
-    // Change save button to update mode
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) {
-      saveBtn.textContent = 'Mettre à jour';
-      saveBtn.onclick = saveEdit;
-    }
     openModal();
   };
 
@@ -689,6 +646,56 @@
       closeModal();
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
+
+  // ===== MODIFIER =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'journal', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+      const ef=document.getElementById('f-date'); if(ef) ef.value=d['date']||'';
+      const ef=document.getElementById('f-saison'); if(ef) ef.value=d['saison']||'';
+      const ef=document.getElementById('f-lune'); if(ef) ef.value=d['lune']||'';
+      const ef=document.getElementById('f-meteo'); if(ef) ef.value=d['meteo']||'';
+      const ef=document.getElementById('f-humeur'); if(ef) ef.value=d['humeur']||'';
+      const ef=document.getElementById('f-energie'); if(ef) ef.value=d['energie']||'';
+      const ef=document.getElementById('f-raison'); if(ef) ef.value=d['raison']||'';
+      const ef=document.getElementById('f-texte'); if(ef) ef.value=d['texte']||'';
+      const ef=document.getElementById('f-reve'); if(ef) ef.value=d['reve']||'';
+      const ef=document.getElementById('f-tirage_type'); if(ef) ef.value=d['tirage_type']||'';
+      const ef=document.getElementById('f-tirage_cartes'); if(ef) ef.value=d['tirage_cartes']||'';
+      const ef=document.getElementById('f-tirage_interp'); if(ef) ef.value=d['tirage_interp']||'';
+      const ef=document.getElementById('f-intention'); if(ef) ef.value=d['intention']||'';
+      const ef=document.getElementById('f-rituel'); if(ef) ef.value=d['rituel']||'';
+      ['reve','tirage','intention','rituel'].forEach(n=>{
+        const cb=document.getElementById('cb-'+n);
+        if(cb){ const key=n==='tirage'?'tirage_type':n; cb.checked=!!d[key]; if(typeof toggleSection==='function') toggleSection(n,!!d[key]); }
+      });
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const entry = {'date': (document.getElementById('f-date')?document.getElementById('f-date').value:(currentEditData['date']||'')), 'saison': (document.getElementById('f-saison')?document.getElementById('f-saison').value:(currentEditData['saison']||'')), 'lune': (document.getElementById('f-lune')?document.getElementById('f-lune').value:(currentEditData['lune']||'')), 'meteo': (document.getElementById('f-meteo')?document.getElementById('f-meteo').value:(currentEditData['meteo']||'')), 'humeur': (document.getElementById('f-humeur')?document.getElementById('f-humeur').value:(currentEditData['humeur']||'')), 'energie': (document.getElementById('f-energie')?document.getElementById('f-energie').value:(currentEditData['energie']||'')), 'raison': (document.getElementById('f-raison')?document.getElementById('f-raison').value:(currentEditData['raison']||'')), 'texte': (document.getElementById('f-texte')?document.getElementById('f-texte').value:(currentEditData['texte']||'')), 'reve': (document.getElementById('f-reve')?document.getElementById('f-reve').value:(currentEditData['reve']||'')), 'tirage_type': (document.getElementById('f-tirage_type')?document.getElementById('f-tirage_type').value:(currentEditData['tirage_type']||'')), 'tirage_cartes': (document.getElementById('f-tirage_cartes')?document.getElementById('f-tirage_cartes').value:(currentEditData['tirage_cartes']||'')), 'tirage_interp': (document.getElementById('f-tirage_interp')?document.getElementById('f-tirage_interp').value:(currentEditData['tirage_interp']||'')), 'intention': (document.getElementById('f-intention')?document.getElementById('f-intention').value:(currentEditData['intention']||'')), 'rituel': (document.getElementById('f-rituel')?document.getElementById('f-rituel').value:(currentEditData['rituel']||'')), updatedAt: new Date().toISOString()};
+    try {
+      await updateDoc(doc(db, 'journal', currentEditId), entry);
+      currentEditId = null;
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal(); loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.');
+      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
+    }
   };
 </script>
 

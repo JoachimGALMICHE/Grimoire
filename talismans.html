@@ -124,7 +124,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
   const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
   onAuthStateChanged(auth,u=>{if(!u){window.location.href='/Grimoire/';return;}loadEntries();});
@@ -145,7 +145,7 @@
     [{label:'Symboles',key:'symboles'},{label:'Activation',key:'activer'},{label:'Notes',key:'notes'}].forEach(s=>{
       if(d[s.key]) html+=`<div class="entry-section"><div class="entry-section-label">${s.label}</div><div class="entry-section-content">${d[s.key]}</div></div>`;
     });
-    html+=`<button class="btn-delete" onclick="deleteEntry('${id}',this)">Supprimer</button>`;
+    html += `<button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
     card.innerHTML=html;return card;
   }
   window.saveEntry=async function(){
@@ -160,42 +160,6 @@
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
-  // ===== EDIT =====
-  let currentEditId = null;
-  let currentEditData = {};
-
-  window.editEntry = async function(id, btnEl) {
-    currentEditId = id;
-    try {
-      const snap = await getDoc(doc(db, 'talismans', id));
-      if (!snap.exists()) return;
-      currentEditData = snap.data();
-      const d = currentEditData;
-    const ef_nom=document.getElementById('f-nom');if(ef_nom)ef_nom.value=d['nom']||'';
-    const ef_type=document.getElementById('f-type');if(ef_type)ef_type.value=d['type']||'';
-    const ef_intention=document.getElementById('f-intention');if(ef_intention)ef_intention.value=d['intention']||'';
-    const ef_matiere=document.getElementById('f-matiere');if(ef_matiere)ef_matiere.value=d['matiere']||'';
-    const ef_symboles=document.getElementById('f-symboles');if(ef_symboles)ef_symboles.value=d['symboles']||'';
-    const ef_activer=document.getElementById('f-activer');if(ef_activer)ef_activer.value=d['activer']||'';
-    const ef_notes=document.getElementById('f-notes');if(ef_notes)ef_notes.value=d['notes']||'';
-      // Handle checkbox fields if any
-      const cbReve = document.getElementById('cb-reve');
-      if(cbReve) { cbReve.checked = !!d['reve']; toggleSection('reve', !!d['reve']); }
-      const cbTirage = document.getElementById('cb-tirage');
-      if(cbTirage) { cbTirage.checked = !!d['tirage_type']; toggleSection('tirage', !!d['tirage_type']); }
-      const cbIntention = document.getElementById('cb-intention');
-      if(cbIntention) { cbIntention.checked = !!d['intention']; toggleSection('intention', !!d['intention']); }
-      const cbRituel = document.getElementById('cb-rituel');
-      if(cbRituel) { cbRituel.checked = !!d['rituel']; toggleSection('rituel', !!d['rituel']); }
-      const cbRecurrent = document.getElementById('f-recurrent');
-      if(cbRecurrent) cbRecurrent.checked = !!d['recurrent'];
-    } catch(e) { console.error(e); return; }
-    // Change save button to update mode
-    const saveBtn = document.getElementById('btnSave');
-    if(saveBtn) {
-      saveBtn.textContent = 'Mettre à jour';
-      saveBtn.onclick = saveEdit;
-    }
     openModal();
   };
 
@@ -213,6 +177,45 @@
       closeModal();
       loadEntries();
     } catch(e) { console.error(e); alert('Erreur mise à jour.'); if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; } }
+  };
+
+  // ===== MODIFIER =====
+  let currentEditId = null;
+  let currentEditData = {};
+
+  window.editEntry = async function(id) {
+    currentEditId = id;
+    try {
+      const snap = await getDoc(doc(db, 'talismans', id));
+      if (!snap.exists()) return;
+      currentEditData = snap.data();
+      const d = currentEditData;
+      const ef=document.getElementById('f-nom'); if(ef) ef.value=d['nom']||'';
+      const ef=document.getElementById('f-type'); if(ef) ef.value=d['type']||'';
+      const ef=document.getElementById('f-intention'); if(ef) ef.value=d['intention']||'';
+      const ef=document.getElementById('f-matiere'); if(ef) ef.value=d['matiere']||'';
+      const ef=document.getElementById('f-symboles'); if(ef) ef.value=d['symboles']||'';
+      const ef=document.getElementById('f-activer'); if(ef) ef.value=d['activer']||'';
+      const ef=document.getElementById('f-notes'); if(ef) ef.value=d['notes']||'';
+    } catch(e) { console.error(e); alert('Erreur chargement.'); return; }
+    const saveBtn = document.getElementById('btnSave');
+    if(saveBtn) { saveBtn.textContent = 'Mettre à jour'; saveBtn.onclick = saveEdit; }
+    openModal();
+  };
+
+  window.saveEdit = async function() {
+    if (!currentEditId) return;
+    const btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
+    const entry = {'nom': (document.getElementById('f-nom')?document.getElementById('f-nom').value:(currentEditData['nom']||'')), 'type': (document.getElementById('f-type')?document.getElementById('f-type').value:(currentEditData['type']||'')), 'intention': (document.getElementById('f-intention')?document.getElementById('f-intention').value:(currentEditData['intention']||'')), 'matiere': (document.getElementById('f-matiere')?document.getElementById('f-matiere').value:(currentEditData['matiere']||'')), 'symboles': (document.getElementById('f-symboles')?document.getElementById('f-symboles').value:(currentEditData['symboles']||'')), 'activer': (document.getElementById('f-activer')?document.getElementById('f-activer').value:(currentEditData['activer']||'')), 'notes': (document.getElementById('f-notes')?document.getElementById('f-notes').value:(currentEditData['notes']||'')), updatedAt: new Date().toISOString()};
+    try {
+      await updateDoc(doc(db, 'talismans', currentEditId), entry);
+      currentEditId = null;
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal(); loadEntries();
+    } catch(e) { console.error(e); alert('Erreur mise à jour.');
+      if(btn) { btn.style.opacity='1'; btn.textContent='Mettre à jour'; }
+    }
   };
 </script>
 </body>
