@@ -134,7 +134,53 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+
+  // MODIFIER
+  var _editId = null;
+
+  function editEntry(id) {
+    _editId = id;
+    db.collection('talismans').doc(id).get().then(function(snap) {
+      if (!snap.exists) return;
+      var d = snap.data();
+    var e0 = document.getElementById('f-nom'); if(e0) e0.value = d['nom'] || '';
+    var e1 = document.getElementById('f-type'); if(e1) e1.value = d['type'] || '';
+    var e2 = document.getElementById('f-intention'); if(e2) e2.value = d['intention'] || '';
+    var e3 = document.getElementById('f-matiere'); if(e3) e3.value = d['matiere'] || '';
+    var e4 = document.getElementById('f-symboles'); if(e4) e4.value = d['symboles'] || '';
+    var e5 = document.getElementById('f-activer'); if(e5) e5.value = d['activer'] || '';
+    var e6 = document.getElementById('f-notes'); if(e6) e6.value = d['notes'] || '';
+      var btn = document.getElementById('btnSave');
+      if(btn) { btn.textContent = 'Mettre a jour'; btn.onclick = _saveEdit; }
+      openModal();
+    }).catch(function(e) { console.error(e); alert('Erreur chargement.'); });
+  }
+
+  function _saveEdit() {
+    if (!_editId) return;
+    var btn = document.getElementById('btnSave');
+    if(btn) { btn.textContent = 'Mise a jour...'; btn.style.opacity = '0.7'; }
+    var entry = {
+      'nom': (document.getElementById('f-nom') ? document.getElementById('f-nom').value : ''),
+      'type': (document.getElementById('f-type') ? document.getElementById('f-type').value : ''),
+      'intention': (document.getElementById('f-intention') ? document.getElementById('f-intention').value : ''),
+      'matiere': (document.getElementById('f-matiere') ? document.getElementById('f-matiere').value : ''),
+      'symboles': (document.getElementById('f-symboles') ? document.getElementById('f-symboles').value : ''),
+      'activer': (document.getElementById('f-activer') ? document.getElementById('f-activer').value : ''),
+      'notes': (document.getElementById('f-notes') ? document.getElementById('f-notes').value : ''),
+      updatedAt: new Date().toISOString()
+    };
+    db.collection('talismans').doc(_editId).update(entry).then(function() {
+      _editId = null;
+      if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
+      closeModal(); loadEntries();
+    }).catch(function(e) {
+      console.error(e); alert('Erreur mise a jour.');
+      if(btn) { btn.style.opacity = '1'; btn.textContent = 'Mettre a jour'; }
+    });
+  }
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
