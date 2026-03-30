@@ -335,24 +335,14 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, setDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
-    authDomain: "grimoire-commun.firebaseapp.com",
-    projectId: "grimoire-commun",
-    storageBucket: "grimoire-commun.firebasestorage.app",
-    messagingSenderId: "401518708387",
-    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
-    measurementId: "G-F0HFZG2H79"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp(firebaseConfig);
+  const app = firebase.app();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
   // Bibliothèque statique
   const TAROT = [
@@ -377,7 +367,7 @@
   let currentLibKey = null;
   let currentFilter = 'all';
 
-  onAuthStateChanged(auth, user => {
+  auth.onAuthStateChanged( user => {
     if (!user) { window.location.href = '/Grimoire/'; return; }
     loadMethodes();
     loadTirages();
@@ -400,7 +390,7 @@
     const list = document.getElementById('list-methodes');
     const loading = document.getElementById('loading-methodes');
     try {
-      const q = query(collection(db, 'tirages_methodes'), orderBy('nom'));
+      const q = query(db.collection('tirages_methodes'), orderBy('nom'));
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucune m\u00e9thode consign\u00e9e.</div>'; return; }
@@ -448,7 +438,7 @@
       createdAt:   new Date().toISOString()
     };
     try {
-      await addDoc(collection(db, 'tirages_methodes'), entry);
+      await db.collection('tirages_methodes').add(entry);
       closeModal('methode'); loadMethodes();
     } catch(e) { console.error(e); alert('Erreur.'); }
   };
@@ -467,7 +457,7 @@
     const list = document.getElementById('list-tirages');
     const loading = document.getElementById('loading-tirages');
     try {
-      const q = query(collection(db, 'tirages_effectues'), orderBy('date', 'desc'));
+      const q = query(db.collection('tirages_effectues'), orderBy('date', 'desc'));
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucun tirage consign\u00e9.</div>'; return; }
@@ -538,7 +528,7 @@
       createdAt:      new Date().toISOString()
     };
     try {
-      await addDoc(collection(db, 'tirages_effectues'), entry);
+      await db.collection('tirages_effectues').add(entry);
       closeModal('tirage'); loadTirages();
     } catch(e) { console.error(e); alert('Erreur.'); }
     btn.textContent = 'Sceller la fiche'; btn.style.opacity = '1';
@@ -553,7 +543,7 @@
       ...RUNES.map(n => ({ key: 'rune_' + n, nom: n, type: 'rune' }))
     ];
     // Load saved data
-    const snap = await getDocs(collection(db, 'bibliotheque'));
+    const snap = await getDocs(db.collection('bibliotheque'));
     const saved = {};
     snap.forEach(d => saved[d.id] = d.data());
 
@@ -598,7 +588,7 @@
       reverse: document.getElementById('detail-reverse').value
     };
     try {
-      await setDoc(doc(db, 'bibliotheque', currentLibKey), data);
+      await db.collection('bibliotheque').doc(currentLibKey).set( data);
       closeDetail(); loadLibrary();
     } catch(e) { console.error(e); alert('Erreur.'); }
   };
@@ -643,8 +633,8 @@
   window.editMethode = async function(id) {
     editMethodeId = id;
     try {
-      const snap = await getDoc(doc(db, 'tirages_methodes', id));
-      if (!snap.exists()) return;
+      const snap = await db.collection('tirages_methodes').doc(id).get();
+      if (!snap.exists) return;
       const d = snap.data();
       document.getElementById('m-nom').value = d.nom || '';
       document.getElementById('m-type').value = d.type || '';
@@ -678,7 +668,7 @@
       positions, updatedAt: new Date().toISOString()
     };
     try {
-      await updateDoc(doc(db, 'tirages_methodes', editMethodeId), entry);
+      await db.collection('tirages_methodes').doc(editMethodeId).update( entry);
       editMethodeId = null;
       const btn = document.querySelector('#modal-methode .btn-save');
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveMethode; }
@@ -691,8 +681,8 @@
   window.editTirage = async function(id) {
     editTirageId = id;
     try {
-      const snap = await getDoc(doc(db, 'tirages_effectues', id));
-      if (!snap.exists()) return;
+      const snap = await db.collection('tirages_effectues').doc(id).get();
+      if (!snap.exists) return;
       const d = snap.data();
       document.getElementById('t-date').value = d.date || '';
       document.getElementById('t-type').value = d.type || '';
@@ -736,7 +726,7 @@
       updatedAt: new Date().toISOString()
     };
     try {
-      await updateDoc(doc(db, 'tirages_effectues', editTirageId), entry);
+      await db.collection('tirages_effectues').doc(editTirageId).update( entry);
       editTirageId = null;
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveTirage; btn.style.opacity = '1'; }
       closeModal('tirage'); loadTirages();

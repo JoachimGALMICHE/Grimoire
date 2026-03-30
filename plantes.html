@@ -94,7 +94,7 @@
 </header>
 <div class="nav-bar">
   <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
-  <button class="btn-new" id="btnCreateNew">Cr&eacute;er une fiche</button>
+  <button class="btn-new" onclick="openModal()">Cr&eacute;er une fiche</button>
 </div>
 <div class="entries-container">
   <div class="loading-msg" id="loadingMsg">Consultation des archives...</div>
@@ -145,16 +145,13 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
+        const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
   const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
-  onAuthStateChanged(auth,u=>{if(!u){window.location.href='/Grimoire/';return;}loadEntries();});
+  auth.onAuthStateChanged(u=>{if(!u){window.location.href='/Grimoire/';return;}loadEntries();});
   async function loadEntries(){
     const list=document.getElementById('entriesList'),loading=document.getElementById('loadingMsg');
     try{
-      const snap=await getDocs(query(collection(db,'plantes'),orderBy('nom')));
+      const snap=await db.collection('plantes').orderBy('nom').get();
       loading.style.display='none';
       if(snap.empty){list.innerHTML='<div class="empty-state">Aucune plante consignée.<br/><em>Le grimoire attend ton herbier.</em></div>';return;}
       list.innerHTML='';snap.forEach(d=>list.appendChild(buildCard(d.data(),d.id)));
@@ -176,10 +173,10 @@
     const nom=document.getElementById('f-nom').value.trim();if(!nom){alert('Le nom est obligatoire.');return;}
     const btn=document.getElementById('btnSave');btn.textContent='Scellement...';btn.style.opacity='0.7';
     const entry={nom,famille:document.getElementById('f-famille').value,parties:document.getElementById('f-parties').value,recolte:document.getElementById('f-recolte').value,magiques:document.getElementById('f-magiques').value,medicinales:document.getElementById('f-medicinales').value,precautions:document.getElementById('f-precautions').value,notes:document.getElementById('f-notes').value,createdAt:new Date().toISOString()};
-    try{await addDoc(collection(db,'plantes'),entry);closeModal();loadEntries();}catch(e){console.error(e);alert('Erreur.');}
+    try{await db.collection('plantes').add(entry);closeModal();loadEntries();}catch(e){console.error(e);alert('Erreur.');}
     btn.textContent='Sceller la fiche';btn.style.opacity='1';
   };
-  window.deleteEntry=async function(id,b){if(!confirm('Supprimer ?'))return;try{await deleteDoc(doc(db,'plantes',id));b.closest('.entry-card').remove();}catch(e){console.error(e);}};
+  window.deleteEntry=async function(id,b){if(!confirm('Supprimer ?'))return;try{await db.collection('plantes').doc(id).delete();b.closest('.entry-card').remove();}catch(e){console.error(e);}};
   window.openModal=function(){document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';};
   window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
@@ -191,7 +188,7 @@
     const d = currentEditData;
     const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'famille': document.getElementById('f-famille')?document.getElementById('f-famille').value:d['famille']||'', 'parties': document.getElementById('f-parties')?document.getElementById('f-parties').value:d['parties']||'', 'recolte': document.getElementById('f-recolte')?document.getElementById('f-recolte').value:d['recolte']||'', 'magiques': document.getElementById('f-magiques')?document.getElementById('f-magiques').value:d['magiques']||'', 'medicinales': document.getElementById('f-medicinales')?document.getElementById('f-medicinales').value:d['medicinales']||'', 'precautions': document.getElementById('f-precautions')?document.getElementById('f-precautions').value:d['precautions']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
     try {
-      await updateDoc(doc(db, 'plantes', currentEditId), entry);
+      await db.collection('plantes').doc(currentEditId).update( entry);
       currentEditId = null;
       // Reset save button
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }

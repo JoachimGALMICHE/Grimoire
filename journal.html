@@ -471,27 +471,17 @@
 </div>
 
 <!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
-    authDomain: "grimoire-commun.firebaseapp.com",
-    projectId: "grimoire-commun",
-    storageBucket: "grimoire-commun.firebasestorage.app",
-    messagingSenderId: "401518708387",
-    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
-    measurementId: "G-F0HFZG2H79"
-  };
-
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp(firebaseConfig);
+  const app = firebase.app();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
   // Auth guard
-  onAuthStateChanged(auth, user => {
+  auth.onAuthStateChanged( user => {
     if (!user) { window.location.href = '/Grimoire/'; return; }
     loadEntries();
   });
@@ -510,7 +500,7 @@
     const list = document.getElementById('entriesList');
     const loading = document.getElementById('loadingMsg');
     try {
-      const q = query(collection(db, 'journal'), orderBy('date', 'desc'));
+      const q = query(db.collection('journal'), orderBy('date', 'desc'));
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) {
@@ -594,7 +584,7 @@
     };
 
     try {
-      await addDoc(collection(db, 'journal'), entry);
+      await db.collection('journal').add(entry);
       closeModal();
       loadEntries();
     } catch(e) {
@@ -608,7 +598,7 @@
   window.deleteEntry = async function(id, btnEl) {
     if (!confirm('Supprimer cette fiche définitivement ?')) return;
     try {
-      await deleteDoc(doc(db, 'journal', id));
+      await db.collection('journal').doc(id).delete();
       btnEl.closest('.entry-card').remove();
       if (!document.querySelector('.entry-card')) {
         document.getElementById('entriesList').innerHTML = '<div class="empty-state">Aucune fiche pour le moment.<br/><em>Le grimoire attend tes premiers mots.</em></div>';
@@ -620,7 +610,6 @@
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  document.getElementById('btnCreateNew').addEventListener('click', window.openModal);
 
   window.closeModal = function() {
     document.getElementById('modalOverlay').classList.remove('open');
@@ -643,7 +632,7 @@
     const d = currentEditData;
     const entry = { 'date': document.getElementById('f-date')?document.getElementById('f-date').value:d['date']||'', 'saison': document.getElementById('f-saison')?document.getElementById('f-saison').value:d['saison']||'', 'lune': document.getElementById('f-lune')?document.getElementById('f-lune').value:d['lune']||'', 'meteo': document.getElementById('f-meteo')?document.getElementById('f-meteo').value:d['meteo']||'', 'humeur': document.getElementById('f-humeur')?document.getElementById('f-humeur').value:d['humeur']||'', 'energie': document.getElementById('f-energie')?document.getElementById('f-energie').value:d['energie']||'', 'raison': document.getElementById('f-raison')?document.getElementById('f-raison').value:d['raison']||'', 'texte': document.getElementById('f-texte')?document.getElementById('f-texte').value:d['texte']||'', 'reve': document.getElementById('f-reve')?document.getElementById('f-reve').value:d['reve']||'', 'tirage_type': document.getElementById('f-tirage_type')?document.getElementById('f-tirage_type').value:d['tirage_type']||'', 'tirage_cartes': document.getElementById('f-tirage_cartes')?document.getElementById('f-tirage_cartes').value:d['tirage_cartes']||'', 'tirage_interp': document.getElementById('f-tirage_interp')?document.getElementById('f-tirage_interp').value:d['tirage_interp']||'', 'intention': document.getElementById('f-intention')?document.getElementById('f-intention').value:d['intention']||'', 'rituel': document.getElementById('f-rituel')?document.getElementById('f-rituel').value:d['rituel']||'', updatedAt: new Date().toISOString() };
     try {
-      await updateDoc(doc(db, 'journal', currentEditId), entry);
+      await db.collection('journal').doc(currentEditId).update( entry);
       currentEditId = null;
       // Reset save button
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
@@ -659,8 +648,8 @@
   window.editEntry = async function(id) {
     currentEditId = id;
     try {
-      const snap = await getDoc(doc(db, 'journal', id));
-      if (!snap.exists()) return;
+      const snap = await db.collection('journal').doc(id).get();
+      if (!snap.exists) return;
       currentEditData = snap.data();
       const d = currentEditData;
       const ef=document.getElementById('f-date'); if(ef) ef.value=d['date']||'';
@@ -693,7 +682,7 @@
     if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
     const entry = {'date': (document.getElementById('f-date')?document.getElementById('f-date').value:(currentEditData['date']||'')), 'saison': (document.getElementById('f-saison')?document.getElementById('f-saison').value:(currentEditData['saison']||'')), 'lune': (document.getElementById('f-lune')?document.getElementById('f-lune').value:(currentEditData['lune']||'')), 'meteo': (document.getElementById('f-meteo')?document.getElementById('f-meteo').value:(currentEditData['meteo']||'')), 'humeur': (document.getElementById('f-humeur')?document.getElementById('f-humeur').value:(currentEditData['humeur']||'')), 'energie': (document.getElementById('f-energie')?document.getElementById('f-energie').value:(currentEditData['energie']||'')), 'raison': (document.getElementById('f-raison')?document.getElementById('f-raison').value:(currentEditData['raison']||'')), 'texte': (document.getElementById('f-texte')?document.getElementById('f-texte').value:(currentEditData['texte']||'')), 'reve': (document.getElementById('f-reve')?document.getElementById('f-reve').value:(currentEditData['reve']||'')), 'tirage_type': (document.getElementById('f-tirage_type')?document.getElementById('f-tirage_type').value:(currentEditData['tirage_type']||'')), 'tirage_cartes': (document.getElementById('f-tirage_cartes')?document.getElementById('f-tirage_cartes').value:(currentEditData['tirage_cartes']||'')), 'tirage_interp': (document.getElementById('f-tirage_interp')?document.getElementById('f-tirage_interp').value:(currentEditData['tirage_interp']||'')), 'intention': (document.getElementById('f-intention')?document.getElementById('f-intention').value:(currentEditData['intention']||'')), 'rituel': (document.getElementById('f-rituel')?document.getElementById('f-rituel').value:(currentEditData['rituel']||'')), updatedAt: new Date().toISOString()};
     try {
-      await updateDoc(doc(db, 'journal', currentEditId), entry);
+      await db.collection('journal').doc(currentEditId).update( entry);
       currentEditId = null;
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
       closeModal(); loadEntries();
@@ -710,8 +699,8 @@
   window.editEntry = async function(id) {
     _editId = id;
     try {
-      const snap = await getDoc(doc(db, 'journal', id));
-      if (!snap.exists()) return;
+      const snap = await db.collection('journal').doc(id).get();
+      if (!snap.exists) return;
       _editData = snap.data();
       const d = _editData;
     const el_date = document.getElementById('f-date'); if(el_date) el_date.value = d['date'] || '';
@@ -772,7 +761,7 @@
       updatedAt: new Date().toISOString()
     };
     try {
-      await updateDoc(doc(db, 'journal', _editId), entry);
+      await db.collection('journal').doc(_editId).update( entry);
       _editId = null;
       allBtns.forEach(function(b) {
         b.textContent = 'Sceller la fiche'; b.onclick = saveEntry; b.style.opacity = '1';

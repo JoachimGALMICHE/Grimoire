@@ -95,7 +95,7 @@
 </header>
 <div class="nav-bar">
   <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
-  <button class="btn-new" id="btnCreateNew">Cr&eacute;er une fiche</button>
+  <button class="btn-new" onclick="openModal()">Cr&eacute;er une fiche</button>
 </div>
 <div class="entries-container">
   <div class="loading-msg" id="loadingMsg">Consultation des archives...</div>
@@ -149,23 +149,19 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
+        const firebaseConfig = {
     apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",
     projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",
     messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"
   };
   const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 
-  onAuthStateChanged(auth,user=>{ if(!user){window.location.href='/Grimoire/';return;} loadEntries(); });
+  auth.onAuthStateChanged(user=>{ if(!user){window.location.href='/Grimoire/';return;} loadEntries(); });
 
   async function loadEntries(){
     const list=document.getElementById('entriesList'),loading=document.getElementById('loadingMsg');
     try{
-      const snap=await getDocs(query(collection(db,'cristaux'),orderBy('nom')));
+      const snap=await db.collection('cristaux').orderBy('nom').get();
       loading.style.display='none';
       if(snap.empty){list.innerHTML='<div class="empty-state">Aucun cristal consign&eacute;.<br/><em>Le grimoire attend tes pierres.</em></div>';return;}
       list.innerHTML='';
@@ -210,14 +206,14 @@
       notes:      document.getElementById('f-notes').value,
       createdAt:  new Date().toISOString()
     };
-    try{await addDoc(collection(db,'cristaux'),entry);closeModal();loadEntries();}
+    try{await db.collection('cristaux').add(entry);closeModal();loadEntries();}
     catch(e){console.error(e);alert('Erreur.');}
     btn.textContent='Sceller la fiche';btn.style.opacity='1';
   };
 
   window.deleteEntry=async function(id,btnEl){
     if(!confirm('Supprimer ?'))return;
-    try{await deleteDoc(doc(db,'cristaux',id));btnEl.closest('.entry-card').remove();}
+    try{await db.collection('cristaux').doc(id).delete();btnEl.closest('.entry-card').remove();}
     catch(e){console.error(e);}
   };
 
@@ -232,7 +228,7 @@
     const d = currentEditData;
     const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'famille': document.getElementById('f-famille')?document.getElementById('f-famille').value:d['famille']||'', 'couleur': document.getElementById('f-couleur')?document.getElementById('f-couleur').value:d['couleur']||'', 'proprietes': document.getElementById('f-proprietes')?document.getElementById('f-proprietes').value:d['proprietes']||'', 'utiliser': document.getElementById('f-utiliser')?document.getElementById('f-utiliser').value:d['utiliser']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
     try {
-      await updateDoc(doc(db, 'cristaux', currentEditId), entry);
+      await db.collection('cristaux').doc(currentEditId).update( entry);
       currentEditId = null;
       // Reset save button
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }

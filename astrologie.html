@@ -218,10 +218,7 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, setDoc, doc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
+        const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
   const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
 
   const ASTRES=['Soleil','Lune','Mercure','Vénus','Mars','Jupiter','Saturne','Uranus','Neptune','Pluton','Chiron','Noeud Nord','Noeud Sud'];
@@ -229,7 +226,7 @@
 
   let currentLibKey=null;
 
-  onAuthStateChanged(auth,u=>{if(!u){window.location.href='/Grimoire/';return;}loadNatal();loadTransits();loadLibrary();});
+  auth.onAuthStateChanged(u=>{if(!u){window.location.href='/Grimoire/';return;}loadNatal();loadTransits();loadLibrary();});
 
   window.switchTab=function(tab){
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -246,8 +243,8 @@
   async function loadNatal(){
     try{
       for(const num of [1,2]){
-        const snap=await getDoc(doc(db,'astrologie','natal'+num));
-        const d=snap.exists()?snap.data():{};
+        const snap=await db.collection('astrologie').doc('natal'+num).get();
+        const d=snap.exists?snap.data():{};
         const grid=document.getElementById('natalGrid'+num);
         grid.innerHTML=NATAL_FIELDS.map(([l,k])=>d[k]?`<div class="natal-item"><div class="natal-item-label">${l}</div><div class="natal-item-val">${d[k]}</div></div>`:'').join('');
         if(!grid.innerHTML) grid.innerHTML='<div style="color:var(--parch-dark);font-style:italic;font-size:0.9rem">Thème non renseigné — clique sur Modifier.</div>';
@@ -260,7 +257,7 @@
     document.getElementById('natalModalTitle').textContent='Thème de '+name;
     // Prefill
     getDoc(doc(db,'astrologie','natal'+num)).then(snap=>{
-      const d=snap.exists()?snap.data():{};
+      const d=snap.exists?snap.data():{};
       NATAL_FIELDS.forEach(([,k])=>{const el=document.getElementById('n-'+k);if(el)el.value=d[k]||'';});
     });
     document.getElementById('modal-natal').classList.add('open');
@@ -270,14 +267,14 @@
   window.saveNatal=async function(){
     const data={};
     NATAL_FIELDS.forEach(([,k])=>{const el=document.getElementById('n-'+k);if(el)data[k]=el.value;});
-    try{await setDoc(doc(db,'astrologie','natal'+currentNatalProfile),data);closeNatalModal();loadNatal();}catch(e){console.error(e);alert('Erreur.');}
+    try{await db.collection('astrologie').doc('natal'+currentNatalProfile).set(data);closeNatalModal();loadNatal();}catch(e){console.error(e);alert('Erreur.');}
   };
 
   // TRANSITS
   async function loadTransits(){
     const list=document.getElementById('listTransits'),loading=document.getElementById('loadingTransits');
     try{
-      const snap=await getDocs(query(collection(db,'astrologie_transits'),orderBy('date','desc')));
+      const snap=await db.collection('astrologie_transits').orderBy('date','desc').get();
       loading.style.display='none';
       if(snap.empty){list.innerHTML='<div class="empty-state">Aucun transit consigné.</div>';return;}
       list.innerHTML='';snap.forEach(d=>list.appendChild(buildCard(d.data(),d.id)));
@@ -295,19 +292,19 @@
     html+=`<button class="btn-delete" onclick="deleteTransit('${id}',this)">Supprimer</button>`;
     card.innerHTML=html;return card;
   }
-  window.deleteTransit=async function(id,b){if(!confirm('Supprimer ?'))return;try{await deleteDoc(doc(db,'astrologie_transits',id));b.closest('.entry-card').remove();}catch(e){console.error(e);}};
+  window.deleteTransit=async function(id,b){if(!confirm('Supprimer ?'))return;try{await db.collection('astrologie_transits').doc(id).delete();b.closest('.entry-card').remove();}catch(e){console.error(e);}};
   window.openModal=function(){document.getElementById('t-date').value=new Date().toISOString().split('T')[0];document.getElementById('modal-transit').classList.add('open');document.body.style.overflow='hidden';};
   window.closeModal=function(){document.getElementById('modal-transit').classList.remove('open');document.body.style.overflow='';};
   window.saveTransit=async function(){
     const btn=document.getElementById('btnSaveTransit');btn.textContent='Scellement...';btn.style.opacity='0.7';
     const entry={date:document.getElementById('t-date').value,planetes:document.getElementById('t-planetes').value,transits:document.getElementById('t-transits').value,ressenti:document.getElementById('t-ressenti').value,notes:document.getElementById('t-notes').value,createdAt:new Date().toISOString()};
-    try{await addDoc(collection(db,'astrologie_transits'),entry);closeModal();loadTransits();}catch(e){console.error(e);alert('Erreur.');}
+    try{await db.collection('astrologie_transits').add(entry);closeModal();loadTransits();}catch(e){console.error(e);alert('Erreur.');}
     btn.textContent='Sceller la fiche';btn.style.opacity='1';
   };
 
   // LIBRARY
   async function loadLibrary(){
-    const snap=await getDocs(collection(db,'astrologie_lib'));
+    const snap=await getDocs(db.collection('astrologie_lib'));
     const saved={};snap.forEach(d=>saved[d.id]=d.data());
     const grid=document.getElementById('libGrid');grid.innerHTML='';
     [...ASTRES,...MAISONS].forEach(nom=>{
@@ -330,7 +327,7 @@
   window.closeDetail=function(){document.getElementById('detailOverlay').classList.remove('open');document.body.style.overflow='';};
   window.saveLibItem=async function(){
     if(!currentLibKey)return;
-    try{await setDoc(doc(db,'astrologie_lib',currentLibKey),{signification:document.getElementById('detailSig').value,notes:document.getElementById('detailNotes').value});closeDetail();loadLibrary();}catch(e){console.error(e);alert('Erreur.');}
+    try{await db.collection('astrologie_lib').doc(currentLibKey).set({signification:document.getElementById('detailSig').value,notes:document.getElementById('detailNotes').value});closeDetail();loadLibrary();}catch(e){console.error(e);alert('Erreur.');}
   };
 
   ['modal-natal','modal-transit'].forEach(id=>{

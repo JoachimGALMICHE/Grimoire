@@ -103,7 +103,7 @@
 
 <div class="nav-bar">
   <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
-  <button class="btn-new" id="btnCreateNew">Cr&eacute;er une fiche</button>
+  <button class="btn-new" onclick="openModal()">Cr&eacute;er une fiche</button>
 </div>
 
 <div class="entries-container">
@@ -195,26 +195,16 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp(firebaseConfig);
+  const app = firebase.app();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
-    authDomain: "grimoire-commun.firebaseapp.com",
-    projectId: "grimoire-commun",
-    storageBucket: "grimoire-commun.firebasestorage.app",
-    messagingSenderId: "401518708387",
-    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
-    measurementId: "G-F0HFZG2H79"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  onAuthStateChanged(auth, user => {
+  auth.onAuthStateChanged( user => {
     if (!user) { window.location.href = '/Grimoire/'; return; }
     loadEntries();
   });
@@ -223,7 +213,7 @@
     const list = document.getElementById('entriesList');
     const loading = document.getElementById('loadingMsg');
     try {
-      const q = query(collection(db, 'sorts'), orderBy('nom'));
+      const q = query(db.collection('sorts'), orderBy('nom'));
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) {
@@ -280,7 +270,7 @@
       createdAt: new Date().toISOString()
     };
     try {
-      await addDoc(collection(db, 'sorts'), entry);
+      await db.collection('sorts').add(entry);
       closeModal(); loadEntries();
     } catch(e) { console.error(e); alert('Erreur lors de la sauvegarde.'); }
     btn.textContent = 'Sceller la fiche'; btn.style.opacity = '1';
@@ -288,7 +278,7 @@
 
   window.deleteEntry = async function(id, btnEl) {
     if (!confirm('Supprimer ce sort ?')) return;
-    try { await deleteDoc(doc(db, 'sorts', id)); btnEl.closest('.entry-card').remove(); }
+    try { await db.collection('sorts').doc(id).delete(); btnEl.closest('.entry-card').remove(); }
     catch(e) { console.error(e); }
   };
 
@@ -296,7 +286,6 @@
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  document.getElementById('btnCreateNew').addEventListener('click', window.openModal);
   window.closeModal = function() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
@@ -312,7 +301,7 @@
     const d = currentEditData;
     const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'type': document.getElementById('f-type')?document.getElementById('f-type').value:d['type']||'', 'intention': document.getElementById('f-intention')?document.getElementById('f-intention').value:d['intention']||'', 'formule': document.getElementById('f-formule')?document.getElementById('f-formule').value:d['formule']||'', 'materiel': document.getElementById('f-materiel')?document.getElementById('f-materiel').value:d['materiel']||'', 'moment': document.getElementById('f-moment')?document.getElementById('f-moment').value:d['moment']||'', 'activer': document.getElementById('f-activer')?document.getElementById('f-activer').value:d['activer']||'', 'resultat': document.getElementById('f-resultat')?document.getElementById('f-resultat').value:d['resultat']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
     try {
-      await updateDoc(doc(db, 'sorts', currentEditId), entry);
+      await db.collection('sorts').doc(currentEditId).update( entry);
       currentEditId = null;
       // Reset save button
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }

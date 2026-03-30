@@ -349,26 +349,16 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp(firebaseConfig);
+  const app = firebase.app();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
-    authDomain: "grimoire-commun.firebaseapp.com",
-    projectId: "grimoire-commun",
-    storageBucket: "grimoire-commun.firebasestorage.app",
-    messagingSenderId: "401518708387",
-    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
-    measurementId: "G-F0HFZG2H79"
-  };
-
-  const app     = initializeApp(firebaseConfig);
-  const auth    = getAuth(app);
-  const db      = getFirestore(app);
-
-  onAuthStateChanged(auth, user => {
+  auth.onAuthStateChanged( user => {
     if (!user) { window.location.href = '/Grimoire/'; return; }
     loadEntries();
   });
@@ -377,7 +367,7 @@
     const grid    = document.getElementById('beastGrid');
     const loading = document.getElementById('loadingMsg');
     try {
-      const q    = query(collection(db, 'bestiaire'), orderBy('nom'));
+      const q    = query(db.collection('bestiaire'), orderBy('nom'));
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) {
@@ -459,7 +449,7 @@
     };
 
     try {
-      await addDoc(collection(db, 'bestiaire'), entry);
+      await db.collection('bestiaire').add(entry);
       closeModal();
       loadEntries();
     } catch(e) {
@@ -473,7 +463,7 @@
   window.deleteEntry = async function(id, btnEl) {
     if (!confirm('Supprimer cette fiche définitivement ?')) return;
     try {
-      await deleteDoc(doc(db, 'bestiaire', id));
+      await db.collection('bestiaire').doc(id).delete();
       btnEl.closest('.beast-card').remove();
     } catch(e) { console.error(e); }
   };
@@ -482,7 +472,6 @@
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  document.getElementById('btnCreateNew').addEventListener('click', window.openModal);
 
   window.closeModal = function() {
     document.getElementById('modalOverlay').classList.remove('open');
@@ -503,7 +492,7 @@
     const d = currentEditData;
     const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'type': document.getElementById('f-type')?document.getElementById('f-type').value:d['type']||'', 'origine': document.getElementById('f-origine')?document.getElementById('f-origine').value:d['origine']||'', 'physique': document.getElementById('f-physique')?document.getElementById('f-physique').value:d['physique']||'', 'caractere': document.getElementById('f-caractere')?document.getElementById('f-caractere').value:d['caractere']||'', 'pouvoirs': document.getElementById('f-pouvoirs')?document.getElementById('f-pouvoirs').value:d['pouvoirs']||'', 'correspondances': document.getElementById('f-correspondances')?document.getElementById('f-correspondances').value:d['correspondances']||'', 'interagir': document.getElementById('f-interagir')?document.getElementById('f-interagir').value:d['interagir']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
     try {
-      await updateDoc(doc(db, 'bestiaire', currentEditId), entry);
+      await db.collection('bestiaire').doc(currentEditId).update( entry);
       currentEditId = null;
       // Reset save button
       if(btn) { btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1'; }
