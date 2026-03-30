@@ -397,7 +397,7 @@
         ${d.origine ? `<div class="beast-origine">${d.origine}</div>` : ''}
         ${d.physique ? `<div class="beast-desc">${d.physique}</div>` : ''}
       </div>
-      <button class=\"btn-modifier\" onclick=\"editEntry(\'${id}\', this)\">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
+      <div class="card-actions"><button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button></div>`;
     return card;
   }
 
