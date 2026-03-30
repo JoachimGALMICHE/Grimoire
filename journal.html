@@ -553,7 +553,7 @@
   }
 
   function saveEntry() {
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     btn.textContent = 'Scellement en cours…';
     btn.style.opacity = '0.7';
     const entry = {
@@ -615,7 +615,7 @@
       document.getElementById('cb-rituel').checked = !!d.rituel;
       toggleSection('rituel', !!d.rituel);
       document.getElementById('f-rituel').value = d.rituel || '';
-      const btn = document.getElementById('btnSave');
+      const btn = document.querySelector('.btn-save');
       btn.textContent = 'Mettre à jour';
       btn.onclick = saveEdit;
       openModal();
@@ -624,7 +624,7 @@
 
   function saveEdit() {
     if (!_editId) return;
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7';
     const entry = {
       date:          document.getElementById('f-date').value,
@@ -661,7 +661,7 @@
   function closeModal() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry;
     _editId = null;
   }

@@ -211,8 +211,8 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script>
   // MODIFIER
   var _editId = null;
 
@@ -227,7 +227,7 @@
     var e3 = document.getElementById('f-origines'); if(e3) e3.value = d['origines'] || '';
     var e4 = document.getElementById('f-pratiquer'); if(e4) e4.value = d['pratiquer'] || '';
     var e5 = document.getElementById('f-notes'); if(e5) e5.value = d['notes'] || '';
-      var btn = document.getElementById('btnSave');
+      var btn = document.querySelector('.btn-save');
       if(btn) { btn.textContent = 'Mettre a jour'; btn.onclick = _saveEdit; }
       openModal();
     }).catch(function(e) { console.error(e); alert('Erreur chargement.'); });
@@ -235,7 +235,7 @@
 
   function _saveEdit() {
     if (!_editId) return;
-    var btn = document.getElementById('btnSave');
+    var btn = document.querySelector('.btn-save');
     if(btn) { btn.textContent = 'Mise a jour...'; btn.style.opacity = '0.7'; }
     var entry = {
       'nom': (document.getElementById('f-nom') ? document.getElementById('f-nom').value : ''),
@@ -319,7 +319,7 @@
   async function saveEntry() {
     const nom = document.getElementById('f-nom').value.trim();
     if (!nom) { alert('Le nom est obligatoire.'); return; }
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     btn.textContent = 'Scellement en cours…'; btn.style.opacity = '0.7';
     const entry = {
       nom,
@@ -357,7 +357,7 @@
 
   window.saveEdit = async function() {
     if (!currentEditId) return;
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
     const d = currentEditData;
     const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'categorie': document.getElementById('f-categorie')?document.getElementById('f-categorie').value:d['categorie']||'', 'description': document.getElementById('f-description')?document.getElementById('f-description').value:d['description']||'', 'origines': document.getElementById('f-origines')?document.getElementById('f-origines').value:d['origines']||'', 'pratiquer': document.getElementById('f-pratiquer')?document.getElementById('f-pratiquer').value:d['pratiquer']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };

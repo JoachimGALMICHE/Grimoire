@@ -150,8 +150,8 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script>
   // MODIFIER
   var _editId = null;
 
@@ -168,7 +168,7 @@
     var e5 = document.getElementById('f-ressenti'); if(e5) e5.value = d['ressenti'] || '';
     var e6 = document.getElementById('f-notes'); if(e6) e6.value = d['notes'] || '';
     var ecb = document.getElementById('f-recurrent'); if(ecb) ecb.checked = !!d['recurrent'];
-      var btn = document.getElementById('btnSave');
+      var btn = document.querySelector('.btn-save');
       if(btn) { btn.textContent = 'Mettre a jour'; btn.onclick = _saveEdit; }
       openModal();
     }).catch(function(e) { console.error(e); alert('Erreur chargement.'); });
@@ -176,7 +176,7 @@
 
   function _saveEdit() {
     if (!_editId) return;
-    var btn = document.getElementById('btnSave');
+    var btn = document.querySelector('.btn-save');
     if(btn) { btn.textContent = 'Mise a jour...'; btn.style.opacity = '0.7'; }
     var entry = {
       'date': (document.getElementById('f-date') ? document.getElementById('f-date').value : ''),
@@ -256,7 +256,7 @@
   }
 
   async function saveEntry(){
-    const btn=document.getElementById('btnSave');
+    const btn=document.querySelector('.btn-save');
     btn.textContent='Scellement en cours…';btn.style.opacity='0.7';
     const entry={
       date:           document.getElementById('f-date').value,
@@ -286,7 +286,7 @@
 
   window.saveEdit = async function() {
     if (!currentEditId) return;
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
     const d = currentEditData;
     const entry = { 'date': document.getElementById('f-date')?document.getElementById('f-date').value:d['date']||'', 'titre': document.getElementById('f-titre')?document.getElementById('f-titre').value:d['titre']||'', 'recit': document.getElementById('f-recit')?document.getElementById('f-recit').value:d['recit']||'', 'symboles': document.getElementById('f-symboles')?document.getElementById('f-symboles').value:d['symboles']||'', 'interpretation': document.getElementById('f-interpretation')?document.getElementById('f-interpretation').value:d['interpretation']||'', 'ressenti': document.getElementById('f-ressenti')?document.getElementById('f-ressenti').value:d['ressenti']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };

@@ -214,8 +214,8 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script>
   // MODIFIER
   var _editId = null;
 
@@ -234,7 +234,7 @@
     var e7 = document.getElementById('f-etapes'); if(e7) e7.value = d['etapes'] || '';
     var e8 = document.getElementById('f-resultat'); if(e8) e8.value = d['resultat'] || '';
     var e9 = document.getElementById('f-notes'); if(e9) e9.value = d['notes'] || '';
-      var btn = document.getElementById('btnSave');
+      var btn = document.querySelector('.btn-save');
       if(btn) { btn.textContent = 'Mettre a jour'; btn.onclick = _saveEdit; }
       openModal();
     }).catch(function(e) { console.error(e); alert('Erreur chargement.'); });
@@ -242,7 +242,7 @@
 
   function _saveEdit() {
     if (!_editId) return;
-    var btn = document.getElementById('btnSave');
+    var btn = document.querySelector('.btn-save');
     if(btn) { btn.textContent = 'Mise a jour...'; btn.style.opacity = '0.7'; }
     var entry = {
       'nom': (document.getElementById('f-nom') ? document.getElementById('f-nom').value : ''),
@@ -341,7 +341,7 @@
   async function saveEntry() {
     const nom = document.getElementById('f-nom').value.trim();
     if (!nom) { alert('Le nom est obligatoire.'); return; }
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     btn.textContent = 'Scellement en cours…'; btn.style.opacity = '0.7';
     const entry = {
       nom,
@@ -383,7 +383,7 @@
 
   window.saveEdit = async function() {
     if (!currentEditId) return;
-    const btn = document.getElementById('btnSave');
+    const btn = document.querySelector('.btn-save');
     if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
     const d = currentEditData;
     const entry = { 'nom': document.getElementById('f-nom')?document.getElementById('f-nom').value:d['nom']||'', 'type': document.getElementById('f-type')?document.getElementById('f-type').value:d['type']||'', 'intention': document.getElementById('f-intention')?document.getElementById('f-intention').value:d['intention']||'', 'lune': document.getElementById('f-lune')?document.getElementById('f-lune').value:d['lune']||'', 'saison': document.getElementById('f-saison')?document.getElementById('f-saison').value:d['saison']||'', 'duree': document.getElementById('f-duree')?document.getElementById('f-duree').value:d['duree']||'', 'materiel': document.getElementById('f-materiel')?document.getElementById('f-materiel').value:d['materiel']||'', 'etapes': document.getElementById('f-etapes')?document.getElementById('f-etapes').value:d['etapes']||'', 'resultat': document.getElementById('f-resultat')?document.getElementById('f-resultat').value:d['resultat']||'', 'notes': document.getElementById('f-notes')?document.getElementById('f-notes').value:d['notes']||'', updatedAt: new Date().toISOString() };
