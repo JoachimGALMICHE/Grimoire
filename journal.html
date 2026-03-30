@@ -137,15 +137,7 @@
     .meta-item { font-size: 0.82rem; color: var(--ink-faded); }
     .meta-label { font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.1rem; color: var(--sepia); text-transform: uppercase; display: block; margin-bottom: 0.1rem; }
 
-    .btn-delete {
-      position: absolute; bottom: 1rem; right: 1rem;
-      background: transparent; border: 1px solid var(--red-wax);
-      color: var(--red-wax); font-family: 'Cinzel Decorative', serif;
-      font-size: 0.5rem; letter-spacing: 0.1rem; padding: 0.25rem 0.6rem;
-      cursor: pointer; text-transform: uppercase; opacity: 0.5;
-      transition: opacity 0.3s;
-    }
-    .btn-delete:hover { opacity: 1; }
+    
 
     @keyframes card-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
@@ -254,6 +246,20 @@
     .btn-save:hover { background: #1a0a00; }
 
     footer { text-align: center; margin-top: 3rem; color: var(--sepia); font-style: italic; font-size: 0.8rem; opacity: 0.5; }
+
+    .card-actions {
+      position: absolute; bottom: 0.8rem; left: 1rem; right: 1rem;
+      display: flex; gap: 0.6rem; align-items: center;
+    }
+    .btn-modifier, .btn-delete {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.5rem;
+      letter-spacing: 0.12rem; text-transform: uppercase;
+      padding: 0.3rem 0.8rem; cursor: pointer; transition: all 0.25s;
+      border: 1px solid var(--gold); color: var(--gold); background: #fff;
+    }
+    .btn-modifier:hover { background: var(--gold); color: var(--ink); }
+    .btn-delete { border-color: var(--red-wax); color: var(--red-wax); }
+    .btn-delete:hover { background: var(--red-wax); color: #fff; }
   </style>
 </head>
 <body>

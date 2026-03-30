@@ -35,8 +35,7 @@
     .entry-section{margin-bottom:0.8rem;}
     .entry-section-label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.25rem;}
     .entry-section-content{font-size:0.92rem;color:var(--ink-faded);line-height:1.6;font-style:italic;white-space:pre-wrap;}
-    .btn-delete{font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;transition:opacity 0.3s;}
-    .btn-delete:hover{opacity:1;}
+    
     .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;}
     @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
     @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
@@ -68,17 +67,23 @@
     .btn-save{flex:2;padding:0.75rem;background:var(--ink);color:var(--parch-light);border:1px solid var(--gold);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;text-transform:uppercase;cursor:pointer;position:relative;transition:background 0.3s;}
     .btn-save::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
     .btn-save:hover{background:#1a0a00;}
-
-    .card-actions { position: absolute; bottom: 0.8rem; left: 1rem; right: 1rem; display: flex; gap: 0.6rem; justify-content: flex-start; }
-    .btn-modifier, .btn-delete {
-      font-family: 'Cinzel Decorative', serif; font-size: 0.5rem; letter-spacing: 0.12rem;
-      text-transform: uppercase; padding: 0.3rem 0.8rem; cursor: pointer; transition: all 0.25s;
-      border: 1px solid #6b3fa0; color: #6b3fa0; background: #fff;
-    }
-    .btn-modifier:hover { background: #6b3fa0; color: #fff; }
-    .btn-delete { border-color: var(--red-wax); color: var(--red-wax); background: #fff; }
-    .btn-delete:hover { background: var(--red-wax); color: #fff; }
+    .btn-modifier, 
+    
     footer{text-align:center;margin-top:3rem;color:var(--sepia);font-style:italic;font-size:0.8rem;opacity:0.5;}
+
+    .card-actions {
+      position: absolute; bottom: 0.8rem; left: 1rem; right: 1rem;
+      display: flex; gap: 0.6rem; align-items: center;
+    }
+    .btn-modifier, .btn-delete {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.5rem;
+      letter-spacing: 0.12rem; text-transform: uppercase;
+      padding: 0.3rem 0.8rem; cursor: pointer; transition: all 0.25s;
+      border: 1px solid var(--gold); color: var(--gold); background: #fff;
+    }
+    .btn-modifier:hover { background: var(--gold); color: var(--ink); }
+    .btn-delete { border-color: var(--red-wax); color: var(--red-wax); }
+    .btn-delete:hover { background: var(--red-wax); color: #fff; }
   </style>
 </head>
 <body>
