@@ -232,7 +232,7 @@
     const loading = document.getElementById('loadingMsg');
     try {
       const q = db.collection('energie').orderBy('nom');
-      const snap = await getDocs(q);
+      const snap = await q.get();
       loading.style.display = 'none';
       if (snap.empty) {
         list.innerHTML = '<div class="empty-state">Aucune fiche.<br/><em>Le grimoire attend ta connaissance.</em></div>';

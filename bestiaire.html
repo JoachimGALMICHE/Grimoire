@@ -376,7 +376,7 @@
     const loading = document.getElementById('loadingMsg');
     try {
       const q    = db.collection('bestiaire').orderBy('nom');
-      const snap = await getDocs(q);
+      const snap = await q.get();
       loading.style.display = 'none';
       if (snap.empty) {
         grid.innerHTML = '<div class="empty-state">Le bestiaire est vide.<br/><em>Consigne le premier être.</em></div>';

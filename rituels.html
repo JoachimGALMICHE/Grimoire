@@ -241,7 +241,7 @@
     const loading = document.getElementById('loadingMsg');
     try {
       const q = db.collection('rituels').orderBy('nom');
-      const snap = await getDocs(q);
+      const snap = await q.get();
       loading.style.display = 'none';
       if (snap.empty) {
         list.innerHTML = '<div class="empty-state">Aucun rituel consign&eacute;.<br/><em>Le grimoire attend tes pratiques sacr&eacute;es.</em></div>';

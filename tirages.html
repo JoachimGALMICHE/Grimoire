@@ -399,7 +399,7 @@
     const loading = document.getElementById('loading-methodes');
     try {
       const q = db.collection('tirages_methodes').orderBy('nom');
-      const snap = await getDocs(q);
+      const snap = await q.get();
       loading.style.display = 'none';
       if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucune m\u00e9thode consign\u00e9e.</div>'; return; }
       list.innerHTML = '';
@@ -466,7 +466,7 @@
     const loading = document.getElementById('loading-tirages');
     try {
       const q = db.collection('tirages_effectues').orderBy('date', 'desc');
-      const snap = await getDocs(q);
+      const snap = await q.get();
       loading.style.display = 'none';
       if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucun tirage consign\u00e9.</div>'; return; }
       list.innerHTML = '';
@@ -604,7 +604,7 @@
   // ===== SHARED =====
   window.deleteDoc_ = async function(col, id, btnEl) {
     if (!confirm('Supprimer ?')) return;
-    try { await deleteDoc(doc(db, col, id)); btnEl.closest('.entry-card').remove(); }
+    try { await db.collection(col).doc(id).delete(); btnEl.closest('.entry-card').remove(); }
     catch(e) { console.error(e); }
   };
 
