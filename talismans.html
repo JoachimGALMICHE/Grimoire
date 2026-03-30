@@ -158,16 +158,16 @@
     html += `<div class="card-actions"><button class="btn-modifier" onclick="editEntry(\'${id}\', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry(\'${id}\', this)">Supprimer</button></div>`;
     card.innerHTML=html;return card;
   }
-  window.saveEntry=async function(){
+  async function saveEntry(){
     const nom=document.getElementById('f-nom').value.trim();if(!nom){alert('Le nom est obligatoire.');return;}
     const btn=document.getElementById('btnSave');btn.textContent='Scellement...';btn.style.opacity='0.7';
     const entry={nom,type:document.getElementById('f-type').value,intention:document.getElementById('f-intention').value,matiere:document.getElementById('f-matiere').value,symboles:document.getElementById('f-symboles').value,activer:document.getElementById('f-activer').value,notes:document.getElementById('f-notes').value,createdAt:new Date().toISOString()};
     try{await db.collection('talismans').add(entry);closeModal();loadEntries();}catch(e){console.error(e);alert('Erreur.');}
     btn.textContent='Sceller la fiche';btn.style.opacity='1';
   };
-  window.deleteEntry=async function(id,b){if(!confirm('Supprimer ?'))return;try{await db.collection('talismans').doc(id).delete();b.closest('.entry-card').remove();}catch(e){console.error(e);}};
-  window.openModal=function(){document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';};
-  window.closeModal=function(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
+  async function deleteEntry(id,b){if(!confirm('Supprimer ?'))return;try{await db.collection('talismans').doc(id).delete();b.closest('.entry-card').remove();}catch(e){console.error(e);}};
+  function openModal(){document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden';};
+  function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';};
   document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 
   window.saveEdit = async function() {

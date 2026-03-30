@@ -252,7 +252,7 @@
     return card;
   }
 
-  window.saveEntry = async function() {
+  async function saveEntry() {
     const nom = document.getElementById('f-nom').value.trim();
     if (!nom) { alert('Le nom est obligatoire.'); return; }
     const btn = document.getElementById('btnSave');
@@ -276,17 +276,17 @@
     btn.textContent = 'Sceller la fiche'; btn.style.opacity = '1';
   };
 
-  window.deleteEntry = async function(id, btnEl) {
+  async function deleteEntry(id, btnEl) {
     if (!confirm('Supprimer ce sort ?')) return;
     try { await db.collection('sorts').doc(id).delete(); btnEl.closest('.entry-card').remove(); }
     catch(e) { console.error(e); }
   };
 
-  window.openModal = function() {
+  function openModal() {
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  window.closeModal = function() {
+  function closeModal() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
   };

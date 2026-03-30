@@ -375,7 +375,7 @@
   });
 
   // ===== TABS =====
-  window.switchTab = function(tab) {
+  function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-actions').forEach(a => a.style.display = 'none');
@@ -424,7 +424,7 @@
     return card;
   }
 
-  window.saveMethode = async function() {
+  async function saveMethode() {
     const nom = document.getElementById('m-nom').value.trim();
     if (!nom) { alert('Le nom est obligatoire.'); return; }
     const positions = [...document.querySelectorAll('.pos-input')].map(i => i.value).filter(v => v.trim());
@@ -443,7 +443,7 @@
     } catch(e) { console.error(e); alert('Erreur.'); }
   };
 
-  window.addPosition = function() {
+  function addPosition() {
     const list = document.getElementById('positions-list');
     const row = document.createElement('div');
     row.className = 'position-row';
@@ -495,7 +495,7 @@
     return card;
   }
 
-  window.addCarte = function() {
+  function addCarte() {
     const list = document.getElementById('cartes-list');
     const row = document.createElement('div');
     row.className = 'carte-row';
@@ -508,7 +508,7 @@
     list.appendChild(row);
   };
 
-  window.saveTirage = async function() {
+  async function saveTirage() {
     const btn = document.getElementById('btnSaveTirage');
     btn.textContent = 'Scellement...'; btn.style.opacity = '0.7';
     const rows = document.querySelectorAll('.carte-row');
@@ -559,14 +559,14 @@
     });
   }
 
-  window.filterLib = function(filter, btn) {
+  function filterLib(filter, btn) {
     currentFilter = filter;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     loadLibrary();
   };
 
-  window.openDetail = function(key, nom, type, data) {
+  function openDetail(key, nom, type, data) {
     currentLibKey = key;
     document.getElementById('detail-name').textContent = nom;
     document.getElementById('detail-sub').textContent = type === 'tarot' ? 'Tarot' : 'Rune Elder Futhark';
@@ -576,12 +576,12 @@
     document.body.style.overflow = 'hidden';
   };
 
-  window.closeDetail = function() {
+  function closeDetail() {
     document.getElementById('detailOverlay').classList.remove('open');
     document.body.style.overflow = '';
   };
 
-  window.saveLibEntry = async function() {
+  async function saveLibEntry() {
     if (!currentLibKey) return;
     const data = {
       endroit: document.getElementById('detail-endroit').value,
@@ -600,7 +600,7 @@
     catch(e) { console.error(e); }
   };
 
-  window.openModal = function(type) {
+  function openModal(type) {
     if (type === 'tirage') {
       document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('cartes-list').innerHTML = '';
@@ -614,7 +614,7 @@
     document.body.style.overflow = 'hidden';
   };
 
-  window.closeModal = function(type) {
+  function closeModal(type) {
     document.getElementById('modal-' + type).classList.remove('open');
     document.body.style.overflow = '';
   };
@@ -630,7 +630,7 @@
 
   // ===== MODIFIER METHODE =====
   let editMethodeId = null;
-  window.editMethode = async function(id) {
+  async function editMethode(id) {
     editMethodeId = id;
     try {
       const snap = await db.collection('tirages_methodes').doc(id).get();
@@ -656,7 +656,7 @@
     document.getElementById('modal-methode').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  window.saveEditMethode = async function() {
+  async function saveEditMethode() {
     if (!editMethodeId) return;
     const positions = [...document.querySelectorAll('.pos-input')].map(i => i.value).filter(v => v.trim());
     const entry = {
@@ -678,7 +678,7 @@
 
   // ===== MODIFIER TIRAGE =====
   let editTirageId = null;
-  window.editTirage = async function(id) {
+  async function editTirage(id) {
     editTirageId = id;
     try {
       const snap = await db.collection('tirages_effectues').doc(id).get();
@@ -705,7 +705,7 @@
     document.getElementById('modal-tirage').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-  window.saveEditTirage = async function() {
+  async function saveEditTirage() {
     if (!editTirageId) return;
     const btn = document.getElementById('btnSaveTirage');
     if(btn) { btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7'; }
