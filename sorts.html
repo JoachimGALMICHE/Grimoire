@@ -103,7 +103,7 @@
 
 <div class="nav-bar">
   <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
-  <button class="btn-new" onclick="openModal()">Cr&eacute;er une fiche</button>
+  <button class="btn-new" id="btnCreateNew">Cr&eacute;er une fiche</button>
 </div>
 
 <div class="entries-container">
@@ -296,6 +296,7 @@
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
+  document.getElementById('btnCreateNew').addEventListener('click', window.openModal);
   window.closeModal = function() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';

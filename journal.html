@@ -620,6 +620,7 @@
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
+  document.getElementById('btnCreateNew').addEventListener('click', window.openModal);
 
   window.closeModal = function() {
     document.getElementById('modalOverlay').classList.remove('open');
