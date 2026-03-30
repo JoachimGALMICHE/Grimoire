@@ -339,10 +339,18 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
+    authDomain: "grimoire-commun.firebaseapp.com",
+    projectId: "grimoire-commun",
+    storageBucket: "grimoire-commun.firebasestorage.app",
+    messagingSenderId: "401518708387",
+    appId: "1:401518708387:web:2ca15dd180798dc28e2116"
+  };
   firebase.initializeApp(firebaseConfig);
-  const app = firebase.app();
   const auth = firebase.auth();
   const db = firebase.firestore();
+
 
   // Bibliothèque statique
   const TAROT = [
@@ -390,7 +398,7 @@
     const list = document.getElementById('list-methodes');
     const loading = document.getElementById('loading-methodes');
     try {
-      const q = query(db.collection('tirages_methodes'), orderBy('nom'));
+      const q = db.collection('tirages_methodes').orderBy('nom');
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucune m\u00e9thode consign\u00e9e.</div>'; return; }
@@ -457,7 +465,7 @@
     const list = document.getElementById('list-tirages');
     const loading = document.getElementById('loading-tirages');
     try {
-      const q = query(db.collection('tirages_effectues'), orderBy('date', 'desc'));
+      const q = db.collection('tirages_effectues').orderBy('date', 'desc');
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) { list.innerHTML = '<div class="empty-state">Aucun tirage consign\u00e9.</div>'; return; }
@@ -543,7 +551,7 @@
       ...RUNES.map(n => ({ key: 'rune_' + n, nom: n, type: 'rune' }))
     ];
     // Load saved data
-    const snap = await getDocs(db.collection('bibliotheque'));
+    const snap = await db.collection('bibliotheque').get();
     const saved = {};
     snap.forEach(d => saved[d.id] = d.data());
 

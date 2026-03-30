@@ -209,10 +209,18 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
+    authDomain: "grimoire-commun.firebaseapp.com",
+    projectId: "grimoire-commun",
+    storageBucket: "grimoire-commun.firebasestorage.app",
+    messagingSenderId: "401518708387",
+    appId: "1:401518708387:web:2ca15dd180798dc28e2116"
+  };
   firebase.initializeApp(firebaseConfig);
-  const app = firebase.app();
   const auth = firebase.auth();
   const db = firebase.firestore();
+
 
   auth.onAuthStateChanged( user => {
     if (!user) { window.location.href = '/Grimoire/'; return; }
@@ -223,7 +231,7 @@
     const list = document.getElementById('entriesList');
     const loading = document.getElementById('loadingMsg');
     try {
-      const q = query(db.collection('energie'), orderBy('nom'));
+      const q = db.collection('energie').orderBy('nom');
       const snap = await getDocs(q);
       loading.style.display = 'none';
       if (snap.empty) {
