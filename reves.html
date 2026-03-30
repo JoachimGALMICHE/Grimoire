@@ -99,7 +99,7 @@
 </header>
 <div class="nav-bar">
   <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
-  <button class="btn-new" id="btnCreateNew">Consigner un r&ecirc;ve</button>
+  <button class="btn-new" onclick="openModal()">Consigner un r&ecirc;ve</button>
 </div>
 <div class="entries-container">
   <div class="loading-msg" id="loadingMsg">Consultation des archives...</div>
@@ -150,13 +150,19 @@
   </div>
 </div>
 
-<script type="module">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
         const firebaseConfig = {
     apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",
     projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",
     messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"
   };
-  const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  ;
 
   auth.onAuthStateChanged(user=>{ if(!user){window.location.href='/Grimoire/';return;} loadEntries(); });
 

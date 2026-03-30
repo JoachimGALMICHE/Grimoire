@@ -545,8 +545,8 @@
     if (d.intention) html += '<div class="entry-section"><div class="entry-section-label">Intention</div><div class="entry-section-content">' + d.intention + '</div></div>';
     if (d.rituel) html += '<div class="entry-section"><div class="entry-section-label">Rituel</div><div class="entry-section-content">' + d.rituel + '</div></div>';
     html += '<div class="card-actions">'
-      + '<button class="btn-modifier" onclick="editEntry('' + id + '')">Modifier</button>'
-      + '<button class="btn-delete" onclick="deleteEntry('' + id + '')">Supprimer</button>'
+      + '<button class="btn-modifier" onclick="editEntry(\'' + id + '\')">Modifier</button>'
+      + '<button class="btn-delete" onclick="deleteEntry(\'' + id + '\')">Supprimer</button>'
       + '</div>';
     card.innerHTML = html;
     return card;

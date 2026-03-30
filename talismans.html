@@ -134,9 +134,15 @@
   </div>
 </div>
 
-<script type="module">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
         const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
-  const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  ;
   auth.onAuthStateChanged(u=>{if(!u){window.location.href='/Grimoire/';return;}loadEntries();});
   async function loadEntries(){
     const list=document.getElementById('entriesList'),loading=document.getElementById('loadingMsg');

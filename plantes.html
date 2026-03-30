@@ -122,7 +122,7 @@
     </div>
     <div class="form-row">
       <div class="field"><label for="f-parties">Parties utilis&eacute;es</label><input type="text" id="f-parties" placeholder="Feuilles, racines, fleurs..."/></div>
-      <div class="field"><label for="f-recolte">R&eacute;colte / Saison</label><input type="text" id="f-recolte" placeholder="Ex: &eacute;t&eacute;, pleine lune..."/></div>
+      <div class="field"><label for="f-recolte">R&eacute;colte / Saison</label><input type="text" id="f-recolte" placeholder="Ex: &eacute;t&eacute; pleine lune..."/></div>
     </div>
     <div class="section-title">Propri&eacute;t&eacute;s</div>
     <div class="form-row single">
@@ -132,7 +132,7 @@
       <div class="field"><label for="f-medicinales">Propri&eacute;t&eacute;s m&eacute;dicinales</label><textarea id="f-medicinales" placeholder="Usages traditionnels et th&eacute;rapeutiques..."></textarea></div>
     </div>
     <div class="form-row single">
-      <div class="field"><label for="f-precautions">Pr&eacute;cautions</label><textarea id="f-precautions" placeholder="Contre-indications, toxicit&eacute;, risques..."></textarea></div>
+      <div class="field"><label for="f-precautions">Pr&eacute;cautions</label><textarea id="f-precautions" placeholder="Contre-indications, toxicit&eacute; risques..."></textarea></div>
     </div>
     <div class="form-row single">
       <div class="field"><label for="f-notes">Notes libres</label><textarea id="f-notes" placeholder="Observations, exp&eacute;riences personnelles..."></textarea></div>
@@ -144,9 +144,15 @@
   </div>
 </div>
 
-<script type="module">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
         const fc={apiKey:"AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",authDomain:"grimoire-commun.firebaseapp.com",projectId:"grimoire-commun",storageBucket:"grimoire-commun.firebasestorage.app",messagingSenderId:"401518708387",appId:"1:401518708387:web:2ca15dd180798dc28e2116",measurementId:"G-F0HFZG2H79"};
-  const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  ;
   auth.onAuthStateChanged(u=>{if(!u){window.location.href='/Grimoire/';return;}loadEntries();});
   async function loadEntries(){
     const list=document.getElementById('entriesList'),loading=document.getElementById('loadingMsg');
