@@ -251,7 +251,7 @@
     sections.forEach(s => {
       if (d[s.key]) html += `<div class="entry-section"><div class="entry-section-label">${s.label}</div><div class="entry-section-content">${d[s.key]}</div></div>`;
     });
-    html += `<button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
+    html += `<div class="card-actions"><button class="btn-modifier" onclick="editEntry(\'${id}\', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry(\'${id}\', this)">Supprimer</button></div>`;
     card.innerHTML = html;
     return card;
   }

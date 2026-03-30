@@ -36,10 +36,8 @@
     .entry-section-label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.25rem;}
     .entry-section-content{font-size:0.92rem;color:var(--ink-faded);line-height:1.6;font-style:italic;white-space:pre-wrap;}
     .warning-block{background:rgba(122,31,31,0.06);border-left:2px solid var(--red-wax);padding:0.6rem 1rem;font-size:0.88rem;color:var(--red-wax);font-style:italic;}
-    .btn-delete{position:absolute;bottom:0.8rem;right:1rem;background:transparent;border:1px solid var(--red-wax);color:var(--red-wax);font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;opacity:0.4;transition:opacity 0.3s;}
+    .btn-delete{font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;transition:opacity 0.3s;}
     .btn-delete:hover{opacity:1;}
-    .btn-modifier{position:absolute;bottom:0.8rem;left:1rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.25rem 0.6rem;cursor:pointer;text-transform:uppercase;opacity:0.5;transition:opacity 0.3s;}
-    .btn-modifier:hover{opacity:1;background:var(--sepia);color:#f5e9c9;}
     .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;}
     @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.85);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
@@ -69,6 +67,16 @@
     .btn-save{flex:2;padding:0.75rem;background:var(--ink);color:#f5e9c9;border:1px solid var(--gold);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;text-transform:uppercase;cursor:pointer;position:relative;transition:background 0.3s;}
     .btn-save::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
     .btn-save:hover{background:#1a0a00;}
+
+    .card-actions { position: absolute; bottom: 0.8rem; left: 1rem; right: 1rem; display: flex; gap: 0.6rem; justify-content: flex-start; }
+    .btn-modifier, .btn-delete {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.5rem; letter-spacing: 0.12rem;
+      text-transform: uppercase; padding: 0.3rem 0.8rem; cursor: pointer; transition: all 0.25s;
+      border: 1px solid #6b3fa0; color: #6b3fa0; background: #fff;
+    }
+    .btn-modifier:hover { background: #6b3fa0; color: #fff; }
+    .btn-delete { border-color: var(--red-wax); color: var(--red-wax); background: #fff; }
+    .btn-delete:hover { background: var(--red-wax); color: #fff; }
     footer{text-align:center;margin-top:3rem;color:var(--sepia);font-style:italic;font-size:0.8rem;opacity:0.5;}
   </style>
 </head>
@@ -156,7 +164,7 @@
     });
     if(d.precautions) html+=`<div class="entry-section"><div class="entry-section-label">Précautions</div><div class="warning-block">${d.precautions}</div></div>`;
     if(d.notes) html+=`<div class="entry-section"><div class="entry-section-label">Notes</div><div class="entry-section-content">${d.notes}</div></div>`;
-    html += `<button class="btn-modifier" onclick="editEntry('${id}', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry('${id}', this)">Supprimer</button>`;
+    html += `<div class="card-actions"><button class="btn-modifier" onclick="editEntry(\'${id}\', this)">Modifier</button><button class="btn-delete" onclick="deleteEntry(\'${id}\', this)">Supprimer</button></div>`;
     card.innerHTML=html;return card;
   }
   window.saveEntry=async function(){
