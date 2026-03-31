@@ -42,7 +42,7 @@
     .entry-card {
       background: linear-gradient(145deg, #f5e9c9 0%, #ecdaaa 100%);
       border: 1px solid var(--parch-dark); box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
-      padding: 1.8rem 2rem 3.5rem; position: relative;
+      padding: 1.8rem 2rem; position: relative;
       animation: card-in 0.5s cubic-bezier(0.22,1,0.36,1) both;
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -103,15 +103,19 @@
     .btn-save::before { content: ''; position: absolute; inset: 2px; border: 1px solid var(--gold); opacity: 0.3; pointer-events: none; }
     .btn-save:hover { background: #1a0a00; }
     footer { text-align: center; margin-top: 3rem; color: var(--sepia); font-style: italic; font-size: 0.8rem; opacity: 0.5; }
+    .btn-modifier,
 
     .card-actions {
-      position: absolute; bottom: 0.8rem; left: 1rem; right: 1rem;
-      display: flex; gap: 0.6rem; align-items: center;
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1.2rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--parch-dark);
     }
     .btn-modifier, .btn-delete {
-      font-family: 'Cinzel Decorative', serif; font-size: 0.5rem;
-      letter-spacing: 0.12rem; text-transform: uppercase;
-      padding: 0.3rem 0.8rem; cursor: pointer; transition: all 0.25s;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.5rem; letter-spacing: 0.12rem; text-transform: uppercase;
+      padding: 0.35rem 0.9rem; cursor: pointer; transition: all 0.25s;
       border: 1px solid var(--gold); color: var(--gold); background: #fff;
     }
     .btn-modifier:hover { background: var(--gold); color: var(--ink); }
