@@ -113,23 +113,12 @@
     .btn-modifier:hover { background: var(--gold); color: var(--ink); }
     .btn-delete:hover { background: var(--red-wax); color: #fff; }
 
-    .alpha-bar {
-      max-width: 900px; margin: 0 auto 1.5rem; padding: 0 1rem;
-      display: flex; flex-wrap: wrap; gap: 0.3rem;
-    }
-    .alpha-btn {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 0.5rem; letter-spacing: 0.1rem;
-      text-transform: uppercase;
-      width: 1.8rem; height: 1.8rem;
-      border: 1px solid var(--parch-dark);
-      background: transparent; color: var(--parch-dark);
-      cursor: pointer; transition: all 0.2s;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .alpha-btn:hover { border-color: var(--gold); color: var(--gold); }
-    .alpha-btn.active { background: var(--ink); border-color: var(--gold); color: var(--parch-light); }
-    .alpha-btn.all { width: auto; padding: 0 0.6rem; }
+    .search-bar { max-width: 900px; margin: 0 auto 1.5rem; padding: 0 1rem; display: flex; align-items: center; gap: 0; }
+    .search-bar input { flex: 1; background: rgba(245,233,201,0.08); border: 1px solid var(--parch-dark); border-right: none; padding: 0.55rem 1rem; font-family: 'IM Fell English', serif; font-size: 0.9rem; color: var(--parch-light); outline: none; transition: border-color 0.3s; }
+    .search-bar input::placeholder { color: var(--parch-dark); font-style: italic; }
+    .search-bar input:focus { border-color: var(--gold); }
+    .search-bar button { background: var(--ink); border: 1px solid var(--parch-dark); color: var(--parch-dark); padding: 0.55rem 0.9rem; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+    .search-bar button:hover { border-color: var(--gold); color: var(--gold); }
     .search-count { max-width: 900px; margin: -0.8rem auto 1rem; padding: 0 1rem; font-family: 'Cinzel Decorative', serif; font-size: 0.55rem; letter-spacing: 0.12rem; color: var(--sepia); text-transform: uppercase; }
   </style>
 </head>
@@ -147,34 +136,9 @@
   <button class="btn-new" onclick="openModal()">Cr&eacute;er une fiche</button>
 </div>
 
-<div class="alpha-bar" id="alphaBar">
-  <button class="alpha-btn all active" onclick="filterAlpha('*', this)">Tout</button>
-  <button class="alpha-btn" onclick="filterAlpha('A', this)">A</button>
-  <button class="alpha-btn" onclick="filterAlpha('B', this)">B</button>
-  <button class="alpha-btn" onclick="filterAlpha('C', this)">C</button>
-  <button class="alpha-btn" onclick="filterAlpha('D', this)">D</button>
-  <button class="alpha-btn" onclick="filterAlpha('E', this)">E</button>
-  <button class="alpha-btn" onclick="filterAlpha('F', this)">F</button>
-  <button class="alpha-btn" onclick="filterAlpha('G', this)">G</button>
-  <button class="alpha-btn" onclick="filterAlpha('H', this)">H</button>
-  <button class="alpha-btn" onclick="filterAlpha('I', this)">I</button>
-  <button class="alpha-btn" onclick="filterAlpha('J', this)">J</button>
-  <button class="alpha-btn" onclick="filterAlpha('K', this)">K</button>
-  <button class="alpha-btn" onclick="filterAlpha('L', this)">L</button>
-  <button class="alpha-btn" onclick="filterAlpha('M', this)">M</button>
-  <button class="alpha-btn" onclick="filterAlpha('N', this)">N</button>
-  <button class="alpha-btn" onclick="filterAlpha('O', this)">O</button>
-  <button class="alpha-btn" onclick="filterAlpha('P', this)">P</button>
-  <button class="alpha-btn" onclick="filterAlpha('Q', this)">Q</button>
-  <button class="alpha-btn" onclick="filterAlpha('R', this)">R</button>
-  <button class="alpha-btn" onclick="filterAlpha('S', this)">S</button>
-  <button class="alpha-btn" onclick="filterAlpha('T', this)">T</button>
-  <button class="alpha-btn" onclick="filterAlpha('U', this)">U</button>
-  <button class="alpha-btn" onclick="filterAlpha('V', this)">V</button>
-  <button class="alpha-btn" onclick="filterAlpha('W', this)">W</button>
-  <button class="alpha-btn" onclick="filterAlpha('X', this)">X</button>
-  <button class="alpha-btn" onclick="filterAlpha('Y', this)">Y</button>
-  <button class="alpha-btn" onclick="filterAlpha('Z', this)">Z</button>
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterCards()"/>
+  <button onclick="clearSearch()">&#10005;</button>
 </div>
 <div class="search-count" id="searchCount"></div>
 
@@ -290,6 +254,26 @@
     });
     var countEl = document.getElementById('searchCount');
     if (countEl) countEl.textContent = letter !== '*' ? count + ' r\u00e9sultat' + (count > 1 ? 's' : '') : '';
+  }
+
+
+  // RECHERCHE
+  function filterCards() {
+    var q = document.getElementById('searchInput').value.toLowerCase().trim();
+    var cards = document.querySelectorAll('.entry-card');
+    var count = 0;
+    cards.forEach(function(card) {
+      var text = (card.innerText || card.textContent).toLowerCase();
+      var match = !q || text.indexOf(q) !== -1;
+      card.style.display = match ? '' : 'none';
+      if (match) count++;
+    });
+    var countEl = document.getElementById('searchCount');
+    if (countEl) countEl.textContent = q ? count + ' r\u00e9sultat' + (count > 1 ? 's' : '') : '';
+  }
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    filterCards();
   }
 </script>
 <script>
