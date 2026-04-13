@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grimoire — Connexion</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --parch-light: #f5e9c9;
+      --parch-mid:   #e8d5a3;
+      --parch-dark:  #c9a96e;
+      --ink:         #2c1a0e;
+      --ink-faded:   #5c3d1e;
+      --sepia:       #8b5e2a;
+      --gold:        #b8860b;
+      --gold-light:  #d4a820;
+      --red-wax:     #7a1f1f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background-color: #1a0f05;
+      background-image:
+        radial-gradient(ellipse at 50% 0%, #3a1f08 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IM Fell English', Georgia, serif;
+      padding: 2rem;
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .particle {
+      position: absolute;
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: var(--gold-light);
+      opacity: 0;
+      animation: float-up linear infinite;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(100vh) translateX(0) scale(1); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-10vh) translateX(30px) scale(0.3); opacity: 0; }
+    }
+
+    /* Main card */
+    .grimoire-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      background: var(--parch-light);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.02' numOctaves='4' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.3'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.15'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #fdf3d8 0%, #f0dca8 40%, #e4c98a 100%);
+      border: 1px solid var(--parch-dark);
+      box-shadow:
+        0 0 0 6px #1a0f05,
+        0 0 0 8px var(--sepia),
+        0 0 40px rgba(180,120,30,0.4),
+        inset 0 0 60px rgba(139,94,42,0.08);
+      padding: 3rem 2.5rem;
+      animation: page-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes page-in {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Decorative corners */
+    .corner {
+      position: absolute;
+      width: 48px; height: 48px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.6;
+    }
+    .corner-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+    .corner-tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+    .corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+    .corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+    /* Title area */
+    .title-area {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .rune-divider {
+      font-size: 1.1rem;
+      letter-spacing: 0.5rem;
+      color: var(--sepia);
+      opacity: 0.7;
+      margin: 0.4rem 0;
+    }
+    .grimoire-title {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 3rem;
+      color: var(--ink);
+      line-height: 1;
+      text-shadow: 1px 1px 0 var(--parch-dark), 0 0 20px rgba(180,120,30,0.3);
+      letter-spacing: 2px;
+    }
+    .grimoire-subtitle {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.65rem;
+      color: var(--sepia);
+      letter-spacing: 0.35rem;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    /* Seal ornament */
+    .seal {
+      width: 60px; height: 60px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+    }
+    .seal svg {
+      width: 100%; height: 100%;
+      animation: slow-spin 20s linear infinite;
+    }
+    @keyframes slow-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+    label {
+      display: block;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2rem;
+      color: var(--sepia);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.35);
+      border: none;
+      border-bottom: 1.5px solid var(--parch-dark);
+      padding: 0.6rem 0.3rem;
+      font-family: 'IM Fell English', serif;
+      font-size: 1rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    input::placeholder { color: var(--parch-dark); font-style: italic; }
+    input:focus {
+      border-bottom-color: var(--gold);
+      background: rgba(255,255,255,0.5);
+    }
+
+    /* Error message */
+    .error-msg {
+      display: none;
+      text-align: center;
+      font-style: italic;
+      color: var(--red-wax);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+    .error-msg.show { display: block; }
+
+    /* Button */
+    .btn-enter {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.85rem;
+      background: var(--ink);
+      color: var(--parch-light);
+      border: none;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.25rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s, letter-spacing 0.3s;
+    }
+    .btn-enter::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border: 1px solid var(--gold);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .btn-enter:hover {
+      background: #1a0a00;
+      letter-spacing: 0.4rem;
+    }
+    .btn-enter:active { transform: scale(0.98); }
+
+    /* Loading state */
+    .btn-enter.loading { pointer-events: none; opacity: 0.7; }
+
+    /* Footer note */
+    .footer-note {
+      text-align: center;
+      margin-top: 2rem;
+      font-style: italic;
+      font-size: 0.78rem;
+      color: var(--sepia);
+      opacity: 0.7;
+    }
+    </style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<div class="grimoire-card">
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="title-area">
+    <!-- Rotating seal -->
+    <div class="seal">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" stroke="#8b5e2a" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <circle cx="50" cy="50" r="38" stroke="#b8860b" stroke-width="0.8"/>
+        <text x="50" y="55" text-anchor="middle" font-size="30" fill="#2c1a0e" font-family="serif">☽</text>
+        <g fill="#8b5e2a" opacity="0.8">
+          <circle cx="50" cy="6" r="2"/>
+          <circle cx="50" cy="94" r="2"/>
+          <circle cx="6" cy="50" r="2"/>
+          <circle cx="94" cy="50" r="2"/>
+          <circle cx="19" cy="19" r="1.5"/>
+          <circle cx="81" cy="19" r="1.5"/>
+          <circle cx="19" cy="81" r="1.5"/>
+          <circle cx="81" cy="81" r="1.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="rune-divider">  </div>
+    <h1 class="grimoire-title">Grimoire</h1>
+    <p class="grimoire-subtitle">Livre de l'Éclypse</p>
+    <div class="rune-divider">  </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg">
+     Identifiants incorrects, âme non reconnue 
+  </div>
+
+    <div class="form-group">
+    <label for="password">Mot de Passe du Grimoire</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+  </div>
+
+  <button class="btn-enter" id="loginBtn" onclick="handleLogin()">
+    Franchir le Seuil
+  </button>
+
+  <p class="footer-note">
+    Seuls les initiés peuvent entrer.<br/>
+    <em>Que la lumière guide tes pas.</em>
+  </p>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  //  REMPLACE CES VALEURS PAR TA CONFIG FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
+    authDomain: "grimoire-commun.firebaseapp.com",
+    projectId: "grimoire-commun",
+    storageBucket: "grimoire-commun.firebasestorage.app",
+    messagingSenderId: "401518708387",
+    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
+    measurementId: "G-F0HFZG2H79"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+    window.handleLogin = async function() {
+    const password = document.getElementById('password').value;
+    const btn      = document.getElementById('loginBtn');
+    const errMsg   = document.getElementById('errorMsg');
+
+    errMsg.classList.remove('show');
+
+    if (!password) {
+      errMsg.textContent = ' Entre le mot de passe du grimoire ';
+      errMsg.classList.add('show');
+      return;
+    }
+
+    btn.classList.add('loading');
+    btn.textContent = 'Ouverture du portail…';
+
+    try {
+      await signInWithEmailAndPassword(auth, 'grimoire@grimoire.local', password);
+      window.location.href = '/Grimoire/menu.html';
+    } catch (err) {
+      errMsg.textContent = ' Mot de passe incorrect ';
+      errMsg.classList.add('show');
+      btn.classList.remove('loading');
+      btn.textContent = 'Franchir le Seuil';
+    }
+  };
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.handleLogin();
+  });
+</script>
+
+<!-- Particles script -->
+<script>
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random()*100}%;
+      width: ${Math.random()*3+1}px;
+      height: ${Math.random()*3+1}px;
+      animation-duration: ${Math.random()*12+8}s;
+      animation-delay: ${Math.random()*10}s;
+    `;
+    container.appendChild(p);
+  }
+</script>
+
+</body>
+</html>
