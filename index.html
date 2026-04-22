@@ -287,33 +287,29 @@
 </div>
 
 <!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  //  REMPLACE CES VALEURS PAR TA CONFIG FIREBASE
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
   const firebaseConfig = {
-    apiKey: "AIzaSyBvStmkk99Z063MPHLlmeUywafIMGCTSAM",
-    authDomain: "grimoire-commun.firebaseapp.com",
-    projectId: "grimoire-commun",
-    storageBucket: "grimoire-commun.firebasestorage.app",
-    messagingSenderId: "401518708387",
-    appId: "1:401518708387:web:2ca15dd180798dc28e2116",
-    measurementId: "G-F0HFZG2H79"
+    apiKey: "AIzaSyBN9DKtJcOKXLEK8OlPRzRuxMPvwjX_Lh0",
+    authDomain: "grimoire-commun-9bdbf.firebaseapp.com",
+    projectId: "grimoire-commun-9bdbf",
+    storageBucket: "grimoire-commun-9bdbf.firebasestorage.app",
+    messagingSenderId: "185824013416",
+    appId: "1:185824013416:web:c955e3fbb073988e899fdd"
   };
+  firebase.initializeApp(firebaseConfig);
+  var auth = firebase.auth();
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-    window.handleLogin = async function() {
-    const password = document.getElementById('password').value;
-    const btn      = document.getElementById('loginBtn');
-    const errMsg   = document.getElementById('errorMsg');
+  function handleLogin() {
+    var password = document.getElementById('password').value;
+    var btn = document.getElementById('loginBtn');
+    var errMsg = document.getElementById('errorMsg');
 
     errMsg.classList.remove('show');
 
     if (!password) {
-      errMsg.textContent = ' Entre le mot de passe du grimoire ';
+      errMsg.textContent = 'Entre le mot de passe du grimoire';
       errMsg.classList.add('show');
       return;
     }
@@ -321,19 +317,20 @@
     btn.classList.add('loading');
     btn.textContent = 'Ouverture du portail…';
 
-    try {
-      await signInWithEmailAndPassword(auth, 'grimoire@grimoire.local', password);
-      window.location.href = '/Grimoire/menu.html';
-    } catch (err) {
-      errMsg.textContent = ' Mot de passe incorrect ';
-      errMsg.classList.add('show');
-      btn.classList.remove('loading');
-      btn.textContent = 'Franchir le Seuil';
-    }
-  };
+    auth.signInWithEmailAndPassword('grimoire@grimoire.local', password)
+      .then(function() {
+        window.location.href = 'https://joachimgalmiche.github.io/Grimoire/menu.html';
+      })
+      .catch(function(err) {
+        errMsg.textContent = 'Mot de passe incorrect';
+        errMsg.classList.add('show');
+        btn.classList.remove('loading');
+        btn.textContent = 'Franchir le Seuil';
+      });
+  }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') window.handleLogin();
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
   });
 </script>
 
