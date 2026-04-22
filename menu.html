@@ -258,15 +258,25 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  auth.onAuthStateChanged( user => {
-    if (!user) { window.location.href = '/Grimoire/'; return; }
-    const name = user.displayName || user.email.split('@')[0];
+  // Wait for auth state before redirecting
+  auth.onAuthStateChanged(function(user) {
+    if (user === undefined) return; // still loading
+    if (!user) {
+      // Give a small delay to avoid false redirect during page load
+      setTimeout(function() {
+        auth.onAuthStateChanged(function(u) {
+          if (!u) window.location.href = 'https://joachimgalmiche.github.io/Grimoire/';
+        });
+      }, 1500);
+      return;
+    }
+    var name = user.displayName || user.email.split('@')[0];
     document.getElementById('userName').textContent = name;
   });
 
   window.handleLogout = async () => {
     await auth.signOut();
-    window.location.href = '/Grimoire/';
+    window.location.href = 'https://joachimgalmiche.github.io/Grimoire/';
   };
 </script>
 
