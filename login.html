@@ -299,17 +299,17 @@
     appId: "1:185824013416:web:c955e3fbb073988e899fdd"
   };
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+  var auth = firebase.auth();
 
-    window.handleLogin = async function() {
-    const password = document.getElementById('password').value;
-    const btn      = document.getElementById('loginBtn');
-    const errMsg   = document.getElementById('errorMsg');
+  function handleLogin() {
+    var password = document.getElementById('password').value;
+    var btn = document.getElementById('loginBtn');
+    var errMsg = document.getElementById('errorMsg');
 
     errMsg.classList.remove('show');
 
     if (!password) {
-      errMsg.textContent = ' Entre le mot de passe du grimoire ';
+      errMsg.textContent = 'Entre le mot de passe du grimoire';
       errMsg.classList.add('show');
       return;
     }
@@ -317,19 +317,27 @@
     btn.classList.add('loading');
     btn.textContent = 'Ouverture du portail…';
 
-    try {
-      await auth.signInWithEmailAndPassword( 'grimoire@grimoire.local', password);
-      window.location.href = '/Grimoire/menu.html';
-    } catch (err) {
-      errMsg.textContent = ' Mot de passe incorrect ';
-      errMsg.classList.add('show');
-      btn.classList.remove('loading');
-      btn.textContent = 'Franchir le Seuil';
-    }
-  };
+    auth.signInWithEmailAndPassword('joachim.galmiche@hotmail.fr', password)
+      .then(function() {
+        window.location.href = 'https://joachimgalmiche.github.io/Grimoire/menu.html';
+      })
+      .catch(function(err) {
+        console.error('Firebase error:', err.code, err.message);
+        var msg = 'Mot de passe incorrect';
+        if (err.code === 'auth/user-not-found') msg = 'Utilisateur introuvable';
+        if (err.code === 'auth/wrong-password') msg = 'Mot de passe incorrect';
+        if (err.code === 'auth/invalid-email') msg = 'Email invalide';
+        if (err.code === 'auth/too-many-requests') msg = 'Trop de tentatives, r\u00e9essaie plus tard';
+        if (err.code === 'auth/invalid-credential') msg = 'Identifiants invalides - v\u00e9rifie email et mot de passe';
+        errMsg.textContent = msg + ' (' + err.code + ')';
+        errMsg.classList.add('show');
+        btn.classList.remove('loading');
+        btn.textContent = 'Franchir le Seuil';
+      });
+  }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') window.handleLogin();
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
   });
 </script>
 
