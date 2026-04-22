@@ -317,12 +317,19 @@
     btn.classList.add('loading');
     btn.textContent = 'Ouverture du portail…';
 
-    auth.signInWithEmailAndPassword('grimoire@grimoire.local', password)
+    auth.signInWithEmailAndPassword('joachim.galmiche@hotmail.fr', password)
       .then(function() {
         window.location.href = 'https://joachimgalmiche.github.io/Grimoire/menu.html';
       })
       .catch(function(err) {
-        errMsg.textContent = 'Mot de passe incorrect';
+        console.error('Firebase error:', err.code, err.message);
+        var msg = 'Mot de passe incorrect';
+        if (err.code === 'auth/user-not-found') msg = 'Utilisateur introuvable';
+        if (err.code === 'auth/wrong-password') msg = 'Mot de passe incorrect';
+        if (err.code === 'auth/invalid-email') msg = 'Email invalide';
+        if (err.code === 'auth/too-many-requests') msg = 'Trop de tentatives, r\u00e9essaie plus tard';
+        if (err.code === 'auth/invalid-credential') msg = 'Identifiants invalides - v\u00e9rifie email et mot de passe';
+        errMsg.textContent = msg + ' (' + err.code + ')';
         errMsg.classList.add('show');
         btn.classList.remove('loading');
         btn.textContent = 'Franchir le Seuil';
