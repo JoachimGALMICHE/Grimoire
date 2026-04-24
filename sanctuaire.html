@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grimoire — Sanctuaire</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--parch-light:#f5e9c9;--parch-mid:#e8d5a3;--parch-dark:#c9a96e;--ink:#2c1a0e;--ink-faded:#5c3d1e;--sepia:#8b5e2a;--gold:#b8860b;--gold-light:#d4a820;--red-wax:#7a1f1f;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{min-height:100vh;background-color:#120a02;background-image:radial-gradient(ellipse at 50% 30%,#2a1205 0%,transparent 70%);font-family:'IM Fell English',Georgia,serif;color:var(--ink);padding:2rem 1rem 4rem;}
+    header{text-align:center;padding:2rem 1rem 1rem;animation:fade-in 1s ease both;}
+    .header-divider{color:var(--gold);opacity:0.6;letter-spacing:0.6rem;font-size:0.9rem;}
+    .site-title{font-family:'UnifrakturMaguntia',cursive;font-size:clamp(2rem,5vw,3.5rem);color:var(--parch-light);text-shadow:0 0 30px rgba(180,120,30,0.5),2px 2px 0 #1a0a00;margin:0.3rem 0;}
+    .site-subtitle{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.4rem;color:var(--parch-dark);text-transform:uppercase;}
+    .nav-bar{max-width:1100px;margin:1.5rem auto;display:flex;justify-content:space-between;align-items:center;padding:0 1rem;}
+    .btn-back,.btn-new{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--sepia);padding:0.5rem 1.2rem;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block;}
+    .btn-back{background:transparent;color:var(--sepia);}
+    .btn-back:hover{background:var(--sepia);color:var(--parch-light);}
+    .btn-new{background:var(--ink);color:var(--parch-light);border-color:var(--gold);position:relative;}
+    .btn-new::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
+    .btn-new:hover{background:#1a0a00;letter-spacing:0.25rem;}
+
+    /* Search */
+    .search-bar{max-width:1100px;margin:0 auto 1.5rem;padding:0 1rem;display:flex;align-items:center;gap:0;}
+    .search-bar input{flex:1;background:rgba(245,233,201,0.08);border:1px solid var(--parch-dark);border-right:none;padding:0.55rem 1rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--parch-light);outline:none;transition:border-color 0.3s;}
+    .search-bar input::placeholder{color:var(--parch-dark);font-style:italic;}
+    .search-bar input:focus{border-color:var(--gold);}
+    .search-bar button{background:var(--ink);border:1px solid var(--parch-dark);color:var(--parch-dark);padding:0.55rem 0.9rem;cursor:pointer;font-size:0.9rem;transition:all 0.2s;}
+    .search-bar button:hover{border-color:var(--gold);color:var(--gold);}
+    .search-count{max-width:1100px;margin:-0.8rem auto 1rem;padding:0 1rem;font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.12rem;color:var(--sepia);text-transform:uppercase;}
+
+    .loading-msg{text-align:center;color:var(--parch-dark);font-style:italic;margin:3rem 0;}
+    .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;}
+
+    /* Grid */
+    .zone-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.4rem;padding:0 0.5rem;}
+
+    /* Zone card */
+    .zone-card{background:linear-gradient(145deg,#f5e9c9 0%,#ecdaaa 100%);border:1px solid var(--parch-dark);box-shadow:3px 3px 0 rgba(0,0,0,0.4);position:relative;cursor:pointer;animation:card-in 0.5s cubic-bezier(0.22,1,0.36,1) both;transition:transform 0.2s,box-shadow 0.2s;overflow:hidden;}
+    .zone-card:hover{transform:translateY(-3px);box-shadow:5px 6px 0 rgba(0,0,0,0.5);}
+    .zone-card::after{content:'';position:absolute;top:6px;right:6px;width:16px;height:16px;border-top:1.5px solid var(--gold);border-right:1.5px solid var(--gold);opacity:0.4;}
+    .zone-body{padding:1.5rem 1.5rem 1rem;}
+    .zone-nom{font-family:'UnifrakturMaguntia',cursive;font-size:1.6rem;color:var(--ink);line-height:1.1;margin-bottom:0.3rem;}
+    .zone-gardien{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.12rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.6rem;}
+    .zone-energie{font-size:0.78rem;color:var(--ink-faded);font-style:italic;margin-bottom:0.6rem;}
+    .zone-desc{font-size:0.82rem;color:var(--ink-faded);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+
+    /* Card actions */
+    .card-actions{display:flex;gap:0.6rem;padding:0.8rem 1.5rem 1rem;border-top:1px solid var(--parch-dark);margin-top:0.5rem;}
+    .btn-modifier,.btn-delete{box-sizing:border-box;width:7rem;font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.12rem;text-transform:uppercase;padding:0.35rem 0;text-align:center;cursor:pointer;transition:all 0.25s;background:#fff;}
+    .btn-modifier{border:1px solid var(--gold);color:var(--gold);}
+    .btn-modifier:hover{background:var(--gold);color:var(--ink);}
+    .btn-delete{border:1px solid var(--red-wax);color:var(--red-wax);}
+    .btn-delete:hover{background:var(--red-wax);color:#fff;}
+
+    /* Detail overlay */
+    .detail-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.9);z-index:200;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+    .detail-overlay.open{display:flex;}
+    .detail-modal{background:linear-gradient(160deg,#fdf3d8 0%,#f0dca8 40%,#e4c98a 100%);border:1px solid var(--parch-dark);box-shadow:0 0 0 4px #1a0f05,0 0 0 6px var(--sepia);width:100%;max-width:700px;padding:2.5rem 2rem;position:relative;animation:page-in 0.4s ease both;}
+    .btn-close{position:absolute;top:1rem;right:1rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;padding:0.3rem 0.7rem;cursor:pointer;text-transform:uppercase;transition:all 0.2s;}
+    .btn-close:hover{background:var(--sepia);color:var(--parch-light);}
+    .detail-nom{font-family:'UnifrakturMaguntia',cursive;font-size:2.5rem;color:var(--ink);margin-bottom:0.3rem;}
+    .detail-gardien{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:1.2rem;}
+    .detail-divider{border:none;border-top:1px solid var(--parch-dark);margin:1rem 0;opacity:0.5;}
+    .detail-section{margin-bottom:1rem;}
+    .detail-label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.3rem;}
+    .detail-content{font-size:0.92rem;color:var(--ink-faded);line-height:1.7;white-space:pre-wrap;font-style:italic;}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.85);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:linear-gradient(160deg,#fdf3d8 0%,#f0dca8 40%,#e4c98a 100%);border:1px solid var(--parch-dark);box-shadow:0 0 0 4px #1a0f05,0 0 0 6px var(--sepia),0 0 40px rgba(180,120,30,0.3);width:100%;max-width:680px;padding:2.5rem 2rem;position:relative;animation:page-in 0.4s ease both;}
+    .modal-corner{position:absolute;width:36px;height:36px;border-color:var(--gold);border-style:solid;opacity:0.5;}
+    .modal-corner.tl{top:8px;left:8px;border-width:1.5px 0 0 1.5px;}
+    .modal-corner.tr{top:8px;right:8px;border-width:1.5px 1.5px 0 0;}
+    .modal-corner.bl{bottom:8px;left:8px;border-width:0 0 1.5px 1.5px;}
+    .modal-corner.br{bottom:8px;right:8px;border-width:0 1.5px 1.5px 0;}
+    .modal-title{font-family:'UnifrakturMaguntia',cursive;font-size:2rem;color:var(--ink);text-align:center;margin-bottom:0.3rem;}
+    .modal-divider{text-align:center;color:var(--sepia);opacity:0.5;letter-spacing:0.4rem;margin-bottom:2rem;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
+    .form-row.single{grid-template-columns:1fr;}
+    .field{display:flex;flex-direction:column;gap:0.3rem;}
+    .field label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;}
+    .field input,.field textarea{background:rgba(255,255,255,0.4);border:none;border-bottom:1.5px solid var(--parch-dark);padding:0.45rem 0.3rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.3s;width:100%;}
+    .field input:focus,.field textarea:focus{border-bottom-color:var(--gold);}
+    .field textarea{resize:vertical;min-height:80px;border:1.5px solid var(--parch-dark);padding:0.5rem;}
+    .field textarea:focus{border-color:var(--gold);}
+    .section-title{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;color:var(--sepia);text-transform:uppercase;margin:1.5rem 0 0.8rem;padding-bottom:0.3rem;border-bottom:1px solid var(--parch-dark);}
+    .modal-actions{display:flex;gap:1rem;margin-top:2rem;}
+    .btn-cancel{flex:1;padding:0.75rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+    .btn-cancel:hover{background:var(--sepia);color:var(--parch-light);}
+    .btn-save{flex:2;padding:0.75rem;background:var(--ink);color:var(--parch-light);border:1px solid var(--gold);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;text-transform:uppercase;cursor:pointer;position:relative;transition:background 0.3s;}
+    .btn-save::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
+    .btn-save:hover{background:#1a0a00;}
+
+    @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+    @keyframes page-in{from{opacity:0;transform:translateY(20px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+    footer{text-align:center;margin-top:3rem;color:var(--sepia);font-style:italic;font-size:0.8rem;opacity:0.5;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+  <h1 class="site-title">Le Sanctuaire</h1>
+  <p class="site-subtitle">Livre de l'&Eacute;clypse</p>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+</header>
+
+<div class="nav-bar">
+  <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
+  <button class="btn-new" onclick="openModal()">Cr&eacute;er une zone</button>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Rechercher une zone..." oninput="filterCards()"/>
+  <button onclick="clearSearch()">&#10005;</button>
+</div>
+<div class="search-count" id="searchCount"></div>
+
+<div class="loading-msg" id="loadingMsg">Contemplation du sanctuaire...</div>
+<div class="zone-grid" id="zoneGrid"></div>
+
+<footer>&#10022; &nbsp; Tout &ecirc;tre pacifique trouve ici refuge &nbsp; &#10022;</footer>
+
+<!-- DETAIL -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-modal">
+    <button class="btn-close" onclick="closeDetail()">Fermer</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+    <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+    <div class="modal-title">Nouvelle Zone</div>
+    <div class="modal-divider">&#8212; &#10022; &#8212;</div>
+
+    <div class="section-title">Identit&eacute;</div>
+    <div class="form-row">
+      <div class="field"><label for="f-nom">Nom de la zone</label><input type="text" id="f-nom" placeholder="Ex: La For&ecirc;t Ancienne..."/></div>
+      <div class="field"><label for="f-gardien">Gardien de la zone</label><input type="text" id="f-gardien" placeholder="Nom du gardien..."/></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-energie">Energie / Vibration</label><input type="text" id="f-energie" placeholder="Ex: Apaisante, protectrice, mystique..."/></div>
+    </div>
+
+    <div class="section-title">Description</div>
+    <div class="form-row single">
+      <div class="field"><label for="f-description">Description &amp; ambiance</label><textarea id="f-description" placeholder="Ce que l'on ressent, voit, entend dans cette zone..."></textarea></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-creatures">Cr&eacute;atures pr&eacute;sentes</label><textarea id="f-creatures" placeholder="Qui habite cette zone du sanctuaire..."></textarea></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-plantes">Plantes &amp; &eacute;l&eacute;ments naturels</label><textarea id="f-plantes" placeholder="Arbres, fleurs, pierres, eau, feu..."></textarea></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-notes">Notes libres</label><textarea id="f-notes" placeholder="Observations, ressentis, &eacute;v&eacute;nements..."></textarea></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveEntry()">Sceller la zone</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBN9DKtJcOKXLEK8OlPRzRuxMPvwjX_Lh0",
+    authDomain: "grimoire-commun-9bdbf.firebaseapp.com",
+    projectId: "grimoire-commun-9bdbf",
+    storageBucket: "grimoire-commun-9bdbf.firebasestorage.app",
+    messagingSenderId: "185824013416",
+    appId: "1:185824013416:web:c955e3fbb073988e899fdd"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var auth = firebase.auth();
+  var db = firebase.firestore();
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'https://joachimgalmiche.github.io/Grimoire/'; return; }
+    loadEntries();
+  });
+
+  function loadEntries() {
+    var grid = document.getElementById('zoneGrid');
+    var loading = document.getElementById('loadingMsg');
+    db.collection('sanctuaire').orderBy('nom').get().then(function(snap) {
+      loading.style.display = 'none';
+      if (snap.empty) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Aucune zone consign&eacute;e.<br/><em>Le sanctuaire attend d\'&ecirc;tre cartographi&eacute;.</em></div>';
+        return;
+      }
+      grid.innerHTML = '';
+      snap.forEach(function(d) { grid.appendChild(buildCard(d.data(), d.id)); });
+    }).catch(function(e) { loading.textContent = 'Erreur.'; console.error(e); });
+  }
+
+  function buildCard(d, id) {
+    var card = document.createElement('div');
+    card.className = 'zone-card';
+    card.onclick = function(e) {
+      if (e.target.classList.contains('btn-modifier') || e.target.classList.contains('btn-delete')) return;
+      openDetail(d);
+    };
+    card.innerHTML = '<div class="zone-body">'
+      + '<div class="zone-nom">' + (d.nom || '—') + '</div>'
+      + (d.gardien ? '<div class="zone-gardien">Gardien : ' + d.gardien + '</div>' : '')
+      + (d.energie ? '<div class="zone-energie">' + d.energie + '</div>' : '')
+      + (d.description ? '<div class="zone-desc">' + d.description + '</div>' : '')
+      + '</div>'
+      + '<div class="card-actions">'
+      + '<button class="btn-modifier" onclick="editEntry(\'' + id + '\')">Modifier</button>'
+      + '<button class="btn-delete" onclick="deleteEntry(\'' + id + '\')">Supprimer</button>'
+      + '</div>';
+    return card;
+  }
+
+  function openDetail(d) {
+    var html = '<div class="detail-nom">' + (d.nom || '—') + '</div>';
+    if (d.gardien) html += '<div class="detail-gardien">Gardien : ' + d.gardien + '</div>';
+    if (d.energie) html += '<div class="detail-gardien">' + d.energie + '</div>';
+    html += '<hr class="detail-divider"/>';
+    var sections = [
+      {label: 'Description & ambiance', key: 'description'},
+      {label: 'Créatures présentes', key: 'creatures'},
+      {label: 'Plantes & éléments naturels', key: 'plantes'},
+      {label: 'Notes libres', key: 'notes'},
+    ];
+    sections.forEach(function(s) {
+      if (d[s.key]) html += '<div class="detail-section"><div class="detail-label">' + s.label + '</div><div class="detail-content">' + d[s.key] + '</div></div>';
+    });
+    document.getElementById('detailContent').innerHTML = html;
+    document.getElementById('detailOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function saveEntry() {
+    var nom = document.getElementById('f-nom').value.trim();
+    if (!nom) { alert('Le nom est obligatoire.'); return; }
+    var btn = document.querySelector('.btn-save');
+    btn.textContent = 'Scellement...'; btn.style.opacity = '0.7';
+    var entry = {
+      nom: nom,
+      gardien: document.getElementById('f-gardien').value,
+      energie: document.getElementById('f-energie').value,
+      description: document.getElementById('f-description').value,
+      creatures: document.getElementById('f-creatures').value,
+      plantes: document.getElementById('f-plantes').value,
+      notes: document.getElementById('f-notes').value,
+      createdAt: new Date().toISOString()
+    };
+    db.collection('sanctuaire').add(entry).then(function() {
+      closeModal(); loadEntries();
+      btn.textContent = 'Sceller la zone'; btn.style.opacity = '1';
+    }).catch(function(e) { console.error(e); alert('Erreur.'); btn.textContent = 'Sceller la zone'; btn.style.opacity = '1'; });
+  }
+
+  function deleteEntry(id) {
+    if (!confirm('Supprimer cette zone ?')) return;
+    db.collection('sanctuaire').doc(id).delete().then(loadEntries).catch(function(e) { console.error(e); });
+  }
+
+  var _editId = null;
+  function editEntry(id) {
+    _editId = id;
+    db.collection('sanctuaire').doc(id).get().then(function(snap) {
+      if (!snap.exists) return;
+      var d = snap.data();
+      document.getElementById('f-nom').value = d.nom || '';
+      document.getElementById('f-gardien').value = d.gardien || '';
+      document.getElementById('f-energie').value = d.energie || '';
+      document.getElementById('f-description').value = d.description || '';
+      document.getElementById('f-creatures').value = d.creatures || '';
+      document.getElementById('f-plantes').value = d.plantes || '';
+      document.getElementById('f-notes').value = d.notes || '';
+      var btn = document.querySelector('.btn-save');
+      btn.textContent = 'Mettre a jour'; btn.onclick = _saveEdit;
+      openModal();
+    });
+  }
+
+  function _saveEdit() {
+    if (!_editId) return;
+    var btn = document.querySelector('.btn-save');
+    btn.textContent = 'Mise a jour...'; btn.style.opacity = '0.7';
+    var entry = {
+      nom: document.getElementById('f-nom').value,
+      gardien: document.getElementById('f-gardien').value,
+      energie: document.getElementById('f-energie').value,
+      description: document.getElementById('f-description').value,
+      creatures: document.getElementById('f-creatures').value,
+      plantes: document.getElementById('f-plantes').value,
+      notes: document.getElementById('f-notes').value,
+      updatedAt: new Date().toISOString()
+    };
+    db.collection('sanctuaire').doc(_editId).update(entry).then(function() {
+      _editId = null;
+      btn.textContent = 'Sceller la zone'; btn.onclick = saveEntry; btn.style.opacity = '1';
+      closeModal(); loadEntries();
+    }).catch(function(e) { console.error(e); alert('Erreur.'); btn.style.opacity = '1'; });
+  }
+
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    _editId = null;
+    var btn = document.querySelector('.btn-save');
+    btn.textContent = 'Sceller la zone'; btn.onclick = saveEntry;
+  }
+
+  function filterCards() {
+    var q = document.getElementById('searchInput').value.toLowerCase().trim();
+    var cards = document.querySelectorAll('.zone-card');
+    var count = 0;
+    cards.forEach(function(card) {
+      var text = (card.innerText || card.textContent).toLowerCase();
+      var match = !q || text.indexOf(q) !== -1;
+      card.style.display = match ? '' : 'none';
+      if (match) count++;
+    });
+    var countEl = document.getElementById('searchCount');
+    if (countEl) countEl.textContent = q ? count + ' r\u00e9sultat' + (count > 1 ? 's' : '') : '';
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    filterCards();
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.getElementById('detailOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeDetail();
+  });
+</script>
+</body>
+</html>
