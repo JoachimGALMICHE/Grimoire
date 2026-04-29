@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grimoire — Identités Ésotériques</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--parch-light:#f5e9c9;--parch-mid:#e8d5a3;--parch-dark:#c9a96e;--ink:#2c1a0e;--ink-faded:#5c3d1e;--sepia:#8b5e2a;--gold:#b8860b;--red-wax:#7a1f1f;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{min-height:100vh;background-color:#120a02;background-image:radial-gradient(ellipse at 50% 30%,#2a1205 0%,transparent 70%);font-family:'IM Fell English',Georgia,serif;color:var(--ink);padding:2rem 1rem 4rem;}
+    header{text-align:center;padding:2rem 1rem 1rem;animation:fade-in 1s ease both;}
+    .header-divider{color:var(--gold);opacity:0.6;letter-spacing:0.6rem;font-size:0.9rem;}
+    .site-title{font-family:'UnifrakturMaguntia',cursive;font-size:clamp(2rem,5vw,3.5rem);color:var(--parch-light);text-shadow:0 0 30px rgba(180,120,30,0.5),2px 2px 0 #1a0a00;margin:0.3rem 0;}
+    .site-subtitle{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.4rem;color:var(--parch-dark);text-transform:uppercase;}
+    .nav-bar{max-width:1100px;margin:1.5rem auto;display:flex;justify-content:space-between;align-items:center;padding:0 1rem;}
+    .btn-back,.btn-new{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--sepia);padding:0.5rem 1.2rem;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block;}
+    .btn-back{background:transparent;color:var(--sepia);}
+    .btn-back:hover{background:var(--sepia);color:var(--parch-light);}
+    .btn-new{background:var(--ink);color:var(--parch-light);border-color:var(--gold);position:relative;}
+    .btn-new::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
+    .btn-new:hover{background:#1a0a00;letter-spacing:0.25rem;}
+
+    /* Cards grid */
+    .id-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:2rem;padding:0 1rem;}
+    .loading-msg{text-align:center;color:var(--parch-dark);font-style:italic;margin:3rem 0;}
+    .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;grid-column:1/-1;}
+
+    /* Identity card */
+    .id-card{background:linear-gradient(145deg,#f5e9c9 0%,#ecdaaa 100%);border:1px solid var(--parch-dark);box-shadow:3px 3px 0 rgba(0,0,0,0.4);position:relative;animation:card-in 0.5s ease both;overflow:hidden;}
+    .id-card::after{content:'';position:absolute;top:6px;right:6px;width:18px;height:18px;border-top:1.5px solid var(--gold);border-right:1.5px solid var(--gold);opacity:0.4;}
+
+    /* Card header */
+    .id-header{background:var(--ink);padding:1.5rem 2rem;position:relative;}
+    .id-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .id-nom{font-family:'UnifrakturMaguntia',cursive;font-size:2rem;color:var(--parch-light);line-height:1;margin-bottom:0.3rem;}
+    .id-titres{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;color:var(--gold);text-transform:uppercase;}
+
+    /* Card body */
+    .id-body{padding:1.5rem 2rem 1rem;}
+    .id-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;}
+    .id-row.single{grid-template-columns:1fr;}
+    .id-row.trio{grid-template-columns:1fr 1fr 1fr;}
+    .id-field{border-bottom:1px solid var(--parch-dark);padding-bottom:0.4rem;}
+    .id-field-label{font-family:'Cinzel Decorative',serif;font-size:0.48rem;letter-spacing:0.12rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.15rem;}
+    .id-field-val{font-size:0.88rem;color:var(--ink);font-style:italic;}
+    .id-divider{border:none;border-top:1px solid var(--parch-dark);margin:0.8rem 0;opacity:0.4;}
+
+    /* Elements badges */
+    .elements-wrap{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.2rem;}
+    .element-badge{font-family:'Cinzel Decorative',serif;font-size:0.48rem;letter-spacing:0.1rem;text-transform:uppercase;padding:0.2rem 0.5rem;border:1px solid var(--gold);color:var(--gold);background:rgba(184,134,11,0.08);}
+
+    /* Card actions */
+    .card-actions{display:flex;gap:0.6rem;padding:0.8rem 2rem 1rem;border-top:1px solid var(--parch-dark);}
+    .btn-modifier,.btn-delete{box-sizing:border-box;width:7rem;font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.12rem;text-transform:uppercase;padding:0.35rem 0;text-align:center;cursor:pointer;transition:all 0.25s;background:#fff;}
+    .btn-modifier{border:1px solid var(--gold);color:var(--gold);}
+    .btn-modifier:hover{background:var(--gold);color:var(--ink);}
+    .btn-delete{border:1px solid var(--red-wax);color:var(--red-wax);}
+    .btn-delete:hover{background:var(--red-wax);color:#fff;}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.85);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:linear-gradient(160deg,#fdf3d8 0%,#f0dca8 40%,#e4c98a 100%);border:1px solid var(--parch-dark);box-shadow:0 0 0 4px #1a0f05,0 0 0 6px var(--sepia);width:100%;max-width:720px;padding:2.5rem 2rem;position:relative;animation:page-in 0.4s ease both;}
+    .modal-corner{position:absolute;width:36px;height:36px;border-color:var(--gold);border-style:solid;opacity:0.5;}
+    .modal-corner.tl{top:8px;left:8px;border-width:1.5px 0 0 1.5px;}
+    .modal-corner.tr{top:8px;right:8px;border-width:1.5px 1.5px 0 0;}
+    .modal-corner.bl{bottom:8px;left:8px;border-width:0 0 1.5px 1.5px;}
+    .modal-corner.br{bottom:8px;right:8px;border-width:0 1.5px 1.5px 0;}
+    .modal-title{font-family:'UnifrakturMaguntia',cursive;font-size:2rem;color:var(--ink);text-align:center;margin-bottom:0.3rem;}
+    .modal-divider{text-align:center;color:var(--sepia);opacity:0.5;letter-spacing:0.4rem;margin-bottom:2rem;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
+    .form-row.single{grid-template-columns:1fr;}
+    .form-row.trio{grid-template-columns:1fr 1fr 1fr;}
+    .field{display:flex;flex-direction:column;gap:0.3rem;}
+    .field label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;}
+    .field input,.field select,.field textarea{background:rgba(255,255,255,0.4);border:none;border-bottom:1.5px solid var(--parch-dark);padding:0.45rem 0.3rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.3s;width:100%;}
+    .field select{cursor:pointer;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--gold);}
+    .field textarea{resize:vertical;min-height:70px;border:1.5px solid var(--parch-dark);padding:0.5rem;}
+    .field textarea:focus{border-color:var(--gold);}
+    .section-title{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;color:var(--sepia);text-transform:uppercase;margin:1.5rem 0 0.8rem;padding-bottom:0.3rem;border-bottom:1px solid var(--parch-dark);}
+    /* Checkbox elements */
+    .elements-check{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.3rem;}
+    .elem-cb{display:flex;align-items:center;gap:0.3rem;}
+    .elem-cb input{accent-color:var(--ink);cursor:pointer;}
+    .elem-cb label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.1rem;color:var(--sepia);text-transform:uppercase;cursor:pointer;}
+    .modal-actions{display:flex;gap:1rem;margin-top:2rem;}
+    .btn-cancel{flex:1;padding:0.75rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+    .btn-cancel:hover{background:var(--sepia);color:var(--parch-light);}
+    .btn-save{flex:2;padding:0.75rem;background:var(--ink);color:var(--parch-light);border:1px solid var(--gold);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;text-transform:uppercase;cursor:pointer;position:relative;transition:background 0.3s;}
+    .btn-save::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
+    .btn-save:hover{background:#1a0a00;}
+
+    @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+    @keyframes page-in{from{opacity:0;transform:translateY(20px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+    footer{text-align:center;margin-top:3rem;color:var(--sepia);font-style:italic;font-size:0.8rem;opacity:0.5;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+  <h1 class="site-title">Identit&eacute;s &Eacute;sot&eacute;riques</h1>
+  <p class="site-subtitle">Livre de l'&Eacute;clypse</p>
+  <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
+</header>
+
+<div class="nav-bar">
+  <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
+  <button class="btn-new" onclick="openModal()">Cr&eacute;er une fiche</button>
+</div>
+
+<div class="loading-msg" id="loadingMsg">Lecture des &eacute;nergies...</div>
+<div class="id-grid" id="idGrid"></div>
+
+<footer>&#10022; &nbsp; Chaque &acirc;me porte en elle l'empreinte du cosmos &nbsp; &#10022;</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+    <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+    <div class="modal-title">Fiche d'Identit&eacute;</div>
+    <div class="modal-divider">&#8212; &#10022; &#8212;</div>
+
+    <div class="section-title">Identit&eacute;</div>
+    <div class="form-row">
+      <div class="field"><label for="f-nom">Pr&eacute;nom &amp; Nom</label><input type="text" id="f-nom" placeholder="Ton nom..."/></div>
+      <div class="field"><label for="f-espece">Esp&egrave;ce (si cas particulier)</label><input type="text" id="f-espece" placeholder="Ex: Hybride, Starseed, Changeant..."/></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-titres">Titre(s)</label><input type="text" id="f-titres" placeholder="Ex: Gar dienne de la for&ecirc;t, Adepte du feu..."/></div>
+    </div>
+
+    <div class="section-title">Astrologie</div>
+    <div class="form-row trio">
+      <div class="field"><label for="f-soleil">Signe Solaire</label><input type="text" id="f-soleil" placeholder="Ex: Lion..."/></div>
+      <div class="field"><label for="f-lune">Signe Lunaire</label><input type="text" id="f-lune" placeholder="Ex: Scorpion..."/></div>
+      <div class="field"><label for="f-ascendant">Ascendant</label><input type="text" id="f-ascendant" placeholder="Ex: Vierge..."/></div>
+    </div>
+
+    <div class="section-title">Num&eacute;rologie &amp; &Eacute;nergie</div>
+    <div class="form-row">
+      <div class="field"><label for="f-chemin">Chemin de vie</label><input type="text" id="f-chemin" placeholder="Ex: 7 — Le Chercheur..."/></div>
+      <div class="field"><label for="f-energie">Type d'&eacute;nergie personnelle</label><input type="text" id="f-energie" placeholder="Ex: Lunaire, solaire, chaotique..."/></div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label>El&eacute;ment(s) dominant(s)</label>
+        <div class="elements-check">
+          <div class="elem-cb"><input type="checkbox" id="el-feu"/><label for="el-feu">Feu</label></div>
+          <div class="elem-cb"><input type="checkbox" id="el-eau"/><label for="el-eau">Eau</label></div>
+          <div class="elem-cb"><input type="checkbox" id="el-air"/><label for="el-air">Air</label></div>
+          <div class="elem-cb"><input type="checkbox" id="el-terre"/><label for="el-terre">Terre</label></div>
+          <div class="elem-cb"><input type="checkbox" id="el-ether"/><label for="el-ether">&Eacute;ther</label></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Plans &amp; Magie</div>
+    <div class="form-row single">
+      <div class="field"><label for="f-plans">Plan(s) de r&eacute;alit&eacute; dominant(s)</label><input type="text" id="f-plans" placeholder="Ex: Plan astral, plan &eacute;th&eacute;rique, plan physique..."/></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-magie">Type(s) de magie</label><input type="text" id="f-magie" placeholder="Ex: Magie lunaire, magie des runes, chamanisme..."/></div>
+    </div>
+    <div class="form-row single">
+      <div class="field"><label for="f-dons">Don(s) / Sens d&eacute;velopp&eacute;(s)</label><input type="text" id="f-dons" placeholder="Ex: Clairvoyance, empathie, t&eacute;l&eacute;pathie..."/></div>
+    </div>
+
+    <div class="section-title">Correspondances personnelles</div>
+    <div class="form-row">
+      <div class="field"><label for="f-totem">Animal totem</label><input type="text" id="f-totem" placeholder="Ton animal totem..."/></div>
+      <div class="field"><label for="f-couleur">Couleur &eacute;sot&eacute;rique</label><input type="text" id="f-couleur" placeholder="Ex: Indigo, noir et or..."/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label for="f-pierre">Pierre &amp; cristal</label><input type="text" id="f-pierre" placeholder="Ex: Labradorite, obsidienne..."/></div>
+      <div class="field"><label for="f-plante">Plante &amp; herbe</label><input type="text" id="f-plante" placeholder="Ex: Sauge, if, lavande..."/></div>
+    </div>
+
+    <div class="section-title">Notes</div>
+    <div class="form-row single">
+      <div class="field"><label for="f-notes">Notes libres</label><textarea id="f-notes" placeholder="Tout ce qui d&eacute;finit ton essence &eacute;sot&eacute;rique..."></textarea></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveEntry()">Sceller la fiche</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBN9DKtJcOKXLEK8OlPRzRuxMPvwjX_Lh0",
+    authDomain: "grimoire-commun-9bdbf.firebaseapp.com",
+    projectId: "grimoire-commun-9bdbf",
+    storageBucket: "grimoire-commun-9bdbf.firebasestorage.app",
+    messagingSenderId: "185824013416",
+    appId: "1:185824013416:web:c955e3fbb073988e899fdd"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var auth = firebase.auth();
+  var db = firebase.firestore();
+
+  var ELEMENTS = ['feu','eau','air','terre','ether'];
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'https://joachimgalmiche.github.io/Grimoire/'; return; }
+    loadEntries();
+  });
+
+  function loadEntries() {
+    var grid = document.getElementById('idGrid');
+    var loading = document.getElementById('loadingMsg');
+    db.collection('identites').orderBy('nom').get().then(function(snap) {
+      loading.style.display = 'none';
+      if (snap.empty) {
+        grid.innerHTML = '<div class="empty-state">Aucune fiche cr&eacute;&eacute;e.<br/><em>Consigne ton identit&eacute; &eacute;sot&eacute;rique.</em></div>';
+        return;
+      }
+      grid.innerHTML = '';
+      snap.forEach(function(d) { grid.appendChild(buildCard(d.data(), d.id)); });
+    }).catch(function(e) { loading.textContent = 'Erreur.'; console.error(e); });
+  }
+
+  function buildCard(d, id) {
+    var card = document.createElement('div');
+    card.className = 'id-card';
+
+    var elemsBadges = '';
+    if (d.elements && d.elements.length) {
+      d.elements.forEach(function(el) {
+        elemsBadges += '<span class="element-badge">' + el + '</span>';
+      });
+    }
+
+    var html = '<div class="id-header">'
+      + '<div class="id-nom">' + (d.nom || '—') + '</div>'
+      + (d.titres ? '<div class="id-titres">' + d.titres + '</div>' : '')
+      + (d.espece ? '<div style="font-family:\'Cinzel Decorative\',serif;font-size:0.5rem;color:var(--parch-dark);letter-spacing:0.1rem;margin-top:0.3rem;">' + d.espece + '</div>' : '')
+      + '</div>'
+      + '<div class="id-body">';
+
+    // Astro row
+    if (d.soleil || d.lune || d.ascendant) {
+      html += '<div class="id-row trio">';
+      if (d.soleil) html += '<div class="id-field"><div class="id-field-label">Soleil</div><div class="id-field-val">' + d.soleil + '</div></div>';
+      if (d.lune) html += '<div class="id-field"><div class="id-field-label">Lune</div><div class="id-field-val">' + d.lune + '</div></div>';
+      if (d.ascendant) html += '<div class="id-field"><div class="id-field-label">Ascendant</div><div class="id-field-val">' + d.ascendant + '</div></div>';
+      html += '</div>';
+    }
+
+    if (d.chemin || d.energie) {
+      html += '<div class="id-row">';
+      if (d.chemin) html += '<div class="id-field"><div class="id-field-label">Chemin de vie</div><div class="id-field-val">' + d.chemin + '</div></div>';
+      if (d.energie) html += '<div class="id-field"><div class="id-field-label">Énergie</div><div class="id-field-val">' + d.energie + '</div></div>';
+      html += '</div>';
+    }
+
+    if (elemsBadges) {
+      html += '<div class="id-field" style="margin-bottom:0.8rem"><div class="id-field-label">Éléments dominants</div><div class="elements-wrap">' + elemsBadges + '</div></div>';
+    }
+
+    if (d.plans || d.magie) {
+      html += '<div class="id-row">';
+      if (d.plans) html += '<div class="id-field"><div class="id-field-label">Plans de réalité</div><div class="id-field-val">' + d.plans + '</div></div>';
+      if (d.magie) html += '<div class="id-field"><div class="id-field-label">Type(s) de magie</div><div class="id-field-val">' + d.magie + '</div></div>';
+      html += '</div>';
+    }
+
+    if (d.dons) html += '<div class="id-field" style="margin-bottom:0.8rem"><div class="id-field-label">Dons & sens</div><div class="id-field-val">' + d.dons + '</div></div>';
+
+    html += '<hr class="id-divider"/>';
+
+    if (d.totem || d.couleur) {
+      html += '<div class="id-row">';
+      if (d.totem) html += '<div class="id-field"><div class="id-field-label">Animal totem</div><div class="id-field-val">' + d.totem + '</div></div>';
+      if (d.couleur) html += '<div class="id-field"><div class="id-field-label">Couleur</div><div class="id-field-val">' + d.couleur + '</div></div>';
+      html += '</div>';
+    }
+
+    if (d.pierre || d.plante) {
+      html += '<div class="id-row">';
+      if (d.pierre) html += '<div class="id-field"><div class="id-field-label">Pierre & cristal</div><div class="id-field-val">' + d.pierre + '</div></div>';
+      if (d.plante) html += '<div class="id-field"><div class="id-field-label">Plante & herbe</div><div class="id-field-val">' + d.plante + '</div></div>';
+      html += '</div>';
+    }
+
+    if (d.notes) html += '<div class="id-field"><div class="id-field-label">Notes</div><div class="id-field-val">' + d.notes + '</div></div>';
+
+    html += '</div>'
+      + '<div class="card-actions">'
+      + '<button class="btn-modifier" onclick="editEntry(\'' + id + '\')">Modifier</button>'
+      + '<button class="btn-delete" onclick="deleteEntry(\'' + id + '\')">Supprimer</button>'
+      + '</div>';
+
+    card.innerHTML = html;
+    return card;
+  }
+
+  function getFormData() {
+    var elements = ELEMENTS.filter(function(el) {
+      return document.getElementById('el-' + el) && document.getElementById('el-' + el).checked;
+    });
+    return {
+      nom:        document.getElementById('f-nom').value,
+      espece:     document.getElementById('f-espece').value,
+      titres:     document.getElementById('f-titres').value,
+      soleil:     document.getElementById('f-soleil').value,
+      lune:       document.getElementById('f-lune').value,
+      ascendant:  document.getElementById('f-ascendant').value,
+      chemin:     document.getElementById('f-chemin').value,
+      energie:    document.getElementById('f-energie').value,
+      elements:   elements,
+      plans:      document.getElementById('f-plans').value,
+      magie:      document.getElementById('f-magie').value,
+      dons:       document.getElementById('f-dons').value,
+      totem:      document.getElementById('f-totem').value,
+      couleur:    document.getElementById('f-couleur').value,
+      pierre:     document.getElementById('f-pierre').value,
+      plante:     document.getElementById('f-plante').value,
+      notes:      document.getElementById('f-notes').value,
+    };
+  }
+
+  function fillForm(d) {
+    document.getElementById('f-nom').value = d.nom || '';
+    document.getElementById('f-espece').value = d.espece || '';
+    document.getElementById('f-titres').value = d.titres || '';
+    document.getElementById('f-soleil').value = d.soleil || '';
+    document.getElementById('f-lune').value = d.lune || '';
+    document.getElementById('f-ascendant').value = d.ascendant || '';
+    document.getElementById('f-chemin').value = d.chemin || '';
+    document.getElementById('f-energie').value = d.energie || '';
+    document.getElementById('f-plans').value = d.plans || '';
+    document.getElementById('f-magie').value = d.magie || '';
+    document.getElementById('f-dons').value = d.dons || '';
+    document.getElementById('f-totem').value = d.totem || '';
+    document.getElementById('f-couleur').value = d.couleur || '';
+    document.getElementById('f-pierre').value = d.pierre || '';
+    document.getElementById('f-plante').value = d.plante || '';
+    document.getElementById('f-notes').value = d.notes || '';
+    ELEMENTS.forEach(function(el) {
+      var cb = document.getElementById('el-' + el);
+      if (cb) cb.checked = d.elements && d.elements.indexOf(el) !== -1;
+    });
+  }
+
+  function saveEntry() {
+    var nom = document.getElementById('f-nom').value.trim();
+    if (!nom) { alert('Le prénom & nom est obligatoire.'); return; }
+    var btn = document.querySelector('.btn-save');
+    btn.textContent = 'Scellement...'; btn.style.opacity = '0.7';
+    var entry = getFormData();
+    entry.createdAt = new Date().toISOString();
+    db.collection('identites').add(entry).then(function() {
+      closeModal(); loadEntries();
+      btn.textContent = 'Sceller la fiche'; btn.style.opacity = '1';
+    }).catch(function(e) { console.error(e); alert('Erreur.'); btn.textContent = 'Sceller la fiche'; btn.style.opacity = '1'; });
+  }
+
+  function deleteEntry(id) {
+    if (!confirm('Supprimer cette fiche ?')) return;
+    db.collection('identites').doc(id).delete().then(loadEntries).catch(function(e) { console.error(e); });
+  }
+
+  var _editId = null;
+  function editEntry(id) {
+    _editId = id;
+    db.collection('identites').doc(id).get().then(function(snap) {
+      if (!snap.exists) return;
+      fillForm(snap.data());
+      var btn = document.querySelector('.btn-save');
+      btn.textContent = 'Mettre a jour'; btn.onclick = _saveEdit;
+      openModal();
+    });
+  }
+
+  function _saveEdit() {
+    if (!_editId) return;
+    var btn = document.querySelector('.btn-save');
+    btn.textContent = 'Mise a jour...'; btn.style.opacity = '0.7';
+    var entry = getFormData();
+    entry.updatedAt = new Date().toISOString();
+    db.collection('identites').doc(_editId).update(entry).then(function() {
+      _editId = null;
+      btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry; btn.style.opacity = '1';
+      closeModal(); loadEntries();
+    }).catch(function(e) { console.error(e); alert('Erreur.'); btn.style.opacity = '1'; });
+  }
+
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    _editId = null;
+    var btn = document.querySelector('.btn-save');
+    btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry;
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+</body>
+</html>
