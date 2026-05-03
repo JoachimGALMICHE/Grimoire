@@ -484,6 +484,34 @@
       </div>
     </div>
 
+    <div class="section-title">Quotidien</div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="f-quotidien">Note quotidienne</label>
+        <textarea id="f-quotidien" placeholder="Ce que tu as v&eacute;cu aujourd'hui..."></textarea>
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="f-ressenti">Ressenti g&eacute;n&eacute;ral</label>
+        <textarea id="f-ressenti" placeholder="Comment tu te sens dans l'ensemble..."></textarea>
+      </div>
+    </div>
+
+    <div class="section-title">Quotidien</div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="f-quotidien">Note quotidienne</label>
+        <textarea id="f-quotidien" placeholder="Ce que tu as v&eacute;cu, pens&eacute;, ressenti aujourd'hui..."></textarea>
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label for="f-ressenti">Ressenti g&eacute;n&eacute;ral</label>
+        <textarea id="f-ressenti" placeholder="Comment tu te sens dans ton corps, ton &acirc;me, ton &eacute;nergie..."></textarea>
+      </div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
       <button class="btn-save" onclick="saveEntry()">Sceller la fiche</button>
@@ -614,6 +642,10 @@
     }
     if (d.intention) html += '<div class="entry-section"><div class="entry-section-label">Intention</div><div class="entry-section-content">' + d.intention + '</div></div>';
     if (d.rituel) html += '<div class="entry-section"><div class="entry-section-label">Rituel</div><div class="entry-section-content">' + d.rituel + '</div></div>';
+    if (d.quotidien) html += '<div class="entry-section"><div class="entry-section-label">Note quotidienne</div><div class="entry-section-content">' + d.quotidien + '</div></div>';
+    if (d.ressenti) html += '<div class="entry-section"><div class="entry-section-label">Ressenti</div><div class="entry-section-content">' + d.ressenti + '</div></div>';
+    if (d.quotidien) html += '<div class="entry-section"><div class="entry-section-label">Note quotidienne</div><div class="entry-section-content">' + d.quotidien + '</div></div>';
+    if (d.ressenti) html += '<div class="entry-section"><div class="entry-section-label">Ressenti g\u00e9n\u00e9ral</div><div class="entry-section-content">' + d.ressenti + '</div></div>';
     html += '<div class="card-actions">'
       + '<button class="btn-modifier" onclick="editEntry(\'' + id + '\')">Modifier</button>'
       + '<button class="btn-delete" onclick="deleteEntry(\'' + id + '\')">Supprimer</button>'
@@ -641,6 +673,12 @@
       tirage_interp: document.getElementById('cb-tirage').checked ? document.getElementById('f-tirage-interp').value : '',
       intention:     document.getElementById('cb-intention').checked ? document.getElementById('f-intention').value : '',
       rituel:        document.getElementById('cb-rituel').checked ? document.getElementById('f-rituel').value : '',
+      quotidien:    document.getElementById('f-quotidien') ? document.getElementById('f-quotidien').value : '',
+      ressenti:     document.getElementById('f-ressenti') ? document.getElementById('f-ressenti').value : '',
+      quotidien:    document.getElementById('f-quotidien').value,
+      ressenti:     document.getElementById('f-ressenti').value,
+      quotidien:     document.getElementById('f-quotidien').value,
+      ressenti:      document.getElementById('f-ressenti').value,
       createdAt:     new Date().toISOString()
     };
     db.collection('journal').add(entry).then(function() {
@@ -685,6 +723,10 @@
       document.getElementById('cb-rituel').checked = !!d.rituel;
       toggleSection('rituel', !!d.rituel);
       document.getElementById('f-rituel').value = d.rituel || '';
+      document.getElementById('f-quotidien').value = d.quotidien || '';
+      document.getElementById('f-ressenti').value = d.ressenti || '';
+      document.getElementById('f-quotidien').value = d.quotidien || '';
+      document.getElementById('f-ressenti').value = d.ressenti || '';
       const btn = document.querySelector('.btn-save');
       btn.textContent = 'Mettre à jour';
       btn.onclick = saveEdit;
@@ -711,6 +753,12 @@
       tirage_interp: document.getElementById('cb-tirage').checked ? document.getElementById('f-tirage-interp').value : '',
       intention:     document.getElementById('cb-intention').checked ? document.getElementById('f-intention').value : '',
       rituel:        document.getElementById('cb-rituel').checked ? document.getElementById('f-rituel').value : '',
+      quotidien:    document.getElementById('f-quotidien') ? document.getElementById('f-quotidien').value : '',
+      ressenti:     document.getElementById('f-ressenti') ? document.getElementById('f-ressenti').value : '',
+      quotidien:    document.getElementById('f-quotidien').value,
+      ressenti:     document.getElementById('f-ressenti').value,
+      quotidien:     document.getElementById('f-quotidien').value,
+      ressenti:      document.getElementById('f-ressenti').value,
       updatedAt:     new Date().toISOString()
     };
     db.collection('journal').doc(_editId).update(entry).then(function() {

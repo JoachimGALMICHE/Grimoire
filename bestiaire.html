@@ -433,6 +433,8 @@
       var d = snap.data();
     var e0 = document.getElementById('f-nom'); if(e0) e0.value = d['nom'] || '';
     var e1 = document.getElementById('f-type'); if(e1) e1.value = d['type'] || '';
+    var eEsp = document.getElementById('f-espece'); if(eEsp) eEsp.value = d['espece'] || '';
+    var eCon = document.getElementById('f-connue'); if(eCon) eCon.checked = !!d['connue'];
     var e2 = document.getElementById('f-origine'); if(e2) e2.value = d['origine'] || '';
     var e3 = document.getElementById('f-physique'); if(e3) e3.value = d['physique'] || '';
     var e4 = document.getElementById('f-caractere'); if(e4) e4.value = d['caractere'] || '';
@@ -519,7 +521,7 @@
 
     card.innerHTML = `
       <div class="beast-body">
-        ${d.type ? `<div class="beast-type">${d.type}</div>` : ''}
+        ${d.type ? `<div class="beast-type">${d.type}${d.espece ? ' — ' + d.espece : ''}${d.connue ? ' &#10022;' : ''}</div>` : ''}
         <div class="beast-name">${d.nom || '—'}</div>
         ${d.origine ? `<div class="beast-origine">${d.origine}</div>` : ''}
         ${d.physique ? `<div class="beast-desc">${d.physique}</div>` : ''}
@@ -568,6 +570,8 @@
     const entry = {
       nom:              nom,
       type:             document.getElementById('f-type').value,
+      espece:           document.getElementById('f-espece') ? document.getElementById('f-espece').value : '',
+      connue:           document.getElementById('f-connue') ? document.getElementById('f-connue').checked : false,
       origine:          document.getElementById('f-origine').value,
       physique:         document.getElementById('f-physique').value,
       caractere:        document.getElementById('f-caractere').value,
