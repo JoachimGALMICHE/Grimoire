@@ -521,60 +521,11 @@
 
 <!-- Firebase -->
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-
-  // RECHERCHE ALPHABETIQUE
-  function filterAlpha(letter, btn) {
-    document.querySelectorAll('.alpha-btn').forEach(function(b) { b.classList.remove('active'); });
-    if (btn) btn.classList.add('active');
-    var cards = document.querySelectorAll('.entry-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      if (letter === '*') { card.style.display = ''; count++; return; }
-      // Get first meaningful text - first non-empty text node
-      var allText = card.innerText || card.textContent || '';
-      var firstLine = allText.trim().split('\n')[0].trim();
-      var firstChar = firstLine.charAt(0).toUpperCase();
-      // Handle accented chars
-      var normalized = firstChar
-        .replace(/[ÉÈÊË]/g, 'E')
-        .replace(/[ÀÂÄ]/g, 'A')
-        .replace(/[ÎÏI]/g, 'I')
-        .replace(/[ÔÖO]/g, 'O')
-        .replace(/[ÙÛÜU]/g, 'U')
-        .replace(/[Ç]/g, 'C');
-      var match = normalized === letter;
-      card.style.display = match ? '' : 'none';
-      if (match) count++;
-    });
-    var countEl = document.getElementById('searchCount');
-    if (countEl) countEl.textContent = letter !== '*' ? count + ' r\u00e9sultat' + (count > 1 ? 's' : '') : '';
-  }
-
-
-  // RECHERCHE
-  function filterCards() {
-    var q = document.getElementById('searchInput').value.toLowerCase().trim();
-    var cards = document.querySelectorAll('.entry-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var text = (card.innerText || card.textContent).toLowerCase();
-      var match = !q || text.indexOf(q) !== -1;
-      card.style.display = match ? '' : 'none';
-      if (match) count++;
-    });
-    var countEl = document.getElementById('searchCount');
-    if (countEl) countEl.textContent = q ? count + ' r\u00e9sultat' + (count > 1 ? 's' : '') : '';
-  }
-  function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    filterCards();
-  }
-</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-    const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyBN9DKtJcOKXLEK8OlPRzRuxMPvwjX_Lh0",
     authDomain: "grimoire-commun-9bdbf.firebaseapp.com",
     projectId: "grimoire-commun-9bdbf",
@@ -583,25 +534,22 @@
     appId: "1:185824013416:web:c955e3fbb073988e899fdd"
   };
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  var auth = firebase.auth();
+  var db = firebase.firestore();
 
-  // Auth guard
   auth.onAuthStateChanged(function(user) {
-    if (!user) { window.location.href = '/Grimoire/'; return; }
+    if (!user) { window.location.href = 'https://joachimgalmiche.github.io/Grimoire/'; return; }
     loadEntries();
   });
 
-  // Set today's date
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
-  // Auto saison
-  const _month = new Date().getMonth() + 1;
-  const _saisons = ['Hiver','Hiver','Printemps','Printemps','Printemps','Été','Été','Été','Automne','Automne','Automne','Hiver'];
+  var _month = new Date().getMonth() + 1;
+  var _saisons = ['Hiver','Hiver','Printemps','Printemps','Printemps','Été','Été','Été','Automne','Automne','Automne','Hiver'];
   document.getElementById('f-saison').value = _saisons[_month - 1];
 
   function loadEntries() {
-    const list = document.getElementById('entriesList');
-    const loading = document.getElementById('loadingMsg');
+    var list = document.getElementById('entriesList');
+    var loading = document.getElementById('loadingMsg');
     db.collection('journal').orderBy('date', 'desc').get().then(function(snap) {
       loading.style.display = 'none';
       if (snap.empty) {
@@ -609,17 +557,15 @@
         return;
       }
       list.innerHTML = '';
-      snap.forEach(function(docSnap) {
-        list.appendChild(buildCard(docSnap.data(), docSnap.id));
-      });
+      snap.forEach(function(docSnap) { list.appendChild(buildCard(docSnap.data(), docSnap.id)); });
     }).catch(function(e) { loading.textContent = 'Erreur lors du chargement.'; console.error(e); });
   }
 
   function buildCard(d, id) {
-    const card = document.createElement('div');
+    var card = document.createElement('div');
     card.className = 'entry-card';
-    const dateStr = d.date ? new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
-    let html = '<div class="entry-header">'
+    var dateStr = d.date ? new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
+    var html = '<div class="entry-header">'
       + '<div class="entry-date">' + dateStr + '</div>'
       + '<div class="entry-tags">'
       + (d.lune ? '<span class="entry-tag">' + d.lune + '</span>' : '')
@@ -644,8 +590,6 @@
     if (d.rituel) html += '<div class="entry-section"><div class="entry-section-label">Rituel</div><div class="entry-section-content">' + d.rituel + '</div></div>';
     if (d.quotidien) html += '<div class="entry-section"><div class="entry-section-label">Note quotidienne</div><div class="entry-section-content">' + d.quotidien + '</div></div>';
     if (d.ressenti) html += '<div class="entry-section"><div class="entry-section-label">Ressenti</div><div class="entry-section-content">' + d.ressenti + '</div></div>';
-    if (d.quotidien) html += '<div class="entry-section"><div class="entry-section-label">Note quotidienne</div><div class="entry-section-content">' + d.quotidien + '</div></div>';
-    if (d.ressenti) html += '<div class="entry-section"><div class="entry-section-label">Ressenti g\u00e9n\u00e9ral</div><div class="entry-section-content">' + d.ressenti + '</div></div>';
     html += '<div class="card-actions">'
       + '<button class="btn-modifier" onclick="editEntry(\'' + id + '\')">Modifier</button>'
       + '<button class="btn-delete" onclick="deleteEntry(\'' + id + '\')">Supprimer</button>'
@@ -655,10 +599,10 @@
   }
 
   function saveEntry() {
-    const btn = document.querySelector('.btn-save');
+    var btn = document.querySelector('.btn-save');
     btn.textContent = 'Scellement en cours…';
     btn.style.opacity = '0.7';
-    const entry = {
+    var entry = {
       date:          document.getElementById('f-date').value,
       saison:        document.getElementById('f-saison').value,
       lune:          document.getElementById('f-lune').value,
@@ -673,10 +617,6 @@
       tirage_interp: document.getElementById('cb-tirage').checked ? document.getElementById('f-tirage-interp').value : '',
       intention:     document.getElementById('cb-intention').checked ? document.getElementById('f-intention').value : '',
       rituel:        document.getElementById('cb-rituel').checked ? document.getElementById('f-rituel').value : '',
-      quotidien:    document.getElementById('f-quotidien') ? document.getElementById('f-quotidien').value : '',
-      ressenti:     document.getElementById('f-ressenti') ? document.getElementById('f-ressenti').value : '',
-      quotidien:    document.getElementById('f-quotidien').value,
-      ressenti:     document.getElementById('f-ressenti').value,
       quotidien:     document.getElementById('f-quotidien').value,
       ressenti:      document.getElementById('f-ressenti').value,
       createdAt:     new Date().toISOString()
@@ -700,7 +640,7 @@
     _editId = id;
     db.collection('journal').doc(id).get().then(function(snap) {
       if (!snap.exists) return;
-      const d = snap.data();
+      var d = snap.data();
       document.getElementById('f-date').value = d.date || '';
       document.getElementById('f-saison').value = d.saison || '';
       document.getElementById('f-lune').value = d.lune || '';
@@ -725,9 +665,7 @@
       document.getElementById('f-rituel').value = d.rituel || '';
       document.getElementById('f-quotidien').value = d.quotidien || '';
       document.getElementById('f-ressenti').value = d.ressenti || '';
-      document.getElementById('f-quotidien').value = d.quotidien || '';
-      document.getElementById('f-ressenti').value = d.ressenti || '';
-      const btn = document.querySelector('.btn-save');
+      var btn = document.querySelector('.btn-save');
       btn.textContent = 'Mettre à jour';
       btn.onclick = saveEdit;
       openModal();
@@ -736,9 +674,9 @@
 
   function saveEdit() {
     if (!_editId) return;
-    const btn = document.querySelector('.btn-save');
+    var btn = document.querySelector('.btn-save');
     btn.textContent = 'Mise à jour...'; btn.style.opacity = '0.7';
-    const entry = {
+    var entry = {
       date:          document.getElementById('f-date').value,
       saison:        document.getElementById('f-saison').value,
       lune:          document.getElementById('f-lune').value,
@@ -753,10 +691,6 @@
       tirage_interp: document.getElementById('cb-tirage').checked ? document.getElementById('f-tirage-interp').value : '',
       intention:     document.getElementById('cb-intention').checked ? document.getElementById('f-intention').value : '',
       rituel:        document.getElementById('cb-rituel').checked ? document.getElementById('f-rituel').value : '',
-      quotidien:    document.getElementById('f-quotidien') ? document.getElementById('f-quotidien').value : '',
-      ressenti:     document.getElementById('f-ressenti') ? document.getElementById('f-ressenti').value : '',
-      quotidien:    document.getElementById('f-quotidien').value,
-      ressenti:     document.getElementById('f-ressenti').value,
       quotidien:     document.getElementById('f-quotidien').value,
       ressenti:      document.getElementById('f-ressenti').value,
       updatedAt:     new Date().toISOString()
@@ -779,13 +713,32 @@
   function closeModal() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
-    const btn = document.querySelector('.btn-save');
+    var btn = document.querySelector('.btn-save');
     btn.textContent = 'Sceller la fiche'; btn.onclick = saveEntry;
     _editId = null;
   }
 
   function toggleSection(name, show) {
     document.getElementById('sec-' + name).classList.toggle('show', show);
+  }
+
+  function filterCards() {
+    var q = document.getElementById('searchInput').value.toLowerCase().trim();
+    var cards = document.querySelectorAll('.entry-card');
+    var count = 0;
+    cards.forEach(function(card) {
+      var text = (card.innerText || card.textContent).toLowerCase();
+      var match = !q || text.indexOf(q) !== -1;
+      card.style.display = match ? '' : 'none';
+      if (match) count++;
+    });
+    var countEl = document.getElementById('searchCount');
+    if (countEl) countEl.textContent = q ? count + ' résultat' + (count > 1 ? 's' : '') : '';
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    filterCards();
   }
 
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
