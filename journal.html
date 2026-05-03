@@ -484,30 +484,24 @@
       </div>
     </div>
 
-    <div class="section-title">Quotidien</div>
-    <div class="form-row single">
-      <div class="field">
-        <label for="f-quotidien">Note quotidienne</label>
-        <textarea id="f-quotidien" placeholder="Ce que tu as v&eacute;cu aujourd'hui..."></textarea>
-      </div>
+    <div class="check-row" style="margin-top:0.6rem">
+      <input type="checkbox" id="cb-quotidien" onchange="toggleSection('quotidien', this.checked)"/>
+      <label for="cb-quotidien">Note quotidienne</label>
     </div>
-    <div class="form-row single">
+    <div class="conditional" id="sec-quotidien">
       <div class="field">
-        <label for="f-ressenti">Ressenti g&eacute;n&eacute;ral</label>
-        <textarea id="f-ressenti" placeholder="Comment tu te sens dans l'ensemble..."></textarea>
-      </div>
-    </div>
-
-    <div class="section-title">Quotidien</div>
-    <div class="form-row single">
-      <div class="field">
-        <label for="f-quotidien">Note quotidienne</label>
+        <label for="f-quotidien">Note du jour</label>
         <textarea id="f-quotidien" placeholder="Ce que tu as v&eacute;cu, pens&eacute;, ressenti aujourd'hui..."></textarea>
       </div>
     </div>
-    <div class="form-row single">
+
+    <div class="check-row" style="margin-top:0.6rem">
+      <input type="checkbox" id="cb-ressenti" onchange="toggleSection('ressenti', this.checked)"/>
+      <label for="cb-ressenti">Ressenti g&eacute;n&eacute;ral</label>
+    </div>
+    <div class="conditional" id="sec-ressenti">
       <div class="field">
-        <label for="f-ressenti">Ressenti g&eacute;n&eacute;ral</label>
+        <label for="f-ressenti">Ressenti</label>
         <textarea id="f-ressenti" placeholder="Comment tu te sens dans ton corps, ton &acirc;me, ton &eacute;nergie..."></textarea>
       </div>
     </div>
@@ -617,8 +611,8 @@
       tirage_interp: document.getElementById('cb-tirage').checked ? document.getElementById('f-tirage-interp').value : '',
       intention:     document.getElementById('cb-intention').checked ? document.getElementById('f-intention').value : '',
       rituel:        document.getElementById('cb-rituel').checked ? document.getElementById('f-rituel').value : '',
-      quotidien:     document.getElementById('f-quotidien').value,
-      ressenti:      document.getElementById('f-ressenti').value,
+      quotidien:     document.getElementById('cb-quotidien').checked ? document.getElementById('f-quotidien').value : '',
+      ressenti:      document.getElementById('cb-ressenti').checked ? document.getElementById('f-ressenti').value : '',
       createdAt:     new Date().toISOString()
     };
     db.collection('journal').add(entry).then(function() {
@@ -663,8 +657,8 @@
       document.getElementById('cb-rituel').checked = !!d.rituel;
       toggleSection('rituel', !!d.rituel);
       document.getElementById('f-rituel').value = d.rituel || '';
-      document.getElementById('f-quotidien').value = d.quotidien || '';
-      document.getElementById('f-ressenti').value = d.ressenti || '';
+      document.getElementById('cb-quotidien').checked = !!d.quotidien; toggleSection('quotidien', !!d.quotidien); document.getElementById('f-quotidien').value = d.quotidien || '';
+      document.getElementById('cb-ressenti').checked = !!d.ressenti; toggleSection('ressenti', !!d.ressenti); document.getElementById('f-ressenti').value = d.ressenti || '';
       var btn = document.querySelector('.btn-save');
       btn.textContent = 'Mettre à jour';
       btn.onclick = saveEdit;
@@ -691,8 +685,8 @@
       tirage_interp: document.getElementById('cb-tirage').checked ? document.getElementById('f-tirage-interp').value : '',
       intention:     document.getElementById('cb-intention').checked ? document.getElementById('f-intention').value : '',
       rituel:        document.getElementById('cb-rituel').checked ? document.getElementById('f-rituel').value : '',
-      quotidien:     document.getElementById('f-quotidien').value,
-      ressenti:      document.getElementById('f-ressenti').value,
+      quotidien:     document.getElementById('cb-quotidien').checked ? document.getElementById('f-quotidien').value : '',
+      ressenti:      document.getElementById('cb-ressenti').checked ? document.getElementById('f-ressenti').value : '',
       updatedAt:     new Date().toISOString()
     };
     db.collection('journal').doc(_editId).update(entry).then(function() {
