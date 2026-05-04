@@ -13,45 +13,51 @@
     .header-divider{color:var(--gold);opacity:0.6;letter-spacing:0.6rem;font-size:0.9rem;}
     .site-title{font-family:'UnifrakturMaguntia',cursive;font-size:clamp(2rem,5vw,3.5rem);color:var(--parch-light);text-shadow:0 0 30px rgba(180,120,30,0.5),2px 2px 0 #1a0a00;margin:0.3rem 0;}
     .site-subtitle{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.4rem;color:var(--parch-dark);text-transform:uppercase;}
-    .nav-bar{max-width:900px;margin:1.5rem auto;display:flex;justify-content:space-between;align-items:center;padding:0 1rem;}
-    .btn-back,.btn-new{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--sepia);padding:0.5rem 1.2rem;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block;}
+    .nav-bar{max-width:1000px;margin:1.5rem auto;display:flex;justify-content:space-between;align-items:center;padding:0 1rem;flex-wrap:wrap;gap:0.6rem;}
+    .btn-back,.btn-new,.btn-lang{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;border:1px solid var(--sepia);padding:0.5rem 1.2rem;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block;}
     .btn-back{background:transparent;color:var(--sepia);}
     .btn-back:hover{background:var(--sepia);color:var(--parch-light);}
     .btn-new{background:var(--ink);color:var(--parch-light);border-color:var(--gold);position:relative;}
     .btn-new::before{content:'';position:absolute;inset:2px;border:1px solid var(--gold);opacity:0.3;pointer-events:none;}
     .btn-new:hover{background:#1a0a00;letter-spacing:0.25rem;}
-    .search-bar{max-width:900px;margin:0 auto 1.5rem;padding:0 1rem;display:flex;align-items:center;}
+    .btn-lang{background:transparent;color:var(--gold);border-color:var(--gold);}
+    .btn-lang:hover{background:rgba(184,134,11,0.1);}
+    .tabs-wrap{max-width:1000px;margin:0 auto;padding:0 1rem;}
+    .tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--parch-dark);margin-bottom:1.5rem;}
+    .tab-btn{font-family:'Cinzel Decorative',serif;font-size:0.58rem;letter-spacing:0.12rem;text-transform:uppercase;padding:0.7rem 1.2rem;cursor:pointer;background:transparent;border:none;color:var(--parch-dark);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.3s;white-space:nowrap;}
+    .tab-btn:hover{color:var(--sepia);}
+    .tab-btn.active{color:var(--parch-light);border-bottom-color:var(--gold);}
+    .no-lang{text-align:center;padding:3rem 1rem;color:var(--parch-dark);font-style:italic;font-size:0.95rem;}
+    .search-bar{max-width:1000px;margin:0 auto 1.5rem;padding:0 1rem;display:flex;align-items:center;}
     .search-bar input{flex:1;background:rgba(245,233,201,0.08);border:1px solid var(--parch-dark);border-right:none;padding:0.55rem 1rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--parch-light);outline:none;transition:border-color 0.3s;}
     .search-bar input::placeholder{color:var(--parch-dark);font-style:italic;}
     .search-bar input:focus{border-color:var(--gold);}
     .search-bar button{background:var(--ink);border:1px solid var(--parch-dark);color:var(--parch-dark);padding:0.55rem 0.9rem;cursor:pointer;font-size:0.9rem;transition:all 0.2s;}
     .search-bar button:hover{border-color:var(--gold);color:var(--gold);}
-    .search-count{max-width:900px;margin:-0.8rem auto 1rem;padding:0 1rem;font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.12rem;color:var(--sepia);text-transform:uppercase;}
-    .loading-msg{text-align:center;color:var(--parch-dark);font-style:italic;margin:3rem 0;}
-    .entries-container{max-width:900px;margin:0 auto;padding:0 0.5rem;}
-    .entries-list{display:flex;flex-direction:column;gap:1.5rem;}
-    .entry-card{background:linear-gradient(145deg,#f5e9c9 0%,#ecdaaa 100%);border:1px solid var(--parch-dark);box-shadow:3px 3px 0 rgba(0,0,0,0.4);padding:1.8rem 2rem 1rem;position:relative;animation:card-in 0.5s ease both;transition:transform 0.2s,box-shadow 0.2s;}
+    .search-count{max-width:1000px;margin:-0.8rem auto 1rem;padding:0 1rem;font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.12rem;color:var(--sepia);text-transform:uppercase;}
+    .panel-wrap{max-width:1000px;margin:0 auto;padding:0 0.5rem;}
+    .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;}
+    .panel-lang-name{font-family:'UnifrakturMaguntia',cursive;font-size:1.8rem;color:var(--parch-light);}
+    .btn-delete-lang{font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.1rem;text-transform:uppercase;border:1px solid var(--red-wax);color:var(--red-wax);background:transparent;padding:0.3rem 0.7rem;cursor:pointer;transition:all 0.2s;opacity:0.6;}
+    .btn-delete-lang:hover{opacity:1;background:var(--red-wax);color:#fff;}
+    .words-list{display:flex;flex-direction:column;gap:1rem;}
+    .entry-card{background:linear-gradient(145deg,#f5e9c9 0%,#ecdaaa 100%);border:1px solid var(--parch-dark);box-shadow:3px 3px 0 rgba(0,0,0,0.4);padding:1.5rem 2rem 1rem;position:relative;animation:card-in 0.4s ease both;transition:transform 0.2s,box-shadow 0.2s;}
     .entry-card:hover{transform:translateY(-2px);box-shadow:5px 6px 0 rgba(0,0,0,0.5);}
-    .entry-card::after{content:'';position:absolute;top:6px;right:6px;width:18px;height:18px;border-top:1.5px solid var(--gold);border-right:1.5px solid var(--gold);opacity:0.4;}
-    .entry-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem;flex-wrap:wrap;gap:0.5rem;}
-    .entry-mot{font-family:'UnifrakturMaguntia',cursive;font-size:2rem;color:var(--ink);line-height:1.1;}
-    .entry-tag{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.12rem;color:var(--ink-faded);border:1px solid var(--parch-dark);padding:0.2rem 0.6rem;text-transform:uppercase;}
-    .entry-traduction{font-size:1rem;color:var(--sepia);font-style:italic;margin-bottom:0.6rem;}
-    .entry-divider{border:none;border-top:1px solid var(--parch-dark);margin:0.8rem 0;opacity:0.5;}
-    .entry-section{margin-bottom:0.6rem;}
-    .entry-section-label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;margin-bottom:0.2rem;}
-    .entry-section-content{font-size:0.92rem;color:var(--ink-faded);line-height:1.6;font-style:italic;white-space:pre-wrap;}
+    .entry-card::after{content:'';position:absolute;top:6px;right:6px;width:16px;height:16px;border-top:1.5px solid var(--gold);border-right:1.5px solid var(--gold);opacity:0.4;}
+    .entry-mot{font-family:'UnifrakturMaguntia',cursive;font-size:1.8rem;color:var(--ink);line-height:1;}
+    .entry-traduction{font-size:1rem;color:var(--sepia);font-style:italic;margin-top:0.2rem;}
+    .entry-notes{font-size:0.85rem;color:var(--ink-faded);font-style:italic;margin-top:0.5rem;line-height:1.5;white-space:pre-wrap;}
     .card-actions{display:flex;gap:0.6rem;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--parch-dark);}
     .btn-modifier,.btn-delete{box-sizing:border-box;width:7rem;font-family:'Cinzel Decorative',serif;font-size:0.5rem;letter-spacing:0.12rem;text-transform:uppercase;padding:0.35rem 0;text-align:center;cursor:pointer;transition:all 0.25s;background:#fff;}
     .btn-modifier{border:1px solid var(--gold);color:var(--gold);}
     .btn-modifier:hover{background:var(--gold);color:var(--ink);}
     .btn-delete{border:1px solid var(--red-wax);color:var(--red-wax);}
     .btn-delete:hover{background:var(--red-wax);color:#fff;}
-    .empty-state{text-align:center;padding:4rem 1rem;color:var(--parch-dark);font-style:italic;}
-    @keyframes card-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .empty-words{text-align:center;padding:2rem;color:var(--parch-dark);font-style:italic;}
+    @keyframes card-in{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,5,0,0.85);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;}
     .modal-overlay.open{display:flex;}
-    .modal{background:linear-gradient(160deg,#fdf3d8 0%,#f0dca8 40%,#e4c98a 100%);border:1px solid var(--parch-dark);box-shadow:0 0 0 4px #1a0f05,0 0 0 6px var(--sepia);width:100%;max-width:680px;padding:2.5rem 2rem;position:relative;animation:page-in 0.4s ease both;}
+    .modal{background:linear-gradient(160deg,#fdf3d8 0%,#f0dca8 40%,#e4c98a 100%);border:1px solid var(--parch-dark);box-shadow:0 0 0 4px #1a0f05,0 0 0 6px var(--sepia);width:100%;max-width:600px;padding:2.5rem 2rem;position:relative;animation:page-in 0.4s ease both;}
     @keyframes page-in{from{opacity:0;transform:translateY(20px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
     .modal-corner{position:absolute;width:36px;height:36px;border-color:var(--gold);border-style:solid;opacity:0.5;}
     .modal-corner.tl{top:8px;left:8px;border-width:1.5px 0 0 1.5px;}
@@ -60,16 +66,14 @@
     .modal-corner.br{bottom:8px;right:8px;border-width:0 1.5px 1.5px 0;}
     .modal-title{font-family:'UnifrakturMaguntia',cursive;font-size:2rem;color:var(--ink);text-align:center;margin-bottom:0.3rem;}
     .modal-divider{text-align:center;color:var(--sepia);opacity:0.5;letter-spacing:0.4rem;margin-bottom:2rem;}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
-    .form-row.single{grid-template-columns:1fr;}
-    .field{display:flex;flex-direction:column;gap:0.3rem;}
+    .field{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.2rem;}
     .field label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.15rem;color:var(--sepia);text-transform:uppercase;}
-    .field input,.field textarea{background:rgba(255,255,255,0.4);border:none;border-bottom:1.5px solid var(--parch-dark);padding:0.45rem 0.3rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.3s;width:100%;}
-    .field input:focus,.field textarea:focus{border-bottom-color:var(--gold);}
+    .field input,.field select,.field textarea{background:rgba(255,255,255,0.4);border:none;border-bottom:1.5px solid var(--parch-dark);padding:0.45rem 0.3rem;font-family:'IM Fell English',serif;font-size:0.9rem;color:var(--ink);outline:none;transition:border-color 0.3s;width:100%;}
+    .field select{cursor:pointer;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--gold);}
     .field textarea{resize:vertical;min-height:80px;border:1.5px solid var(--parch-dark);padding:0.5rem;}
     .field textarea:focus{border-color:var(--gold);}
-    .section-title{font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;color:var(--sepia);text-transform:uppercase;margin:1.5rem 0 0.8rem;padding-bottom:0.3rem;border-bottom:1px solid var(--parch-dark);}
-    .modal-actions{display:flex;gap:1rem;margin-top:2rem;}
+    .modal-actions{display:flex;gap:1rem;margin-top:1.5rem;}
     .btn-cancel{flex:1;padding:0.75rem;background:transparent;border:1px solid var(--sepia);color:var(--sepia);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.15rem;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
     .btn-cancel:hover{background:var(--sepia);color:var(--parch-light);}
     .btn-save{flex:2;padding:0.75rem;background:var(--ink);color:var(--parch-light);border:1px solid var(--gold);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.2rem;text-transform:uppercase;cursor:pointer;position:relative;transition:background 0.3s;}
@@ -79,66 +83,56 @@
   </style>
 </head>
 <body>
-
 <header>
   <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
   <h1 class="site-title">Langue des Entit&eacute;s</h1>
   <p class="site-subtitle">Livre de l'&Eacute;clypse</p>
   <div class="header-divider">&#8212; &#10022; &#10022; &#10022; &#8212;</div>
 </header>
-
 <div class="nav-bar">
   <a class="btn-back" href="/Grimoire/menu.html">Retour au menu</a>
-  <button class="btn-new" onclick="openModal()">Ajouter un mot</button>
+  <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+    <button class="btn-lang" onclick="openLangModal()">+ Cr&eacute;er une langue</button>
+    <button class="btn-new" onclick="openMotModal()">+ Ajouter un mot</button>
+  </div>
 </div>
-
-<div class="search-bar">
+<div class="tabs-wrap"><div class="tabs" id="tabsBar"></div></div>
+<div class="search-bar" id="searchBar" style="display:none;">
   <input type="text" id="searchInput" placeholder="Rechercher un mot..." oninput="filterCards()"/>
   <button onclick="clearSearch()">&#10005;</button>
 </div>
 <div class="search-count" id="searchCount"></div>
-
-<div class="entries-container">
-  <div class="loading-msg" id="loadingMsg">Consultation des archives...</div>
-  <div class="entries-list" id="entriesList"></div>
-</div>
-
+<div class="panel-wrap" id="panelWrap"></div>
+<div class="no-lang" id="noLang">Aucune langue cr&eacute;&eacute;e.<br/><em>Commence par cr&eacute;er une langue.</em></div>
 <footer>&#10022; &nbsp; Les mots des entit&eacute;s portent en eux une puissance ancienne &nbsp; &#10022;</footer>
 
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-overlay" id="modalLang">
   <div class="modal">
     <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
     <div class="modal-corner bl"></div><div class="modal-corner br"></div>
-    <div class="modal-title">Nouveau Mot</div>
+    <div class="modal-title">Nouvelle Langue</div>
     <div class="modal-divider">&#8212; &#10022; &#8212;</div>
-
-    <div class="section-title">Le Mot</div>
-    <div class="form-row">
-      <div class="field">
-        <label for="f-mot">Mot / Expression</label>
-        <input type="text" id="f-mot" placeholder="Le mot dans sa langue d'origine..."/>
-      </div>
-      <div class="field">
-        <label for="f-langue">Langue / Entit&eacute; d'origine</label>
-        <input type="text" id="f-langue" placeholder="Ex: Langue des ombres, dialecte fae..."/>
-      </div>
-    </div>
-    <div class="form-row single">
-      <div class="field">
-        <label for="f-traduction">Traduction</label>
-        <input type="text" id="f-traduction" placeholder="Sa signification en fran&ccedil;ais..."/>
-      </div>
-    </div>
-    <div class="form-row single">
-      <div class="field">
-        <label for="f-notes">Notes libres</label>
-        <textarea id="f-notes" placeholder="Contexte, comment il a &eacute;t&eacute; transmis, son &eacute;nergie..."></textarea>
-      </div>
-    </div>
-
+    <div class="field"><label for="f-lang-nom">Nom de la langue</label><input type="text" id="f-lang-nom" placeholder="Ex: Langue des Ombres..."/></div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-save" onclick="saveEntry()">Sceller le mot</button>
+      <button class="btn-cancel" onclick="closeLangModal()">Annuler</button>
+      <button class="btn-save" onclick="saveLang()">Cr&eacute;er</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalMot">
+  <div class="modal">
+    <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+    <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+    <div class="modal-title" id="motModalTitle">Nouveau Mot</div>
+    <div class="modal-divider">&#8212; &#10022; &#8212;</div>
+    <div class="field"><label for="f-mot-langue">Langue</label><select id="f-mot-langue"></select></div>
+    <div class="field"><label for="f-mot">Mot / Expression</label><input type="text" id="f-mot" placeholder="Le mot dans sa langue..."/></div>
+    <div class="field"><label for="f-traduction">Traduction</label><input type="text" id="f-traduction" placeholder="Sa signification..."/></div>
+    <div class="field"><label for="f-notes">Notes libres</label><textarea id="f-notes" placeholder="Contexte, energie, transmission..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeMotModal()">Annuler</button>
+      <button class="btn-save" id="btnSaveMot" onclick="saveMot()">Sceller le mot</button>
     </div>
   </div>
 </div>
@@ -147,145 +141,186 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBN9DKtJcOKXLEK8OlPRzRuxMPvwjX_Lh0",
-    authDomain: "grimoire-commun-9bdbf.firebaseapp.com",
-    projectId: "grimoire-commun-9bdbf",
-    storageBucket: "grimoire-commun-9bdbf.firebasestorage.app",
-    messagingSenderId: "185824013416",
-    appId: "1:185824013416:web:c955e3fbb073988e899fdd"
-  };
+  var firebaseConfig={apiKey:"AIzaSyBN9DKtJcOKXLEK8OlPRzRuxMPvwjX_Lh0",authDomain:"grimoire-commun-9bdbf.firebaseapp.com",projectId:"grimoire-commun-9bdbf",storageBucket:"grimoire-commun-9bdbf.firebasestorage.app",messagingSenderId:"185824013416",appId:"1:185824013416:web:c955e3fbb073988e899fdd"};
   firebase.initializeApp(firebaseConfig);
-  var auth = firebase.auth();
-  var db = firebase.firestore();
+  var auth=firebase.auth(),db=firebase.firestore();
+  var _langues=[],_currentLang=null,_editMotId=null;
 
-  auth.onAuthStateChanged(function(user) {
-    if (!user) { window.location.href = 'https://joachimgalmiche.github.io/Grimoire/'; return; }
-    loadEntries();
+  auth.onAuthStateChanged(function(user){
+    if(!user){window.location.href='https://joachimgalmiche.github.io/Grimoire/';return;}
+    loadAll();
   });
 
-  function loadEntries() {
-    var list = document.getElementById('entriesList');
-    var loading = document.getElementById('loadingMsg');
-    db.collection('langues').orderBy('mot').get().then(function(snap) {
-      loading.style.display = 'none';
-      if (snap.empty) {
-        list.innerHTML = '<div class="empty-state">Aucun mot consign\u00e9.<br/><em>Le grimoire attend les mots des entit\u00e9s.</em></div>';
-        return;
+  function loadAll(){
+    db.collection('langues_liste').orderBy('nom').get().then(function(snap){
+      _langues=[];
+      snap.forEach(function(d){_langues.push({id:d.id,nom:d.data().nom});});
+      renderTabs();
+      if(_langues.length>0){
+        var toShow=_currentLang&&_langues.find(function(l){return l.id===_currentLang;})?_currentLang:_langues[0].id;
+        switchTab(toShow);
+        document.getElementById('noLang').style.display='none';
+        document.getElementById('searchBar').style.display='flex';
+      } else {
+        document.getElementById('noLang').style.display='block';
+        document.getElementById('searchBar').style.display='none';
+        document.getElementById('panelWrap').innerHTML='';
       }
-      list.innerHTML = '';
-      snap.forEach(function(d) { list.appendChild(buildCard(d.data(), d.id)); });
-    }).catch(function(e) { loading.textContent = 'Erreur.'; console.error(e); });
-  }
-
-  function buildCard(d, id) {
-    var card = document.createElement('div');
-    card.className = 'entry-card';
-    var html = '<div class="entry-header">'
-      + '<div class="entry-mot">' + (d.mot || '\u2014') + '</div>'
-      + (d.langue ? '<span class="entry-tag">' + d.langue + '</span>' : '')
-      + '</div>';
-    if (d.traduction) html += '<div class="entry-traduction">\u2014 ' + d.traduction + '</div>';
-    if (d.notes) html += '<hr class="entry-divider"/><div class="entry-section"><div class="entry-section-label">Notes</div><div class="entry-section-content">' + d.notes + '</div></div>';
-    html += '<div class="card-actions">'
-      + '<button class="btn-modifier" onclick="editEntry(\'' + id + '\')">Modifier</button>'
-      + '<button class="btn-delete" onclick="deleteEntry(\'' + id + '\')">Supprimer</button>'
-      + '</div>';
-    card.innerHTML = html;
-    return card;
-  }
-
-  function saveEntry() {
-    var mot = document.getElementById('f-mot').value.trim();
-    if (!mot) { alert('Le mot est obligatoire.'); return; }
-    var btn = document.querySelector('.btn-save');
-    btn.textContent = 'Scellement...'; btn.style.opacity = '0.7';
-    var entry = {
-      mot:        mot,
-      langue:     document.getElementById('f-langue').value,
-      traduction: document.getElementById('f-traduction').value,
-      notes:      document.getElementById('f-notes').value,
-      createdAt:  new Date().toISOString()
-    };
-    db.collection('langues').add(entry).then(function() {
-      closeModal(); loadEntries();
-      btn.textContent = 'Sceller le mot'; btn.style.opacity = '1';
-    }).catch(function(e) { console.error(e); alert('Erreur.'); btn.textContent = 'Sceller le mot'; btn.style.opacity = '1'; });
-  }
-
-  function deleteEntry(id) {
-    if (!confirm('Supprimer ce mot ?')) return;
-    db.collection('langues').doc(id).delete().then(loadEntries).catch(function(e) { console.error(e); });
-  }
-
-  var _editId = null;
-  function editEntry(id) {
-    _editId = id;
-    db.collection('langues').doc(id).get().then(function(snap) {
-      if (!snap.exists) return;
-      var d = snap.data();
-      document.getElementById('f-mot').value = d.mot || '';
-      document.getElementById('f-langue').value = d.langue || '';
-      document.getElementById('f-traduction').value = d.traduction || '';
-      document.getElementById('f-notes').value = d.notes || '';
-      var btn = document.querySelector('.btn-save');
-      btn.textContent = 'Mettre \u00e0 jour'; btn.onclick = saveEdit;
-      openModal();
     });
   }
 
-  function saveEdit() {
-    if (!_editId) return;
-    var btn = document.querySelector('.btn-save');
-    btn.textContent = 'Mise \u00e0 jour...'; btn.style.opacity = '0.7';
-    var entry = {
-      mot:        document.getElementById('f-mot').value,
-      langue:     document.getElementById('f-langue').value,
-      traduction: document.getElementById('f-traduction').value,
-      notes:      document.getElementById('f-notes').value,
-      updatedAt:  new Date().toISOString()
-    };
-    db.collection('langues').doc(_editId).update(entry).then(function() {
-      _editId = null;
-      btn.textContent = 'Sceller le mot'; btn.onclick = saveEntry; btn.style.opacity = '1';
-      closeModal(); loadEntries();
-    }).catch(function(e) { console.error(e); alert('Erreur.'); btn.style.opacity = '1'; });
-  }
-
-  function openModal() {
-    document.getElementById('modalOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-    _editId = null;
-    var btn = document.querySelector('.btn-save');
-    btn.textContent = 'Sceller le mot'; btn.onclick = saveEntry;
-  }
-
-  function filterCards() {
-    var q = document.getElementById('searchInput').value.toLowerCase().trim();
-    var cards = document.querySelectorAll('.entry-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var text = (card.innerText || card.textContent).toLowerCase();
-      var match = !q || text.indexOf(q) !== -1;
-      card.style.display = match ? '' : 'none';
-      if (match) count++;
+  function renderTabs(){
+    var bar=document.getElementById('tabsBar');
+    bar.innerHTML='';
+    _langues.forEach(function(l){
+      var btn=document.createElement('button');
+      btn.className='tab-btn'+(l.id===_currentLang?' active':'');
+      btn.textContent=l.nom;
+      btn.onclick=(function(id){return function(){switchTab(id);};})(l.id);
+      bar.appendChild(btn);
     });
-    var countEl = document.getElementById('searchCount');
-    if (countEl) countEl.textContent = q ? count + ' r\u00e9sultat' + (count > 1 ? 's' : '') : '';
   }
 
-  function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    filterCards();
+  function switchTab(langId){
+    _currentLang=langId;
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+    _langues.forEach(function(l,i){if(l.id===langId)document.querySelectorAll('.tab-btn')[i].classList.add('active');});
+    document.getElementById('searchInput').value='';
+    document.getElementById('searchCount').textContent='';
+    loadWords(langId);
   }
 
-  document.getElementById('modalOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
+  function loadWords(langId){
+    var wrap=document.getElementById('panelWrap');
+    wrap.innerHTML='<div style="text-align:center;color:var(--parch-dark);font-style:italic;margin:2rem 0;">Chargement...</div>';
+    var lang=_langues.find(function(l){return l.id===langId;});
+    db.collection('langues_mots').where('langueId','==',langId).orderBy('mot').get().then(function(snap){
+      var html='<div class="panel-header">'
+        +'<div class="panel-lang-name">'+(lang?lang.nom:'')+'</div>'
+        +'<button class="btn-delete-lang" onclick="deleteLang(\''+langId+'\')">Supprimer cette langue</button>'
+        +'</div><div class="words-list" id="wordsList">';
+      if(snap.empty){
+        html+='<div class="empty-words">Aucun mot dans cette langue.<br/><em>Ajoute le premier mot.</em></div>';
+      } else {
+        snap.forEach(function(d){html+=buildCardHTML(d.data(),d.id);});
+      }
+      html+='</div>';
+      wrap.innerHTML=html;
+    }).catch(function(e){console.error(e);});
+  }
+
+  function buildCardHTML(d,id){
+    return '<div class="entry-card">'
+      +'<div class="entry-mot">'+(d.mot||'&mdash;')+'</div>'
+      +(d.traduction?'<div class="entry-traduction">&mdash; '+d.traduction+'</div>':'')
+      +(d.notes?'<div class="entry-notes">'+d.notes+'</div>':'')
+      +'<div class="card-actions">'
+      +'<button class="btn-modifier" onclick="editMot(\''+id+'\')">Modifier</button>'
+      +'<button class="btn-delete" onclick="deleteMot(\''+id+'\')">Supprimer</button>'
+      +'</div></div>';
+  }
+
+  function openLangModal(){document.getElementById('f-lang-nom').value='';document.getElementById('modalLang').classList.add('open');document.body.style.overflow='hidden';}
+  function closeLangModal(){document.getElementById('modalLang').classList.remove('open');document.body.style.overflow='';}
+  function saveLang(){
+    var nom=document.getElementById('f-lang-nom').value.trim();
+    if(!nom){alert('Le nom est obligatoire.');return;}
+    db.collection('langues_liste').add({nom:nom,createdAt:new Date().toISOString()}).then(function(){closeLangModal();loadAll();}).catch(function(e){console.error(e);alert('Erreur.');});
+  }
+  function deleteLang(langId){
+    if(!confirm('Supprimer cette langue et tous ses mots ?'))return;
+    db.collection('langues_mots').where('langueId','==',langId).get().then(function(snap){
+      var batch=db.batch();
+      snap.forEach(function(d){batch.delete(d.ref);});
+      batch.delete(db.collection('langues_liste').doc(langId));
+      return batch.commit();
+    }).then(function(){_currentLang=null;loadAll();}).catch(function(e){console.error(e);alert('Erreur.');});
+  }
+
+  function updateLangSelect(selectedId){
+    var sel=document.getElementById('f-mot-langue');
+    sel.innerHTML='';
+    _langues.forEach(function(l){
+      var opt=document.createElement('option');
+      opt.value=l.id;opt.textContent=l.nom;
+      if(l.id===(selectedId||_currentLang))opt.selected=true;
+      sel.appendChild(opt);
+    });
+  }
+  function openMotModal(){
+    if(_langues.length===0){alert('Cr\u00e9e d\'abord une langue !');return;}
+    _editMotId=null;
+    document.getElementById('motModalTitle').textContent='Nouveau Mot';
+    document.getElementById('f-mot').value='';
+    document.getElementById('f-traduction').value='';
+    document.getElementById('f-notes').value='';
+    var btn=document.getElementById('btnSaveMot');
+    btn.textContent='Sceller le mot';btn.onclick=saveMot;
+    updateLangSelect(null);
+    document.getElementById('modalMot').classList.add('open');document.body.style.overflow='hidden';
+  }
+  function closeMotModal(){document.getElementById('modalMot').classList.remove('open');document.body.style.overflow='';}
+  function saveMot(){
+    var mot=document.getElementById('f-mot').value.trim();
+    if(!mot){alert('Le mot est obligatoire.');return;}
+    var btn=document.getElementById('btnSaveMot');
+    btn.textContent='Scellement...';btn.style.opacity='0.7';
+    var entry={langueId:document.getElementById('f-mot-langue').value,mot:mot,traduction:document.getElementById('f-traduction').value,notes:document.getElementById('f-notes').value,createdAt:new Date().toISOString()};
+    db.collection('langues_mots').add(entry).then(function(){
+      _currentLang=entry.langueId;closeMotModal();loadAll();
+      btn.textContent='Sceller le mot';btn.style.opacity='1';
+    }).catch(function(e){console.error(e);alert('Erreur.');btn.textContent='Sceller le mot';btn.style.opacity='1';});
+  }
+  function deleteMot(id){
+    if(!confirm('Supprimer ce mot ?'))return;
+    db.collection('langues_mots').doc(id).delete().then(function(){loadWords(_currentLang);}).catch(function(e){console.error(e);});
+  }
+  function editMot(id){
+    _editMotId=id;
+    db.collection('langues_mots').doc(id).get().then(function(snap){
+      if(!snap.exists)return;
+      var d=snap.data();
+      updateLangSelect(d.langueId);
+      document.getElementById('f-mot').value=d.mot||'';
+      document.getElementById('f-traduction').value=d.traduction||'';
+      document.getElementById('f-notes').value=d.notes||'';
+      document.getElementById('motModalTitle').textContent='Modifier le mot';
+      var btn=document.getElementById('btnSaveMot');
+      btn.textContent='Mettre \u00e0 jour';btn.onclick=saveEditMot;
+      document.getElementById('modalMot').classList.add('open');document.body.style.overflow='hidden';
+    });
+  }
+  function saveEditMot(){
+    if(!_editMotId)return;
+    var btn=document.getElementById('btnSaveMot');
+    btn.textContent='Mise \u00e0 jour...';btn.style.opacity='0.7';
+    var entry={langueId:document.getElementById('f-mot-langue').value,mot:document.getElementById('f-mot').value,traduction:document.getElementById('f-traduction').value,notes:document.getElementById('f-notes').value,updatedAt:new Date().toISOString()};
+    db.collection('langues_mots').doc(_editMotId).update(entry).then(function(){
+      _currentLang=entry.langueId;_editMotId=null;
+      btn.textContent='Sceller le mot';btn.onclick=saveMot;btn.style.opacity='1';
+      closeMotModal();loadAll();
+    }).catch(function(e){console.error(e);alert('Erreur.');btn.style.opacity='1';});
+  }
+
+  function filterCards(){
+    var q=document.getElementById('searchInput').value.toLowerCase().trim();
+    var cards=document.querySelectorAll('.entry-card');
+    var count=0;
+    cards.forEach(function(card){
+      var text=(card.innerText||card.textContent).toLowerCase();
+      var match=!q||text.indexOf(q)!==-1;
+      card.style.display=match?'':'none';
+      if(match)count++;
+    });
+    var el=document.getElementById('searchCount');
+    if(el)el.textContent=q?count+' r\u00e9sultat'+(count>1?'s':''):'';
+  }
+  function clearSearch(){document.getElementById('searchInput').value='';filterCards();}
+
+  ['modalLang','modalMot'].forEach(function(id){
+    document.getElementById(id).addEventListener('click',function(e){
+      if(e.target===this){if(id==='modalLang')closeLangModal();else closeMotModal();}
+    });
   });
 </script>
 </body>
